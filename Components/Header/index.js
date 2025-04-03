@@ -46,9 +46,9 @@ const Header = () => {
           </Navbar.Collapse>
         </div>
       </Navbar>
-      <marquee behavior="scroll" direction="left" scrollamount="10">
+      {/* <marquee behavior="scroll" direction="left" scrollamount="10">
         🏏 Here is some scrolling text... right to left! 🏏
-      </marquee>
+      </marquee> */}
     </>
   );
 };
