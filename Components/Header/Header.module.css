@@ -1,0 +1,37 @@
+.navbar {
+    background-color: #1a1a1a;
+    padding: 12px 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .brand {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    margin-right: 12px;
+  }
+  
+  .title {
+    font-size: 18px;
+    margin: 0;
+    color: #ffffff;
+    font-weight: 600;
+  }
+  
+  .subtitle {
+    font-size: 12px;
+    margin: 0;
+    color: #b3b3b3;
+  }
+  
+  .navLink {
+    color: #ffffff !important;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+  }
+  
+  .navLink:hover {
+    color: #007bff !important;
+  }
