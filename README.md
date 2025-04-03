@@ -1,2 +1,0 @@
-# chennaikhatrisportsclub
-chennaikhatrisportsclub
