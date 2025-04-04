@@ -18,7 +18,7 @@ export default function Home() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentImage((prevImage) => (prevImage + 1) % images.length);
-    }, 1000); // Change image every 5 seconds
+    }, 5000); // Change image every 5 seconds
 
     return () => clearInterval(intervalId);
   }, []);
@@ -73,7 +73,7 @@ export default function Home() {
         <div className="absolute inset-0 flex flex-col justify-center items-center"></div>
         <div className="absolute inset-0 bg-black opacity-60"></div>{" "}
         <Head>
-          <title>Launching Soon</title>
+          <title>Chennai Khatri Sports Club</title>
         </Head>
         <div className="d-flex justify-content-center align-items-center vh-100 text-center text-white fade-in relative">
           <div
@@ -86,7 +86,6 @@ export default function Home() {
                 fontFamily: "Arial, sans-serif",
                 letterSpacing: "1.0em",
                 textShadow: "10px 2px 4px rgba(0, 0, 0, 0.5)",
-                
               }}
             >
               LAUNCHING SOON
