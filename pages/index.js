@@ -7,6 +7,7 @@ import Header from "../Components/Header";
 // import khatriDawlatzLogo from "../public/khatridawlatz/khatri_dawlatz_logo.png";
 // import Footer from "../Components/Footer";
 import Meta from "../Components/Meta";
+// import videoSrc from "../public/video.mp4";
 
 // const teamDetails = [
 //   {
@@ -119,12 +120,28 @@ export default function Home() {
       <div
         className="absolute inset-0 flex flex-col justify-center items-center"
         style={{
-          backgroundImage: `url(${images[currentImage]})`,
+          backgroundImage: `
+          linear-gradient(
+            rgba(0, 0, 0, 0.5),
+            rgba(0, 0, 0, 0.5)
+          ),
+          url(${images[currentImage]})
+        `,
           backgroundSize: "cover",
           backgroundPosition: "center",
           opacity: 0.7,
         }}
       >
+        {/* <div className="relative h-screen w-full">
+      <video
+    className="absolute inset-0 object-cover w-full h-full"
+    src={videoSrc}
+    autoPlay
+    loop
+    muted
+  ></video> */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-50"></div>
+        <div className="absolute inset-0 flex flex-col justify-center items-center"></div>
         <div className="absolute inset-0 bg-black opacity-60"></div>{" "}
         <Head>
           <title>Launching Soon</title>

@@ -1,12 +1,12 @@
 import React from "react";
 import Head from "next/head";
-import favicon from "../public/favicon.ico";
+import favicon from "../../public/favicon.ico";
 
 const Meta = () => {
   return (
     <Head>
-      <title>Khatri Premier League</title>
-      <meta name="description" content="Khatri Premier League" />
+      <title>Chennai Khatri Sports Club</title>
+      <meta name="description" content="Chennai Khatri Sports Club" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link rel="icon" href={favicon} />
       <link
