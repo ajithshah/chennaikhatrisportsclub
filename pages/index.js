@@ -1,77 +1,8 @@
-// import Head from "next/head";
-// import Card from "../Components/Card";
-import Header from "../Components/Header";
-// import kanchiSuperKingsLogo from "../public/kanchisuperkings/kanchi_super_kings_logo.png";
-// import vadilsBetaLogo from "../public/vadilsbeta/vadils_beta_logo.png";
-// import shaWarriorsLogo from "../public/shawarriors/sha_warriors_logo.png";
-// import khatriDawlatzLogo from "../public/khatridawlatz/khatri_dawlatz_logo.png";
-import Footer from "../Components/Footer";
-import Meta from "../Components/Meta";
-// import videoSrc from "../public/video.mp4";
-// import bg1 from "../public/bg1.jpeg";
-// import bg2 from "../public/bg2.jpg";
-// import bg3 from "../public/bg3.jpg";
-
-// const teamDetails = [
-//   {
-//     id: "kanchisuperkings",
-//     teamName: "Kanchi Super Kings",
-//     description: "Chennai",
-//     image: kanchiSuperKingsLogo,
-//   },
-//   {
-//     id: "vadilsbeta",
-//     teamName: "Vadils Beta",
-//     description: "Mumbai",
-//     image: vadilsBetaLogo,
-//   },
-//   {
-//     id: "kanchisuperkings",
-//     teamName: "Kanchi Super Kings",
-//     description: "Chennai",
-//     image: kanchiSuperKingsLogo,
-//   },
-//   {
-//     id: "khatridawlatz",
-//     teamName: "Khatri Dawlatz",
-//     description: "Kanchipuram",
-//     image: khatriDawlatzLogo,
-//   },
-//   {
-//     id: "shawarriors",
-//     teamName: "Sha Warriors",
-//     description: "Kanchipuram",
-//     image: shaWarriorsLogo,
-//   },
-// ];
-
-// export default function Home() {
-//   return (
-//     <>
-//       <Meta />
-//       <Header />
-//       <div className="row justify-content-center align-items-center text-center pt-2 g-4">
-//         {teamDetails.map((item, index) => (
-//           <div
-//             className="col-sm-4 pt-4 col-md-4 col-lg-3 d-flex justify-content-center"
-//             key={index}
-//           >
-//             <Card
-//               id={item.id}
-//               teamName={item.teamName}
-//               image={item.image}
-//               description={item.description}
-//             />
-//           </div>
-//         ))}
-//       </div>
-//       <Footer />
-//     </>
-//   );
-// }
-
 import { useState, useEffect } from "react";
 import Head from "next/head";
+import Header from "../Components/Header";
+import Footer from "../Components/Footer";
+import Meta from "../Components/Meta";
 
 export default function Home() {
   const images = [
@@ -87,7 +18,7 @@ export default function Home() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentImage((prevImage) => (prevImage + 1) % images.length);
-    }, 5000); // Change image every 5 seconds
+    }, 1000); // Change image every 5 seconds
 
     return () => clearInterval(intervalId);
   }, []);
@@ -132,23 +63,13 @@ export default function Home() {
         `,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          opacity: 0.7,
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
+          backgroundColor: "#000",
+          fontFamily: "Arial, sans-serif",
         }}
       >
-        {/* <div className="absolute inset-0 w-full overflow-hidden -z-10 rounded-lg">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="object-cover w-full opacity-5"
-          >
-            <source src="../public/video.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-white dark:from-black to-transparent opacity-10"></div>
-        </div> */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-purple-500 opacity-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-purple-200 opacity-10"></div>
         <div className="absolute inset-0 flex flex-col justify-center items-center"></div>
         <div className="absolute inset-0 bg-black opacity-60"></div>{" "}
         <Head>
@@ -161,7 +82,12 @@ export default function Home() {
           >
             <h1
               className="text-4xl md:text-10xl lg:text-10xl font-bold mb-4 animate-pulse"
-              style={{ fontFamily: "Arial, sans-serif" }}
+              style={{
+                fontFamily: "Arial, sans-serif",
+                letterSpacing: "1.0em",
+                textShadow: "10px 2px 4px rgba(0, 0, 0, 0.5)",
+                
+              }}
             >
               LAUNCHING SOON
             </h1>
@@ -169,7 +95,7 @@ export default function Home() {
               className="text-lg md:text-2xl lg:text-4xl mb-4 font-bold"
               style={{ fontFamily: "Arial, sans-serif" }}
             >
-              Stay tuned for updates!
+              Stay tuned for updates...!
             </p>
           </div>
         </div>
