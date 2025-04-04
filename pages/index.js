@@ -84,7 +84,7 @@ export default function Home() {
               className="text-4xl md:text-10xl lg:text-10xl font-bold mb-4 animate-pulse"
               style={{
                 fontFamily: "Arial, sans-serif",
-                letterSpacing: "1.0em",
+                letterSpacing: ".3em",
                 textShadow: "10px 2px 4px rgba(0, 0, 0, 0.5)",
               }}
             >
