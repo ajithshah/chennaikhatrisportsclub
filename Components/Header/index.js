@@ -29,8 +29,8 @@ const Header = () => {
               </div>
             </div>
           </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          {/* <Navbar.Collapse id="basic-navbar-nav">
+          {/* <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               <Link href="/" passHref legacyBehavior>
                 <Nav.Link className="px-3 text-dark">Home</Nav.Link>
