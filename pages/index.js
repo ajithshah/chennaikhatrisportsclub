@@ -113,41 +113,42 @@ export default function Home() {
     }
   };
   return (
-    <div
-      className="absolute inset-0"
-      style={{
-        background: `url(${images[currentImage]})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        opacity: 0.7, // Increase opacity for image background
-      }}
-    >
-      <div className="absolute inset-0 bg-black opacity-100"></div>{" "}
-      {/* Change opacity to 60% */}
+    <>
       <Meta />
       <Header />
-      <Head>
-        <title>Launching Soon</title>
-      </Head>
-      <div className="d-flex justify-content-center align-items-center vh-100 text-center text-white fade-in relative">
-        <div
-          className="p-4 container mx-auto"
-          style={{ fontFamily: "Arial, sans-serif" }}
-        >
-          <h1
-            className="display-1 fw-bold mb-4 animate-pulse"
+      <div
+        className="absolute inset-0 flex flex-col justify-center items-center"
+        style={{
+          backgroundImage: `url(${images[currentImage]})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: 0.7,
+        }}
+      >
+        <div className="absolute inset-0 bg-black opacity-60"></div>{" "}
+        <Head>
+          <title>Launching Soon</title>
+        </Head>
+        <div className="d-flex justify-content-center align-items-center vh-100 text-center text-white fade-in relative">
+          <div
+            className="p-4 container mx-auto"
             style={{ fontFamily: "Arial, sans-serif" }}
           >
-            LAUNCHING SOON
-          </h1>
-          <p
-            className="fs-4 mb-8 fw-bold"
-            style={{ fontFamily: "Arial, sans-serif" }}
-          >
-            Stay tuned for updates!
-          </p>
+            <h1
+              className="text-4xl md:text-6xl lg:text-8xl font-bold mb-4 animate-pulse"
+              style={{ fontFamily: "Arial, sans-serif" }}
+            >
+              LAUNCHING SOON
+            </h1>
+            <p
+              className="text-lg md:text-2xl lg:text-4xl mb-4 font-bold"
+              style={{ fontFamily: "Arial, sans-serif" }}
+            >
+              Stay tuned for updates!
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
