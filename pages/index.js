@@ -8,9 +8,9 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Meta from "../Components/Meta";
 // import videoSrc from "../public/video.mp4";
-import bg1 from "../public/bg1.jpeg";
-import bg2 from "../public/bg2.jpg";
-import bg3 from "../public/bg3.jpg";
+// import bg1 from "../public/bg1.jpeg";
+// import bg2 from "../public/bg2.jpg";
+// import bg3 from "../public/bg3.jpg";
 
 // const teamDetails = [
 //   {
