@@ -5,9 +5,12 @@ import Header from "../Components/Header";
 // import vadilsBetaLogo from "../public/vadilsbeta/vadils_beta_logo.png";
 // import shaWarriorsLogo from "../public/shawarriors/sha_warriors_logo.png";
 // import khatriDawlatzLogo from "../public/khatridawlatz/khatri_dawlatz_logo.png";
-// import Footer from "../Components/Footer";
+import Footer from "../Components/Footer";
 import Meta from "../Components/Meta";
 // import videoSrc from "../public/video.mp4";
+import bg1 from "../public/bg1.jpeg";
+import bg2 from "../public/bg2.jpg";
+import bg3 from "../public/bg3.jpg";
 
 // const teamDetails = [
 //   {
@@ -132,15 +135,20 @@ export default function Home() {
           opacity: 0.7,
         }}
       >
-        {/* <div className="relative h-screen w-full">
-      <video
-    className="absolute inset-0 object-cover w-full h-full"
-    src={videoSrc}
-    autoPlay
-    loop
-    muted
-  ></video> */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-50"></div>
+        {/* <div className="absolute inset-0 w-full overflow-hidden -z-10 rounded-lg">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="object-cover w-full opacity-5"
+          >
+            <source src="../public/video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-white dark:from-black to-transparent opacity-10"></div>
+        </div> */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-purple-500 opacity-10"></div>
         <div className="absolute inset-0 flex flex-col justify-center items-center"></div>
         <div className="absolute inset-0 bg-black opacity-60"></div>{" "}
         <Head>
@@ -166,6 +174,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }
