@@ -26,7 +26,7 @@ const Footer = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Shanthosh Kumar
+            Shanthosh
           </a>
         </p>
       </div>
