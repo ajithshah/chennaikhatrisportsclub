@@ -24,14 +24,13 @@ const Header = () => {
               className="me-2"
             />
             <div>
-              <div className="fs-5 mb-0 fw-bold text-dark">
-                Khatri Premier League
+              <div className="fs-5 mb-0 text-dark font-weight-bold">
+                Chennai Khatri Sports Club | 🏆⚔️🥇🎮
               </div>
-              <div className="text-dark small">Season - 3</div>
             </div>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
+          {/* <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               <Link href="/" passHref legacyBehavior>
                 <Nav.Link className="px-3 text-dark">Home</Nav.Link>
@@ -43,7 +42,7 @@ const Header = () => {
                 <Nav.Link className="px-3 text-dark">Contact</Nav.Link>
               </Link>
             </Nav>
-          </Navbar.Collapse>
+          </Navbar.Collapse> */}
         </div>
       </Navbar>
       {/* <marquee behavior="scroll" direction="left" scrollamount="10">
