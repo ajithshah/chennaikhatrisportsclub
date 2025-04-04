@@ -69,7 +69,7 @@ import Meta from "../Components/Meta";
 import { useState, useEffect } from "react";
 import Head from "next/head";
 
-export default function LaunchingSoon() {
+export default function Home() {
   const images = [
     "https://images.unsplash.com/photo-1509721434272-b79147e0e708?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80",
     "https://images.unsplash.com/photo-1506710507565-203b9f24669b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1536&q=80",
@@ -112,28 +112,32 @@ export default function LaunchingSoon() {
       setMessage("An error occurred. Please try again!");
     }
   };
-
   return (
     <div
-      className="h-screen bg-gray-900 flex justify-center items-center"
+      className="absolute inset-0"
       style={{
-        backgroundImage: `url(${images[currentImage]})`,
+        background: `url(${images[currentImage]})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
+        opacity: 0.7,  // Increase opacity for image background
       }}
     >
+      <div className="absolute inset-0 bg-black opacity-100"></div> {/* Change opacity to 60% */}
       <Meta />
       <Header />
       <Head>
         <title>Launching Soon</title>
       </Head>
-
-      <div className="text-center text-white p-4 container mx-auto">
-  <h1 className="display-1 fw-bold mb-4 animate-pulse font-weight-bold">
-    Launching Soon
-  </h1>
-  <p className="fs-4 mb-8 fw-bold">Stay tuned for updates!</p>
-</div>
+  
+      <div className="d-flex justify-content-center align-items-center vh-100 text-center text-white fade-in relative">
+      <div className="p-4 container mx-auto" style={{ fontFamily: 'Arial, sans-serif' }}>
+        <h1 className="display-1 fw-bold mb-4 animate-pulse" style={{ fontFamily: 'Arial, sans-serif' }}>
+          LAUNCHING SOON
+        </h1>
+        <p className="fs-4 mb-8 fw-bold" style={{ fontFamily: 'Arial, sans-serif' }}>Stay tuned for updates!</p>
+      </div>
+    </div>
     </div>
   );
+  
 }

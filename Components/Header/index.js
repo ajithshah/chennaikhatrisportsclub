@@ -8,8 +8,8 @@ const Header = () => {
   return (
     <>
       <Navbar
-        // bg="light"
-        style={{ backgroundColor: "#adadad" }}
+        bg="light"
+        style={{ backgroundColor: "#FFF" }}
         variant="light"
         expand="lg"
         className="py-2 px-3 shadow"
@@ -25,7 +25,7 @@ const Header = () => {
             />
             <div>
               <div className="fs-5 mb-0 text-dark font-weight-bold">
-                Chennai Khatri Sports Club | 🏆⚔️🥇🎮
+                Chennai Khatri Sports Club
               </div>
             </div>
           </Navbar.Brand>
