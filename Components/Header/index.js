@@ -4,7 +4,6 @@ import Link from "next/link";
 import logo from "../../public/logo.png";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import {
-  getAuth,
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
@@ -86,7 +85,11 @@ const Header = () => {
           />
           <div>
             <div className="fs-5 mb-0 text-dark font-weight-bold">
-              Chennai Khatri Sports Club
+              <Link href="/" passHref legacyBehavior>
+                <Nav.Link className="px-3 text-dark">
+                  Chennai Khatri Sports Club
+                </Nav.Link>
+              </Link>
             </div>
           </div>
         </Navbar.Brand>
@@ -101,8 +104,8 @@ const Header = () => {
             </Link>
             {/* <Link href="/about" passHref legacyBehavior>
               <Nav.Link className="px-3 text-dark">About</Nav.Link>
-            </Link>
-            <Link href="/contact" passHref legacyBehavior>
+            </Link> */}
+            {/* <Link href="/contact" passHref legacyBehavior>
               <Nav.Link className="px-3 text-dark">Contact</Nav.Link>
             </Link> */}
           </Nav>
