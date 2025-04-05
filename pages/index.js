@@ -1,3 +1,201 @@
+// import Head from "next/head";
+// import Card from "../Components/Card";
+// import Header from "../Components/Header";
+// import kanchiSuperKingsLogo from "../public/kanchisuperkings/kanchi_super_kings_logo.png";
+// import vadilsBetaLogo from "../public/vadilsbeta/vadils_beta_logo.png";
+// import shaWarriorsLogo from "../public/shawarriors/sha_warriors_logo.png";
+// import khatriDawlatzLogo from "../public/khatridawlatz/khatri_dawlatz_logo.png";
+// import Footer from "../Components/Footer";
+// import Meta from "../Components/Meta";
+// import { db } from "../firebase";
+// import { collection, addDoc } from "firebase/firestore";
+// import React, { useState } from "react";
+// // import { useAuthState } from "react-firebase-hooks/auth";
+
+// const teamDetails = [
+//   {
+//     id: "kanchisuperkings",
+//     teamName: "Kanchi Super Kings",
+//     description: "Chennai",
+//     image: kanchiSuperKingsLogo,
+//   },
+//   {
+//     id: "vadilsbeta",
+//     teamName: "Vadils Beta",
+//     description: "Mumbai",
+//     image: vadilsBetaLogo,
+//   },
+//   {
+//     id: "kanchisuperkings",
+//     teamName: "Kanchi Super Kings",
+//     description: "Chennai",
+//     image: kanchiSuperKingsLogo,
+//   },
+//   {
+//     id: "khatridawlatz",
+//     teamName: "Khatri Dawlatz",
+//     description: "Kanchipuram",
+//     image: khatriDawlatzLogo,
+//   },
+//   {
+//     id: "shawarriors",
+//     teamName: "Sha Warriors",
+//     description: "Kanchipuram",
+//     image: shaWarriorsLogo,
+//   },
+// ];
+
+// async function addData(name, age) {
+//   try {
+//     if (!name || !age) {
+//       throw new Error("Name and age are required");
+//     }
+
+//     const docRef = await addDoc(collection(db, "projects"), {
+//       name: name,
+//       age: age,
+//     });
+//     console.log("Document written with ID: ", docRef.id);
+//     return true;
+//   } catch (e) {
+//     console.error("Error adding document: ", e);
+//     return false;
+//   }
+// }
+
+// export default function Home() {
+//   const [name, setName] = useState("");
+//   const [age, setAge] = useState("");
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     try {
+//       const success = await addData(name, age);
+//       if (success) {
+//         setName("");
+//         setAge("");
+//         alert("Data added successfully");
+//       }
+//     } catch (error) {
+//       console.error("Error submitting form:", error);
+//       alert("Error adding data. Please try again.");
+//       setIsSubmitting(false);
+//     }
+//   };
+
+//   return (
+//     <>
+//       <Meta />
+//       <Header />
+//       <form onSubmit={handleSubmit}>
+//         <input
+//           type="text"
+//           placeholder="Name"
+//           value={name}
+//           onChange={(e) => setName(e.target.value)}
+//         />
+//         <input
+//           type="number"
+//           placeholder="Age"
+//           value={age}
+//           onChange={(e) => setAge(e.target.value)}
+//         />
+//       <button type="submit" disabled={isSubmitting}>
+//           {isSubmitting ? 'Submitting...' : 'Submit'}
+//         </button>
+//       </form>
+
+//       {/* <div className="row justify-content-center align-items-center text-center pt-2 g-4"> */}
+
+//       {/* <div
+//         style={{
+//           display: "flex",
+//           height: "100vh",
+//           width: "100vw",
+//           alignItems: "center",
+//           justifyContent: "center",
+//           flexDirection: "column",
+//           gridGap: 8,
+//           background:
+//             "linear-gradient(180deg, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%)",
+//         }}
+//       >
+//         {loading && <h4>Loading...</h4>}
+//         {!user && <Auth />}
+//         {user && (
+//           <>
+//             <h1>Pineapple on Pizza?</h1>
+
+//             <div style={{ flexDirection: "row", display: "flex" }}>
+//               <button
+//                 style={{ fontSize: 32, marginRight: 8 }}
+//                 onClick={() => addVoteDocument("yes")}
+//               >
+//                 ✔️🍍🍕
+//               </button>
+//               <h3>
+//                 Pineapple Lovers:{" "}
+//                 {votes?.docs?.filter((doc) => doc.data().vote === "yes").length}
+//               </h3>
+//             </div>
+//             <div style={{ flexDirection: "row", display: "flex" }}>
+//               <button
+//                 style={{ fontSize: 32, marginRight: 8 }}
+//                 onClick={() => addVoteDocument("no")}
+//               >
+//                 ❌🍍🍕
+//               </button>
+//               <h3>
+//                 Pineapple Haters:{" "}
+//                 {votes?.docs?.filter((doc) => doc.data().vote === "no").length}
+//               </h3>
+//             </div>
+
+//             <div style={{ marginTop: "64px" }}>
+//               <h3>Voters:</h3>
+//               <div
+//                 style={{
+//                   maxHeight: "320px",
+//                   overflowY: "auto",
+//                   width: "240px",
+//                 }}
+//               >
+//                 {votes?.docs?.map((doc) => (
+//                   <>
+//                     <VoterList
+//                       id={doc.id}
+//                       key={doc.id}
+//                       vote={doc.data().vote}
+//                     />
+//                   </>
+//                 ))}
+//               </div>
+//             </div>
+//           </>
+//         )}
+//       </div> */}
+//       {/* <div className="row justify-content-center align-items-center text-center pt-2 g-4">
+//         {teamDetails.map((item, index) => (
+//           <div
+//             className="col-sm-4 pt-4 col-md-4 col-lg-3 d-flex justify-content-center"
+//             key={index}
+//           >
+//             <Card
+//               id={item.id}
+//               teamName={item.teamName}
+//               image={item.image}
+//               description={item.description}
+//             />
+//           </div>
+//         ))}
+//       </div> */}
+//       <Footer />
+//     </>
+//   );
+// }
+
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Header from "../Components/Header";
