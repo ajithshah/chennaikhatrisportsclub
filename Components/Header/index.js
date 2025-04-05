@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import logo from "../../public/logo.png";
-import { Navbar, Nav } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import {
   getAuth,
   signInWithPopup,
@@ -106,43 +106,52 @@ const Header = () => {
               <Nav.Link className="px-3 text-dark">Contact</Nav.Link>
             </Link> */}
           </Nav>
-          <Nav className="d-flex align-items-center gap-3">
+          <Nav className="d-flex align-items-center justify-content-end gap-3 w-100">
             {user ? (
-              <div className="d-flex align-items-center gap-3 bg-white rounded-pill px-4 py-2 border shadow-sm">
-                {user.photoURL && (
-                  <Image
-                    src={user.photoURL}
-                    alt="Profile"
-                    width={40}
-                    height={40}
-                    className="rounded-circle border-2 border-primary shadow-sm"
-                    style={{ borderStyle: "solid" }}
-                    priority
-                  />
-                )}
-                <span className="text-dark fw-semibold px-2">
-                  {user.displayName}
-                </span>
-                <button
-                  onClick={handleSignOut}
-                  className="px-4 py-1 btn btn-outline-danger btn-sm rounded-pill"
-                  style={{
-                    transition: "all 0.3s ease",
-                    borderWidth: "2px",
-                    transform: "translateY(0)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow =
-                      "0 4px 8px rgba(220, 53, 69, 0.2)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}
+              <div className="d-flex align-items-center gap-3 bg-white rounded-pill px-4 py-2">
+                <NavDropdown
+                  align="end"
+                  title={
+                    <div className="d-flex align-items-center justify-content-between gap-3">
+                      <div className="d-flex align-items-center gap-2">
+                        {user.photoURL && (
+                          <Image
+                            src={user.photoURL}
+                            alt="Profile"
+                            width={40}
+                            height={40}
+                            className="rounded-circle border-2 border-primary shadow-sm"
+                            style={{ borderStyle: "solid" }}
+                            priority
+                          />
+                        )}
+                        <span className="text-dark fw-semibold">
+                          {user.displayName}
+                        </span>
+                      </div>
+                      <i
+                        className="fas fa-chevron-down text-muted"
+                        style={{
+                          fontSize: "12px",
+                          transition: "transform 0.2s ease",
+                        }}
+                      ></i>
+                    </div>
+                  }
+                  id="nav-dropdown"
+                  className="profile-dropdown"
                 >
-                  Sign Out
-                </button>
+                  <Link href="/profile" passHref legacyBehavior>
+                    <NavDropdown.Item>View Profile</NavDropdown.Item>
+                  </Link>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item
+                    onClick={handleSignOut}
+                    className="text-danger"
+                  >
+                    Sign Out
+                  </NavDropdown.Item>
+                </NavDropdown>
               </div>
             ) : (
               <button
