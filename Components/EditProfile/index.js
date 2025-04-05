@@ -113,6 +113,7 @@ export default function EditProfile() {
                     <Form.Control
                       type="tel"
                       name="phoneNumber"
+                      required
                       value={formData.phoneNumber}
                       onChange={handleChange}
                     />
@@ -123,7 +124,7 @@ export default function EditProfile() {
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                       type="tel"
-                      name="phoneNumber"
+                      name="email"
                       value={formData.email}
                       onChange={handleChange}
                       disabled={true}
@@ -134,6 +135,7 @@ export default function EditProfile() {
                     <Form.Label>Date of Birth</Form.Label>
                     <Form.Control
                       type="date"
+                      required
                       name="dateOfBirth"
                       value={formData.dateOfBirth}
                       onChange={handleChange}
