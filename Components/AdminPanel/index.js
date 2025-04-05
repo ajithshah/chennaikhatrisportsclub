@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Badge } from "react-bootstrap";
 import { auth, db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import Header from "../Header";
@@ -23,7 +23,7 @@ export default function AdminPanel() {
       id: "users",
       title: "Users",
       icon: "👥",
-      description: "Manage club members and user permissions",
+      description: "Manage User",
       color: "#F44336",
       link: "/adminpanel/users",
     },
@@ -59,30 +59,47 @@ export default function AdminPanel() {
       <Meta />
       <Header />
       <Container className="py-5">
-        <h2 className="fw-bold mb-4">Admin Dashboard</h2>
         <Row className="g-4">
           {sportsCategories.map((sport) => (
-            <Col key={sport.id} xs={12} md={6} lg={4}>
+            <Col key={sport.id} xs={12} md={6} xl={4}>
               <Card
-                className="border-0 shadow-sm h-100 hover-card"
+                className="border-0 shadow-sm hover-card h-100"
                 style={{
-                  borderLeft: `4px solid ${sport.color}`,
-                  transition: "all 0.3s ease",
+                  borderRadius: "16px",
+                  overflow: "hidden",
                 }}
               >
-                <Card.Body className="p-4">
-                  <div className="d-flex align-items-center mb-3">
-                    <span className="fs-2 me-3">{sport.icon}</span>
-                    <h3 className="mb-0 fs-4 fw-bold">{sport.title}</h3>
+                <div
+                  className="py-3 px-4"
+                  style={{
+                    background: `${sport.color}15`,
+                    borderBottom: `2px dashed ${sport.color}30`,
+                  }}
+                >
+                  <div className="d-flex justify-content-between align-items-center">
+                    <span className="fs-1">{sport.icon}</span>
+                    <Badge
+                      bg="light"
+                      text="dark"
+                      className="rounded-pill px-3 py-2"
+                    >
+                      {sport.stats}
+                    </Badge>
                   </div>
+                </div>
+                <Card.Body className="p-4">
+                  <h3 className="fs-4 fw-bold mb-2">{sport.title}</h3>
                   <p className="text-muted mb-4">{sport.description}</p>
-                  <Button
-                    variant="outline-primary"
-                    className="rounded-pill px-4"
-                    onClick={() => router.push(sport.link)}
-                  >
-                    Manage {sport.title}
-                  </Button>
+                  <div className="d-flex gap-2">
+                    <Button
+                      variant="primary"
+                      className="rounded-pill px-4 w-100"
+                      onClick={() => router.push(sport.link)}
+                    >
+                      <i className="fas fa-tasks me-2"></i>
+                      Manage
+                    </Button>
+                  </div>
                 </Card.Body>
               </Card>
             </Col>

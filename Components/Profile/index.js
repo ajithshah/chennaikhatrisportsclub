@@ -106,15 +106,17 @@ export function Profile() {
                   <Button
                     variant="primary"
                     onClick={() => router.push("/profile/edit")}
-                    className="px-4 rounded-pill"
+                    className="px-4 py-2 rounded-pill"
                   >
+                    <i className="fas fa-edit me-2"></i>
                     Edit Profile
                   </Button>
+
                   {userData?.isAdmin && (
                     <Button
                       variant="outline-primary"
                       onClick={() => router.push("/adminpanel")}
-                      className="px-4 rounded-pill"
+                      className="px-2 py-2 rounded-pill ms-2 ml-2"
                     >
                       <i className="fas fa-users-cog me-2"></i>
                       Admin Panel

@@ -6,11 +6,13 @@ import EditProfile from "../../Components/EditProfile";
 
 const ProfilePage = () => {
   return (
-    <>
+    <div className="d-flex flex-column min-vh-100">
       <Meta />
-      <EditProfile />
+      <main className="flex-grow-1">
+        <EditProfile />
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

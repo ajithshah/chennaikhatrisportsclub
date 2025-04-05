@@ -5,11 +5,13 @@ import AdminPanel from "@/Components/AdminPanel";
 
 const CricketPage = () => {
   return (
-    <>
+    <div className="d-flex flex-column min-vh-100">
       <Meta />
-      <AdminPanel />
+      <main className="flex-grow-1">
+        <AdminPanel />
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 
