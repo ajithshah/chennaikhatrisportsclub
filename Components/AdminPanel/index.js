@@ -15,7 +15,7 @@ export default function AdminPanel() {
       id: "cricket",
       title: "Manage Cricket Teams",
       icon: "🏏",
-      description: "Manage cricket teams, matches, and tournaments",
+      description: "Manage cricket teams and players",
       color: "#4CAF50",
       link: "/adminpanel/cricket",
     },

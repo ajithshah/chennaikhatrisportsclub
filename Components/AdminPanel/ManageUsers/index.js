@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { Container, Table, Button, Badge, Card } from "react-bootstrap";
+import { Container, Table, Button, Badge, Card, Form } from "react-bootstrap";
 import { auth, db } from "../../../firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import Header from "@/Components/Header";
 import Meta from "@/Components/Meta";
+import Modal from "react-bootstrap/Modal";
 
 export default function ManageUsers() {
   const router = useRouter();
@@ -56,7 +57,7 @@ export default function ManageUsers() {
           <Card.Body className="p-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h2 className="fw-bold mb-0">Manage Users</h2>
-              <Badge bg="primary" className="px-3 py-2 rounded-pill">
+              <Badge bg="primary text-light" className="px-3 py-2 rounded-pill">
                 Total Users: {users.length}
               </Badge>
             </div>
@@ -64,9 +65,11 @@ export default function ManageUsers() {
             <Table responsive hover className="align-middle">
               <thead>
                 <tr>
-                  <th>User</th>
+                  <th>Pofile</th>
+                  <th>Name</th>
                   <th>Email</th>
                   <th>Phone</th>
+                  <th>DOB</th>
                   <th>Role</th>
                   <th>Actions</th>
                 </tr>
@@ -85,13 +88,17 @@ export default function ManageUsers() {
                             className="rounded-circle"
                           />
                         )}
-                        <div>{user.displayName}</div>
                       </div>
                     </td>
+                    <td>{user.displayName}</td>
                     <td>{user.email}</td>
                     <td>{user.phoneNumber || "-"}</td>
+                    <td>{user.dateOfBirth || "-"}</td>
                     <td>
-                      <Badge bg={user.isAdmin ? "danger" : "success"}>
+                      <Badge
+                        bg={user.isAdmin ? "danger" : "success"}
+                        className="text-light"
+                      >
                         {user.isAdmin ? "Admin" : "User"}
                       </Badge>
                     </td>
