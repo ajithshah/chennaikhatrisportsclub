@@ -209,8 +209,8 @@ export default function Home() {
     "https://images.unsplash.com/photo-1536987333706-fc9adfb10d91?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80",
   ];
 
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [message, setMessage] = useState("");
   const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
@@ -221,30 +221,30 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Implement your backend API call here
-      // For example, using fetch API
-      const response = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     // Implement your backend API call here
+  //     // For example, using fetch API
+  //     const response = await fetch("/api/newsletter", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ email }),
+  //     });
 
-      if (response.ok) {
-        setMessage("Thank you for subscribing!");
-        setEmail("");
-      } else {
-        setMessage("Failed to subscribe. Try again!");
-      }
-    } catch (error) {
-      console.error(error);
-      setMessage("An error occurred. Please try again!");
-    }
-  };
+  //     if (response.ok) {
+  //       setMessage("Thank you for subscribing!");
+  //       setEmail("");
+  //     } else {
+  //       setMessage("Failed to subscribe. Try again!");
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     setMessage("An error occurred. Please try again!");
+  //   }
+  // };
   return (
     <>
       <Meta />
