@@ -20,6 +20,10 @@ main {
 }
 
 /* Profile Dropdown Styles */
+
+.profile-dropdown {
+  position: relative;
+}
 .profile-dropdown .dropdown-toggle {
   padding-right: 0 !important;
 }
@@ -40,8 +44,18 @@ main {
 
 /* Dropdown Menu Animation */
 .profile-dropdown .dropdown-menu {
-  transform-origin: top right;
-  animation: dropdownFade 0.4s ease;
+  z-index: 1050 !important;
+  position: absolute;
+  margin-top: 0.5rem;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 0.5rem;
+}
+
+.navbar {
+  position: relative;
+  z-index: 1040;
 }
 
 @keyframes dropdownFade {
@@ -71,7 +85,7 @@ main {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /* z-index: 10; */
+  z-index: 1;
   width: 100%;
   max-width: 1200px;
   padding: 0 1rem;
@@ -120,5 +134,24 @@ main {
 
   .hero-content {
     padding: 0 1.5rem;
+  }
+}
+
+/* Responsive Club Name */
+.club-name {
+  font-size: 1.25rem !important; /* Default size */
+}
+
+@media (max-width: 768px) {
+  .club-name {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .club-name {
+    font-size: 0.875rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
   }
 }

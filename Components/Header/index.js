@@ -3,11 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import logo from "../../public/logo.png";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
-import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut,
-} from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import { getDoc, setDoc, doc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
 
@@ -86,7 +82,7 @@ const Header = () => {
           <div>
             <div className="fs-5 mb-0 text-dark font-weight-bold">
               <Link href="/" passHref legacyBehavior>
-                <Nav.Link className="px-3 text-dark">
+                <Nav.Link className="px-3 text-dark club-name">
                   Chennai Khatri Sports Club
                 </Nav.Link>
               </Link>
