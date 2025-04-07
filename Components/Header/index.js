@@ -101,9 +101,9 @@ const Header = () => {
             {/* <Link href="/about" passHref legacyBehavior>
               <Nav.Link className="px-3 text-dark">About</Nav.Link>
             </Link> */}
-            <Link href="/contact" passHref legacyBehavior>
+            {/* <Link href="/contact" passHref legacyBehavior>
               <Nav.Link className="px-3 text-dark">Contact</Nav.Link>
-            </Link>
+            </Link> */}
           </Nav>
           <Nav className="d-flex align-items-center justify-content-end gap-3 w-100">
             {user ? (
