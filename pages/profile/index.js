@@ -1,7 +1,7 @@
 import React from "react";
-import Footer from "../../Components/Footer";
-import Meta from "../../Components/Meta";
-import Profile from "../../Components/Profile";
+import Footer from "@/Components/Footer";
+import Meta from "@/Components/Meta";
+import Profile from "@/Components/Profile";
 
 const ProfilePage = () => {
   return (

@@ -52,7 +52,18 @@ export default function AdminPanel() {
     return () => unsubscribe();
   }, [router]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-auto text-center">
+        <h2 className="text-xl md:text-2xl font-semibold">
+          Getting AdminPanel Details
+        </h2>
+        <p className="text-gray-500">
+          Please wait while we load your admin panel details...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>

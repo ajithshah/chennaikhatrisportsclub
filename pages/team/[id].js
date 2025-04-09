@@ -5,7 +5,7 @@ import Footer from "../../Components/Footer";
 import Header from "../../Components/Header";
 import teamData from "../../TeamData/team";
 import PlayerCard from "../../Components/PlayerCard";
-import ClipLoader from "react-spinners/ClipLoader";
+import { ClipLoader } from "react-spinners";
 import Meta from "../../Components/Meta";
 
 const fetchTeamData = async (id) => {
@@ -28,9 +28,22 @@ const TeamPage = () => {
       <>
         <Meta />
         <Header />
-        <div className="flex items-center justify-center min-h-screen bg-gray-50 pt-2">
-          <div className="text-center">
-            <ClipLoader color="#4F46E5" size={50} aria-label="Loading..." />
+        <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full mx-auto text-center">
+            <div className="mb-6">
+              <ClipLoader 
+                color="#4F46E5" 
+                size={60} 
+                speedMultiplier={0.7}
+                aria-label="Loading..." 
+              />
+            </div>
+            <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">
+              Loading Team Details
+            </h2>
+            <p className="text-gray-500">
+              Please wait while we fetch the team information...
+            </p>
           </div>
         </div>
         <Footer />
