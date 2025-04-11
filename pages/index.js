@@ -41,7 +41,7 @@ export default function Home() {
 
       setShowSuccess(true);
       setUser(result.user);
-      router.push("/profile/edit");
+      router.push("/");
 
       // setTimeout(() => {
       //   router.push("/");
