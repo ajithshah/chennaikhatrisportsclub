@@ -125,6 +125,8 @@ main {
   backdrop-filter: blur(1px);
   transition: all 0.3s ease;
 }
+/* Home */
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

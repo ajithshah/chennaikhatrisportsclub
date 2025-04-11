@@ -114,8 +114,16 @@ export function Profile() {
                 <div className="d-flex gap-3 mt-4">
                   <Button
                     variant="primary"
-                    onClick={() => router.push("/profile/edit")}
+                    onClick={() => router.push("/")}
                     className="px-4 py-2 rounded-pill"
+                  >
+                    <i className="fas fa-edit me-2"></i>
+                    Home
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => router.push("/profile/edit")}
+                    className="px-2 py-2 rounded-pill ms-2 ml-2"
                   >
                     <i className="fas fa-edit me-2"></i>
                     Edit Profile

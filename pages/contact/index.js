@@ -21,19 +21,17 @@ const ContactPage = () => {
                 <div className="mb-4">
                   <p className="mb-2">
                     <i className="fas fa-map-marker-alt mr-2 text-primary"></i>
-                    53, Iyya Mudhali St
-                    <br />
-                    <span className="ml-4">Chintadripet Chennai</span>
+                    Chintadripet, Chennai
                   </p>
 
                   <p className="mb-2">
                     <i className="fas fa-phone mr-2 text-primary"></i>
-                    (+91) 99627-48001
+                    (+91) 123-456-7890
                   </p>
 
                   <p className="mb-2">
                     <i className="fas fa-envelope mr-2 text-primary"></i>
-                    kpl@gmail.com
+                    ckpc@gmail.com
                   </p>
                 </div>
               </div>
