@@ -118,7 +118,7 @@ export default function ManageUsers() {
                         size="sm"
                         variant="light"
                         className="rounded-pill"
-                        onClick={() => router.push(`/admin/users/${user.id}`)}
+                        onClick={() => router.push(`/adminpanel/${user.id}`)}
                       >
                         View Details
                       </Button>

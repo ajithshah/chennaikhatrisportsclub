@@ -6,12 +6,12 @@ import ManageGame from "@/Components/AdminPanel/ManageCricketTeam";
 const ProfilePage = () => {
   return (
     <div className="d-flex flex-column min-vh-100">
-    <Meta />
-    <main className="flex-grow-1">
-    <ManageGame />
-    </main>
-    <Footer />
-  </div>
+      <Meta />
+      <main className="flex-grow-1">
+        <ManageGame />
+      </main>
+      <Footer />
+    </div>
   );
 };
 
