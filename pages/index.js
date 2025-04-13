@@ -1,9 +1,56 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Meta from "../Components/Meta";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth, db } from "../firebase";
+import { getDoc, setDoc, doc } from "firebase/firestore";
 
 export default function Home() {
+  const [user, setUser] = useState(null);
+  const provider = new GoogleAuthProvider();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const signInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          providerId: user.providerData[0].providerId,
+          lastLogin: new Date().toISOString(),
+        };
+
+        await setDoc(userRef, userData, { merge: true });
+
+        if (!userSnap.exists()) {
+          userData.isAdmin = false;
+          userData.createdAt = new Date().toISOString();
+        }
+
+        await setDoc(userRef, userData, { merge: true });
+      }
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    }
+  };
   return (
     <>
       <Meta />
@@ -47,6 +94,37 @@ export default function Home() {
             }}
           >
             Stay tuned for updates...!
+          </p>
+          <p
+            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-white mb-12 tracking-wide animate-fade-in"
+            style={{
+              textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+            }}
+          >
+            {user ? (
+              <div>Welcome {user.displayName}</div>
+            ) : (
+              <button
+                onClick={signInWithGoogle}
+                className="px-4 py-2 btn btn-primary rounded-pill"
+                style={{
+                  transition: "all 0.3s ease",
+                  transform: "translateY(0)",
+                  fontWeight: "500",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 12px rgba(13, 110, 253, 0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                Sign Up with Google
+              </button>
+            )}
           </p>
         </div>
       </div>
