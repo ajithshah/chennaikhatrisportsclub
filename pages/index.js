@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Meta from "../Components/Meta";
+import { useRouter } from "next/router";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { getDoc, setDoc, doc } from "firebase/firestore";
@@ -9,6 +10,7 @@ import { getDoc, setDoc, doc } from "firebase/firestore";
 export default function Home() {
   const [user, setUser] = useState(null);
   const provider = new GoogleAuthProvider();
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -44,6 +46,7 @@ export default function Home() {
           userData.isAdmin = false;
           userData.createdAt = new Date().toISOString();
         }
+        router.push("/profile/edit");
 
         await setDoc(userRef, userData, { merge: true });
       }
@@ -95,14 +98,25 @@ export default function Home() {
           >
             Stay tuned for updates...!
           </p>
-          <p
-            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-white mb-12 tracking-wide animate-fade-in"
-            style={{
-              textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
-            }}
-          >
+          <p>
             {user ? (
-              <div>Welcome {user.displayName}</div>
+              <div
+                className="text-white text-center animate-fade-in mx-auto"
+                style={{
+                  width: "auto",
+                  minWidth: "200px",
+                  maxWidth: "300px",
+                  textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                  padding: "1rem",
+                  borderRadius: "8px",
+                  background: "rgba(255,255,255,0.1)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                }}
+              >
+                Welcome,{" "}
+                <span className="font-semibold">{user.displayName}</span>!
+              </div>
             ) : (
               <button
                 onClick={signInWithGoogle}

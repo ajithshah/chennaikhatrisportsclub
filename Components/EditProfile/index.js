@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { Container, Card, Row, Col, Form, Button } from "react-bootstrap";
 import { auth, db } from "../../firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import Header from "../../Components/Header";
-import Meta from "../../Components/Meta";
+import Header from "../Header";
+import Meta from "../Meta";
 
 export default function EditProfile() {
   const router = useRouter();
@@ -44,6 +43,12 @@ export default function EditProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Validate phone number
+    if (!/^[6-9]\d{9}$/.test(formData.phoneNumber)) {
+      alert("Please enter a valid Indian phone number");
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -123,9 +128,19 @@ export default function EditProfile() {
                       type="tel"
                       name="phoneNumber"
                       required
+                      pattern="^[6-9]\d{9}$"
+                      title="Please enter a valid 10-digit Indian phone number"
                       value={formData.phoneNumber}
                       onChange={handleChange}
+                      isInvalid={
+                        formData.phoneNumber &&
+                        !/^[6-9]\d{9}$/.test(formData.phoneNumber)
+                      }
                     />
+                    <Form.Control.Feedback type="invalid">
+                      Please enter a valid 10-digit Indian phone number starting
+                      with 6-9
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col md={6}>
