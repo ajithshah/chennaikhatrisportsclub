@@ -40,10 +40,6 @@ const Hero = () => {
       setShowSuccess(true);
       setUser(result.user);
       router.push("/");
-
-      // setTimeout(() => {
-      //   router.push("/");
-      // }, 1500);
     } catch (error) {
       console.error("Error signing in with Google:", error);
       setIsLoading(false);
