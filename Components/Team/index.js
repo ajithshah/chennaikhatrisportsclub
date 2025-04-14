@@ -346,8 +346,11 @@ export default function Team() {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Role</th>
                   <th>Contact</th>
+                  <th>Role</th>
+                  <th>Jersey Name</th>
+                  <th>Jersey Number</th>
+                  <th>Jersey Size</th>
                   {teamData?.status === "active" && <th>Actions</th>}
                 </tr>
               </thead>
@@ -375,13 +378,17 @@ export default function Team() {
                         )}
                       </div>
                     </td>
-                    <td>{player.role}</td>
                     <td>
                       {
                         availablePlayers.find((p) => p.id === player.userId)
                           ?.phoneNumber
                       }
                     </td>
+                    <td>{player.role}</td>
+
+                    <td>{player.jerseyName}</td>
+                    <td>{player.jerseyNumber}</td>
+                    <td>{player.jerseySize.toUpperCase()}</td>
                     <td>
                       {teamData?.status === "active" && (
                         <>
