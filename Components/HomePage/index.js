@@ -11,7 +11,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
-const Hero = () => {
+const HomePage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -167,4 +167,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default HomePage;
