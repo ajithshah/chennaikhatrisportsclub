@@ -1,0 +1,67 @@
+.formGroup {
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  
+  .formGroup label {
+    display: block;
+    font-weight: 500;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .formGroup input,
+  .formGroup select,
+  .formGroup textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #2d3748;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .formGroup input:focus,
+  .formGroup select:focus,
+  .formGroup textarea:focus {
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    outline: none;
+  }
+  
+  .formGroup input:disabled,
+  .formGroup select:disabled {
+    background-color: #f7fafc;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  .formGroup textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  .formGroup .helperText {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-top: 0.25rem;
+  }
+  
+  .formGroup .invalid-feedback {
+    font-size: 0.875rem;
+    color: #e53e3e;
+    margin-top: 0.25rem;
+  }
+  
+  .requiredLabel {
+    position: relative;
+  }
+  
+  .requiredLabel::after {
+    content: '*';
+    color: #e53e3e;
+    margin-left: 4px;
+    font-size: 1.1em;
+  }
