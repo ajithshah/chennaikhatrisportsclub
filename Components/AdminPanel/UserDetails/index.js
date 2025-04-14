@@ -1,80 +1,151 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image";
-import { Container, Card, Row, Col, Button } from "react-bootstrap";
+import { Container, Card, Row, Col, Spinner } from "react-bootstrap";
 import { auth, db } from "../../../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import Meta from "@/Components/Meta";
+import Image from "next/image";
 
 export default function UserDetails({ userId }) {
-  const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    const checkAuthAndFetchUser = async () => {
+    const fetchUserDetails = async () => {
       try {
-        // Check if admin is authenticated
-        const currentUser = auth.currentUser;
-        if (!currentUser) {
-          router.push("/login");
+        if (!userId) {
+          router.push("/adminpanel/users");
           return;
         }
 
-        // Check if current user is admin
-        const adminRef = doc(db, "users", currentUser.uid);
-        const adminSnap = await getDoc(adminRef);
-        const adminData = adminSnap.data();
+        const userDoc = doc(db, "users", userId);
+        const userSnapshot = await getDoc(userDoc);
 
-        if (!adminSnap.exists() || !adminData.isAdmin) {
-          router.push("/");
-          return;
-        }
-
-        // Fetch target user details
-        if (userId) {
-          const userRef = doc(db, "users", userId);
-          const userSnap = await getDoc(userRef);
-
-          if (userSnap.exists()) {
-            const userData = userSnap.data();
-            setUser({
-              id: userSnap.id,
-              displayName: userData.displayName,
-              email: userData.email,
-              dateOfBirth: userData.dateOfBirth,
-              createdAt: userData.createdAt,
-              isAdmin: userData.isAdmin,
-              photoURL: userData.photoURL,
-            });
-          }
+        if (userSnapshot.exists()) {
+          setUser({ id: userSnapshot.id, ...userSnapshot.data() });
+        } else {
+          router.push("/adminpanel/users");
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching user details:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
-    // Listen for auth state changes
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        checkAuthAndFetchUser();
-      } else {
-        router.push("/login");
-      }
-    });
-
-    return () => unsubscribe();
+    fetchUserDetails();
   }, [userId, router]);
 
-  // ...existing loading and error states remain the same...
+  if (loading) {
+    return (
+      <Container className="py-5 text-center">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </Container>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  const calculateAge = (dateOfBirth) => {
+    if (!dateOfBirth) return null;
+    const dob = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    return age;
+  };
 
   return (
     <>
-      <Meta title={`User Details - ${user?.displayName || "User"}`} />
       <Container className="py-5">
         <Card className="border-0 shadow-sm">
-          <Card.Body className="p-4">{/* ...existing JSX code... */}</Card.Body>
+          <Card.Body className="p-4">
+            <h2 className="mb-4">User Details</h2>
+            <div className="text-center mb-4">
+              {user.photoURL ? (
+                <Image
+                  src={user.photoURL}
+                  alt={user.displayName || "User profile"}
+                  width={180}
+                  height={180}
+                  className="rounded-circle border shadow-sm"
+                  style={{ objectFit: "cover" }}
+                />
+              ) : (
+                <div
+                  className="d-flex justify-content-center align-items-center bg-light rounded-circle mx-auto"
+                  style={{ width: 120, height: 120 }}
+                >
+                  <span className="h1 text-muted">
+                    {user.displayName ? user.displayName[0].toUpperCase() : "?"}
+                  </span>
+                </div>
+              )}
+            </div>
+            <Row className="g-4">
+              <Col md={6}>
+                <div className="mb-3">
+                  <strong>Name:</strong>
+                  <p>{user.displayName || "Not provided"}</p>
+                </div>
+                <div className="mb-3">
+                  <strong>Email:</strong>
+                  <p>{user.email || "Not provided"}</p>
+                </div>
+                <div className="mb-3">
+                  <strong>Phone:</strong>
+                  <p>{user.phoneNumber || "Not provided"}</p>
+                </div>
+                <div className="mb-3">
+                  <strong>DOB:</strong>
+                  <p>
+                    {user.dateOfBirth ? (
+                      <>
+                        {user.dateOfBirth}{" "}
+                        <span className="text-muted">
+                          ({calculateAge(user.dateOfBirth)} years old)
+                        </span>
+                      </>
+                    ) : (
+                      "Not provided"
+                    )}
+                  </p>
+                </div>
+                <div className="mb-3">
+                  <strong>Address:</strong>
+                  <p>
+                    {user.address ? (
+                      <>
+                        {user.address.street && `${user.address.street}, `}
+                        {user.address.city && `${user.address.city}, `}
+                        {user.address.state && `${user.address.state}, `}
+                        {user.address.pincode && user.address.pincode}
+                      </>
+                    ) : (
+                      "Not provided"
+                    )}
+                  </p>
+                </div>
+              </Col>
+              <Col md={6}>
+                <div className="mb-3">
+                  <strong>Member Since:</strong>
+                  <p>{user.createdAt}</p>
+                </div>
+                <div className="mb-3">
+                  <strong>Role:</strong>
+                  <p>{user.isAdmin ? "Admin" : "Member"}</p>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
         </Card>
       </Container>
     </>

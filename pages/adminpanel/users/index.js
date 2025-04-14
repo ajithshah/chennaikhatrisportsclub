@@ -3,7 +3,7 @@ import Footer from "@/Components/Footer";
 import Meta from "@/Components/Meta";
 import ManageUsers from "@/Components/AdminPanel/ManageUsers";
 
-const CricketPage = () => {
+const AdminPage = () => {
   return (
     <div className="d-flex flex-column min-vh-100">
       <Meta />
@@ -15,4 +15,4 @@ const CricketPage = () => {
   );
 };
 
-export default CricketPage;
+export default AdminPage;

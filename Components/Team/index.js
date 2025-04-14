@@ -219,10 +219,10 @@ export default function Team() {
           <Card.Body className="p-4">
             {/* Team Header */}
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h2 className="fw-bold mb-0">Team: {teamData?.name}</h2>
+              <h2 className="fw-bold mb-0">Team : {teamData?.name}</h2>
               <Badge
                 bg={teamData?.status === "active" ? "success" : "secondary"}
-                className="px-3 py-2 rounded-pill"
+                className="px-5 py-2 rounded-pill text-light"
               >
                 {teamData?.status}
               </Badge>
@@ -237,7 +237,10 @@ export default function Team() {
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div>{teamData?.captain}</div>
-                    <Badge bg="primary ml-2" className="rounded-pill">
+                    <Badge
+                      bg="primary ml-2"
+                      className="rounded-pill text-light"
+                    >
                       C
                     </Badge>
                   </div>
@@ -429,7 +432,7 @@ export default function Team() {
               <Form.Group className="mb-3 formGroup">
                 <Form.Label>Jersey Number</Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number"
                   placeholder="Jersey Number"
                   onChange={(e) =>
                     setNewPlayer({ ...newPlayer, jerseyNumber: e.target.value })
