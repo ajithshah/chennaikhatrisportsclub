@@ -161,25 +161,7 @@ export function Profile() {
                       <i className="fas fa-cricket-bat-ball me-2"></i>Cricket
                       Team:
                     </div>
-                    <div>
-                      {teamData ? (
-                        <div className="d-flex align-items-center">
-                          <span className="me-2 ">{teamData.name}</span>
-                          <Badge
-                            bg={
-                              teamData.status === "active"
-                                ? "success"
-                                : "secondary"
-                            }
-                            className="rounded-pill px-2  ml-2"
-                          >
-                            {teamData.status}
-                          </Badge>
-                        </div>
-                      ) : (
-                        "Not associated with any team"
-                      )}
-                    </div>
+                    <div>Associated {teamData.name}</div>
                   </div>
                 )}
 

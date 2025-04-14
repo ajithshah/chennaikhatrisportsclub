@@ -14,9 +14,11 @@ import {
   collection,
   addDoc,
   getDocs,
+  query,
   doc,
   getDoc,
   updateDoc,
+  where,
   deleteDoc,
 } from "firebase/firestore";
 import Header from "@/Components/Header";
@@ -28,8 +30,11 @@ export default function ManageCricketTeam() {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [viewShowModal, setViewShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [teamMembers, setTeamMembers] = useState([]);
   const [availableCaptains, setAvailableCaptains] = useState([]);
+  const [viewTeamDetails, setViewTeamDetails] = useState(null);
   const [teamForm, setTeamForm] = useState({
     name: "",
     captain: "",
@@ -105,6 +110,7 @@ export default function ManageCricketTeam() {
       name: team.name,
       captain: team.captain,
       status: team.status || "active",
+      phoneNumber: team.phoneNumber,
       email: team.email,
     });
     setShowModal(true);
@@ -179,6 +185,40 @@ export default function ManageCricketTeam() {
       setTeams(teamsData);
     } catch (error) {
       console.error("Error adding team:", error);
+    }
+  };
+
+  const handleViewTeam = async (teamId) => {
+    try {
+      const teamRef = doc(db, "cricket_teams", teamId);
+      const teamSnap = await getDoc(teamRef);
+
+      if (teamSnap.exists()) {
+        const teamData = teamSnap.data();
+        setViewTeamDetails(teamData);
+
+        // Get players array from team document
+        const players = teamData.players || [];
+
+        // Transform players data to match the expected format
+        const membersData = players.map((player, index) => ({
+          id: index.toString(), // Generate an id since it's an array
+          name: player.name,
+          role: player.isCaptain
+            ? "Captain"
+            : player.isViceCaptain
+            ? "Vice Captain"
+            : "Player",
+          jerseyNumber: player.jerseyNumber,
+          jerseyName: player.jerseyName,
+          phoneNumber: player.phoneNumber,
+        }));
+
+        setTeamMembers(membersData);
+        setViewShowModal(true);
+      }
+    } catch (error) {
+      console.error("Error viewing team:", error);
     }
   };
 
@@ -261,8 +301,17 @@ export default function ManageCricketTeam() {
                           <div className="d-flex gap-2">
                             <Button
                               size="sm"
-                              variant="outline-primary"
+                              variant="outline-info"
                               className="rounded-pill"
+                              onClick={() => handleViewTeam(team.id)}
+                            >
+                              <i className="fas fa-trash-alt me-1"></i>
+                              View
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline-primary"
+                              className="rounded-pill ml-2"
                               onClick={() => handleEditTeam(team)}
                             >
                               <i className="fas fa-edit me-1"></i>
@@ -271,7 +320,7 @@ export default function ManageCricketTeam() {
                             <Button
                               size="sm"
                               variant="outline-danger"
-                              className="rounded-pill"
+                              className="rounded-pill ml-2"
                               onClick={() => handleDeleteTeam(team.id)}
                             >
                               <i className="fas fa-trash-alt me-1"></i>
@@ -338,11 +387,7 @@ export default function ManageCricketTeam() {
                   options={availableCaptains.map((captain) => ({
                     value: captain.id,
                     label: `${captain.name} ${
-                      captain.phoneNumber
-                        ? `(${captain.phoneNumber})`
-                        : captain.email
-                        ? `(${captain.email})`
-                        : ""
+                      captain.phoneNumber ? `(${captain.phoneNumber})` : ""
                     }`,
                     name: captain.name,
                     phoneNumber: captain.phoneNumber,
@@ -387,7 +432,7 @@ export default function ManageCricketTeam() {
               <Form.Group className="formGroup">
                 <Form.Label>Phone Number</Form.Label>
                 <Form.Control
-                  type="tel"
+                  type="text"
                   required
                   value={teamForm.phoneNumber}
                   disabled={true}
@@ -432,6 +477,54 @@ export default function ManageCricketTeam() {
               </Button>
             </Modal.Footer>
           </Form>
+        </Modal>
+        <Modal
+          show={viewShowModal}
+          onHide={() => {
+            setViewShowModal(false);
+            setViewTeamDetails(null);
+            setTeamMembers([]);
+          }}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Team Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {viewTeamDetails && (
+              <>
+                <h5>Team Name: {viewTeamDetails.name}</h5>
+                <hr />
+                <h6 className="mb-3">Team Members</h6>
+                {teamMembers.length > 0 ? (
+                  <Table responsive size="sm">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Contact</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {teamMembers.map((member) => (
+                        <tr key={member.id}>
+                          <td>{member.name}</td>
+                          <td>{member.role}</td>
+                          <td>{member.phoneNumber}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <p className="text-muted">No team members added yet.</p>
+                )}
+              </>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setViewShowModal(false)}>
+              Close
+            </Button>
+          </Modal.Footer>
         </Modal>
       </Container>
     </>

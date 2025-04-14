@@ -98,6 +98,9 @@ export default function Team() {
         contact: newPlayer.contact,
         isCaptain: newPlayer.isCaptain,
         isViceCaptain: newPlayer.isViceCaptain,
+        jerseyNumber: newPlayer.jerseyNumber,
+        jerseyName: newPlayer.jerseyName,
+        jerseySize: newPlayer.jerseySize,
       };
 
       // Update team data
@@ -119,6 +122,9 @@ export default function Team() {
         contact: "",
         isCaptain: false,
         isViceCaptain: false,
+        jerseyNumber: "",
+        jerseyName: "",
+        jerseySize: "",
       });
       setShowModal(false);
     } catch (error) {
@@ -152,6 +158,12 @@ export default function Team() {
         name: editTeam.name,
         phoneNumber: editTeam.phoneNumber,
         status: editTeam.status,
+        jerseyNumber: editTeam.jerseyNumber,
+        jerseyName: editTeam.jerseyName,
+        jerseySize: editTeam.jerseySize,
+        role: editTeam.role,
+        isCaptain: editTeam.isCaptain,
+        isViceCaptain: editTeam.isViceCaptain,
       });
 
       // Update local state
@@ -160,6 +172,12 @@ export default function Team() {
         name: editTeam.name,
         phoneNumber: editTeam.phoneNumber,
         status: editTeam.status,
+        jerseyNumber: editTeam.jerseyNumber,
+        jerseyName: editTeam.jerseyName,
+        jerseySize: editTeam.jerseySize,
+        role: editTeam.role,
+        isCaptain: editTeam.isCaptain,
+        isViceCaptain: editTeam.isViceCaptain,
       });
 
       setShowEditModal(false);
@@ -339,6 +357,10 @@ export default function Team() {
                       name: selected?.name || "",
                       userId: selected?.value || "",
                       contact: selected?.phoneNumber || "",
+                      jerseyNumber: selected?.jerseyNumber || "",
+                      jerseyName: selected?.jerseyName || "",
+                      jerseySize: selected?.jerseySize || "",
+                      role: selected?.role || "",
                       isCaptain: selected?.isCaptain || false,
                       isViceCaptain: selected?.isViceCaptain || false,
                     })
@@ -394,6 +416,42 @@ export default function Team() {
                   <option value="Wicket-keeper">Wicket-keeper</option>
                 </Form.Select>
               </Form.Group>
+              <Form.Group className="mb-3 formGroup">
+                <Form.Label>Jersey Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Jersey Name"
+                  onChange={(e) =>
+                    setNewPlayer({ ...newPlayer, jerseyName: e.target.value })
+                  }
+                />
+              </Form.Group>
+              <Form.Group className="mb-3 formGroup">
+                <Form.Label>Jersey Number</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Jersey Number"
+                  onChange={(e) =>
+                    setNewPlayer({ ...newPlayer, jerseyNumber: e.target.value })
+                  }
+                />
+              </Form.Group>
+              <Form.Group className="mb-3 formGroup">
+                <Form.Label>Jersey Size</Form.Label>
+                <Form.Select
+                  required
+                  onChange={(e) =>
+                    setNewPlayer({ ...newPlayer, jerseySize: e.target.value })
+                  }
+                >
+                  <option value="">Select Size</option>
+                  <option value="s">S</option>
+                  <option value="m">M</option>
+                  <option value="l">L</option>
+                  <option value="xl">XL</option>
+                  <option value="xxl">XXL</option>
+                </Form.Select>
+              </Form.Group>
               {!teamData?.players?.find((player) => player.isCaptain) && (
                 <Form.Group className="mb-3 formGroup">
                   <Form.Check
@@ -416,7 +474,7 @@ export default function Team() {
                     <Form.Check
                       type="checkbox"
                       id="isViceCaptain"
-                      label="Assign as Vice Captain"
+                      label="Assign as Team Vice Captain"
                       checked={newPlayer.isViceCaptain}
                       onChange={(e) =>
                         setNewPlayer({
