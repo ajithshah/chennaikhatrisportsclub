@@ -173,7 +173,7 @@ export default function ManageUsers() {
                     <th>Profile</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Phone</th>
+                    <th>Contact</th>
                     <th>DOB</th>
                     <th>Role</th>
                     <th>Actions</th>

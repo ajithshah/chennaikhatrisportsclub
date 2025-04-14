@@ -92,34 +92,34 @@ export function Profile() {
                 <div className="mb-4">
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-map-marker-alt me-2"></i>Name:
+                      Name:
                     </div>
                     <div>{userData?.displayName || "Not provided"}</div>
                   </div>
 
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-envelope me-2"></i>Email:
+                      Email:
                     </div>
                     <div>{userData?.email || "Not provided"}</div>
                   </div>
 
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-phone me-2"></i>Mobile:
+                      Mobile:
                     </div>
                     <div>{userData?.phoneNumber || "Not provided"}</div>
                   </div>
 
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-phone me-2"></i>Date Of Birth:
+                      Date Of Birth:
                     </div>
                     <div>{userData?.dateOfBirth || "Not provided"}</div>
                   </div>
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-clock me-2"></i>Address:
+                      Address:
                     </div>
                     <div>
                       {userData?.address ? (
@@ -145,7 +145,7 @@ export function Profile() {
 
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-clock me-2"></i>Last Login:
+                      Last Login:
                     </div>
                     <div>
                       {userData?.lastLogin
@@ -171,7 +171,6 @@ export function Profile() {
                     onClick={() => router.push("/")}
                     className="px-4 py-2 rounded-pill"
                   >
-                    <i className="fas fa-edit me-2"></i>
                     Home
                   </Button>
                   <Button
@@ -179,29 +178,15 @@ export function Profile() {
                     onClick={() => router.push("/profile/edit")}
                     className="px-2 py-2 rounded-pill ms-2 ml-2"
                   >
-                    <i className="fas fa-edit me-2"></i>
                     Edit Profile
                   </Button>
-                  {/* {teamData &&
-                    teamData.email === userData?.email && (
-                      <Button
-                        variant="outline-success"
-                        onClick={() =>
-                          router.push(`/teams/edit/${teamData.id}`)
-                        }
-                        className="px-2 py-2 rounded-pill ms-2"
-                      >
-                        <i className="fas fa-users me-2"></i>
-                        Edit Team
-                      </Button>
-                    )} */}
                   {teamData && teamData.email === userData?.email && (
                     <Button
                       variant="outline-success"
                       onClick={() => router.push(`/team/${teamData.id}`)}
                       className="px-2 py-2 rounded-pill ms-2 ml-2"
                     >
-                      <i className="fas fa-users me-2"></i>
+                      {/* <i className="fas fa-users me-2"></i> */}
                       View My Team
                     </Button>
                   )}
@@ -211,7 +196,7 @@ export function Profile() {
                       onClick={() => router.push("/adminpanel")}
                       className="px-2 py-2 rounded-pill ms-2 ml-2"
                     >
-                      <i className="fas fa-users-cog me-2"></i>
+                      {/* <i className="fas fa-users-cog me-2"></i> */}
                       Admin Panel
                     </Button>
                   )}

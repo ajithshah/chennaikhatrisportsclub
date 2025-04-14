@@ -100,7 +100,7 @@ export default function UserDetails({ userId }) {
                   <p>{user.email || "Not provided"}</p>
                 </div>
                 <div className="mb-3">
-                  <strong>Phone:</strong>
+                  <strong>Contact:</strong>
                   <p>{user.phoneNumber || "Not provided"}</p>
                 </div>
                 <div className="mb-3">

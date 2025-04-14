@@ -36,7 +36,7 @@ export default function ManageCricketTeam() {
   const [availableCaptains, setAvailableCaptains] = useState([]);
   const [viewTeamDetails, setViewTeamDetails] = useState(null);
   const [teamForm, setTeamForm] = useState({
-    name: "",
+    teamame: "",
     captain: "",
     phoneNumber: "",
     status: "active",
@@ -116,13 +116,34 @@ export default function ManageCricketTeam() {
     setShowModal(true);
   };
   const handleDeleteTeam = async (teamId) => {
-    if (window.confirm("Are you sure you want to delete this team?")) {
-      try {
-        await deleteDoc(doc(db, "cricket_teams", teamId));
-        setTeams(teams.filter((team) => team.id !== teamId));
-      } catch (error) {
-        console.error("Error deleting team:", error);
+    try {
+      // First get the team document to check for members
+      const teamRef = doc(db, "cricket_teams", teamId);
+      const teamSnap = await getDoc(teamRef);
+
+      if (!teamSnap.exists()) {
+        console.error("Team not found");
+        return;
       }
+
+      const teamData = teamSnap.data();
+
+      // Check if team has members
+      if (teamData.players && teamData.players.length > 0) {
+        alert(
+          "Cannot delete team with existing members. Please remove all members first."
+        );
+        return;
+      }
+
+      // If no members, proceed with deletion after confirmation
+      if (window.confirm("Are you sure you want to delete this team?")) {
+        await deleteDoc(teamRef);
+        setTeams(teams.filter((team) => team.id !== teamId));
+      }
+    } catch (error) {
+      console.error("Error deleting team:", error);
+      alert("Error deleting team. Please try again.");
     }
   };
 
@@ -211,6 +232,7 @@ export default function ManageCricketTeam() {
             : "Player",
           jerseyNumber: player.jerseyNumber,
           jerseyName: player.jerseyName,
+          jerseySize: player.jerseySize,
           phoneNumber: player.phoneNumber,
         }));
 
@@ -239,9 +261,9 @@ export default function ManageCricketTeam() {
       <Container className="py-5">
         <Card className="border-0 shadow-sm">
           <Card.Body className="p-4">
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="d-flex justify-content-between align-items-center mb-2">
               <h2 className="fw-bold mb-0">Cricket Teams</h2>
-              <div className="d-flex gap-3 align-items-center">
+              <div className="d-flex align-items-center">
                 <Badge
                   bg="primary"
                   className="px-4 py-3 rounded-pill text-light text-center"
@@ -254,18 +276,17 @@ export default function ManageCricketTeam() {
                 </Badge>
                 <Button
                   variant="primary"
-                  className="rounded-pill px-4"
+                  className="rounded-pill px-3 ml-2"
                   onClick={() => setShowModal(true)}
                 >
-                  <i className="fas fa-plus me-2"></i>
-                  Add Team
+                  {/* <i className="fas fa-plus me-2"></i> */}
                 </Button>
               </div>
             </div>
 
             {teams.length === 0 ? (
               <div className="text-center py-5 text-muted">
-                <i className="fas fa-users fa-3x mb-3"></i>
+                {/* <i className="fas fa-users fa-3x mb-3"></i> */}
                 <h5>No teams added yet</h5>
                 <p>Click the Add Team button to create your first team</p>
               </div>
@@ -276,7 +297,7 @@ export default function ManageCricketTeam() {
                     <tr>
                       <th className="px-4 py-3">Team Name</th>
                       <th className="px-4 py-3">Captain</th>
-                      <th className="px-4 py-3">phoneNumber</th>
+                      <th className="px-4 py-3">Contact</th>
                       <th className="px-4 py-3">Status</th>
                       <th className="px-4 py-3">Actions</th>
                     </tr>
@@ -292,7 +313,7 @@ export default function ManageCricketTeam() {
                             bg={
                               team.status === "active" ? "success" : "secondary"
                             }
-                            className="rounded-pill px-3"
+                            className="rounded-pill px-3 text-light"
                           >
                             {team.status}
                           </Badge>
@@ -301,11 +322,11 @@ export default function ManageCricketTeam() {
                           <div className="d-flex gap-2">
                             <Button
                               size="sm"
-                              variant="outline-info"
+                              variant="outline-success"
                               className="rounded-pill"
                               onClick={() => handleViewTeam(team.id)}
                             >
-                              <i className="fas fa-trash-alt me-1"></i>
+                              {/* <i className="bi-view-list me-1"></i> */}
                               View
                             </Button>
                             <Button
@@ -314,7 +335,7 @@ export default function ManageCricketTeam() {
                               className="rounded-pill ml-2"
                               onClick={() => handleEditTeam(team)}
                             >
-                              <i className="fas fa-edit me-1"></i>
+                              {/* <i className="fas fa-edit me-1"></i> */}
                               Edit
                             </Button>
                             <Button
@@ -323,7 +344,7 @@ export default function ManageCricketTeam() {
                               className="rounded-pill ml-2"
                               onClick={() => handleDeleteTeam(team.id)}
                             >
-                              <i className="fas fa-trash-alt me-1"></i>
+                              {/* <i className="fas fa-trash-alt me-1"></i> */}
                               Delete
                             </Button>
                           </div>
@@ -451,6 +472,7 @@ export default function ManageCricketTeam() {
                   }
                 >
                   <option value="active">Active</option>
+                  <option value="freeze">Freeze</option>
                   <option value="inactive">Inactive</option>
                 </Form.Select>
               </Form.Group>
@@ -502,6 +524,9 @@ export default function ManageCricketTeam() {
                         <th>Name</th>
                         <th>Role</th>
                         <th>Contact</th>
+                        <th>Jersey Name</th>
+                        <th>Jersey Number</th>
+                        <th>Jersey Size</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -510,6 +535,9 @@ export default function ManageCricketTeam() {
                           <td>{member.name}</td>
                           <td>{member.role}</td>
                           <td>{member.phoneNumber}</td>
+                          <td>{member.jerseyName}</td>
+                          <td>{member.jerseyNumber}</td>
+                          <td>{member.jerseySize}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -521,7 +549,11 @@ export default function ManageCricketTeam() {
             )}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setViewShowModal(false)}>
+            <Button
+              variant="secondary"
+              onClick={() => setViewShowModal(false)}
+              className="bg-primary"
+            >
               Close
             </Button>
           </Modal.Footer>

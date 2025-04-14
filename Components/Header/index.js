@@ -128,13 +128,6 @@ const Header = () => {
                           {user.displayName}
                         </span>
                       </div>
-                      <i
-                        className="fas fa-chevron-down text-muted"
-                        style={{
-                          fontSize: "12px",
-                          transition: "transform 0.2s ease",
-                        }}
-                      ></i>
                     </div>
                   }
                   id="nav-dropdown"

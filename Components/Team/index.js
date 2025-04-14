@@ -29,11 +29,14 @@ export default function Team() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [availablePlayers, setAvailablePlayers] = useState([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingPlayer, setEditingPlayer] = useState(null);
+  const [editingPlayerIndex, setEditingPlayerIndex] = useState(null);
   const [newPlayer, setNewPlayer] = useState({
     name: "",
     role: "",
     userId: "",
-    contact: "",
+    phoneNumber: "",
     isCaptain: false,
     isViceCaptain: false,
   });
@@ -95,7 +98,7 @@ export default function Team() {
         name: newPlayer.name,
         role: newPlayer.role,
         userId: newPlayer.userId,
-        contact: newPlayer.contact,
+        phoneNumber: newPlayer.phoneNumber,
         isCaptain: newPlayer.isCaptain,
         isViceCaptain: newPlayer.isViceCaptain,
         jerseyNumber: newPlayer.jerseyNumber,
@@ -119,7 +122,7 @@ export default function Team() {
         name: "",
         role: "",
         userId: "",
-        contact: "",
+        phoneNumber: "",
         isCaptain: false,
         isViceCaptain: false,
         jerseyNumber: "",
@@ -186,6 +189,23 @@ export default function Team() {
     }
   };
 
+  const handleEditPlayer = (index) => {
+    const player = teamData.players[index];
+    setEditingPlayer({
+      name: player.name,
+      role: player.role,
+      userId: player.userId,
+      phoneNumber: player.phoneNumber,
+      isCaptain: player.isCaptain,
+      isViceCaptain: player.isViceCaptain,
+      jerseyNumber: player.jerseyNumber || "",
+      jerseyName: player.jerseyName || "",
+      jerseySize: player.jerseySize || "",
+    });
+    setEditingPlayerIndex(index);
+    setShowEditModal(true);
+  };
+
   // Initial data fetch
   useEffect(() => {
     const fetchData = async () => {
@@ -211,6 +231,52 @@ export default function Team() {
     );
   }
 
+  const handleUpdatePlayer = async (e) => {
+    e.preventDefault();
+    if (!editingPlayer.role) return;
+
+    try {
+      const teamRef = doc(db, "cricket_teams", id);
+      const updatedPlayers = [...teamData.players];
+
+      // If making this player captain, remove captain status from others
+      if (editingPlayer.isCaptain) {
+        updatedPlayers.forEach((player, idx) => {
+          if (idx !== editingPlayerIndex) {
+            player.isCaptain = false;
+          }
+        });
+      }
+
+      // If making this player vice captain, remove vice captain status from others
+      if (editingPlayer.isViceCaptain) {
+        updatedPlayers.forEach((player, idx) => {
+          if (idx !== editingPlayerIndex) {
+            player.isViceCaptain = false;
+          }
+        });
+      }
+
+      updatedPlayers[editingPlayerIndex] = {
+        ...updatedPlayers[editingPlayerIndex],
+        ...editingPlayer,
+      };
+
+      await updateDoc(teamRef, { players: updatedPlayers });
+
+      setTeamData({
+        ...teamData,
+        players: updatedPlayers,
+      });
+
+      setShowEditModal(false);
+      setEditingPlayer(null);
+      setEditingPlayerIndex(null);
+    } catch (error) {
+      console.error("Error updating player:", error);
+    }
+  };
+
   return (
     <>
       <Meta title={`Team - ${teamData?.name || "Loading..."}`} />
@@ -221,7 +287,13 @@ export default function Team() {
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h2 className="fw-bold mb-0">Team : {teamData?.name}</h2>
               <Badge
-                bg={teamData?.status === "active" ? "success" : "secondary"}
+                bg={
+                  teamData?.status === "active"
+                    ? "success"
+                    : teamData?.status === "inactive"
+                    ? "danger"
+                    : "warning"
+                }
                 className="px-5 py-2 rounded-pill text-light"
               >
                 {teamData?.status}
@@ -233,7 +305,7 @@ export default function Team() {
               <Col md={6}>
                 <div className="d-flex align-items-center mb-3">
                   <div className="text-muted" style={{ width: "140px" }}>
-                    <i className="fas fa-user me-2"></i>Team Captain:
+                    Team Captain:
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <div>{teamData?.captain}</div>
@@ -247,7 +319,7 @@ export default function Team() {
                 </div>
                 <div className="d-flex align-items-center mb-3">
                   <div className="text-muted" style={{ width: "140px" }}>
-                    <i className="fas fa-phone me-2"></i>Contact:
+                    Contact:
                   </div>
                   <div>{teamData?.phoneNumber}</div>
                 </div>
@@ -255,17 +327,19 @@ export default function Team() {
             </Row>
 
             {/* Players Section */}
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <h4 className="mb-0">Team Players</h4>
-              <Button
-                variant="primary"
-                className="rounded-pill"
-                onClick={() => setShowModal(true)}
-              >
-                <i className="fas fa-plus me-2"></i>
-                Add Player
-              </Button>
-            </div>
+            {teamData?.status === "active" && (
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h4 className="mb-0">Team Players</h4>
+                <Button
+                  variant="primary"
+                  className="rounded-pill"
+                  onClick={() => setShowModal(true)}
+                >
+                  <i className="fas fa-plus me-2"></i>
+                  Add Player
+                </Button>
+              </div>
+            )}
 
             {/* Players Table */}
             <Table responsive hover className="align-middle">
@@ -274,7 +348,7 @@ export default function Team() {
                   <th>Name</th>
                   <th>Role</th>
                   <th>Contact</th>
-                  <th>Actions</th>
+                  {teamData?.status === "active" && <th>Actions</th>}
                 </tr>
               </thead>
               <tbody>
@@ -309,22 +383,26 @@ export default function Team() {
                       }
                     </td>
                     <td>
-                      {/* <Button
-                        size="sm"
-                        variant="outline-success"
-                        className="rounded-pill"
-                        onClick={() => handleRemovePlayer(index)}
-                      >
-                        Edit
-                      </Button> */}
-                      <Button
-                        size="sm ml-2"
-                        variant="outline-danger"
-                        className="rounded-pill"
-                        onClick={() => handleRemovePlayer(index)}
-                      >
-                        Remove
-                      </Button>
+                      {teamData?.status === "active" && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline-success"
+                            className="rounded-pill"
+                            onClick={() => handleEditPlayer(index)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm ml-2"
+                            variant="outline-danger"
+                            className="rounded-pill"
+                            onClick={() => handleRemovePlayer(index)}
+                          >
+                            Remove
+                          </Button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -342,7 +420,7 @@ export default function Team() {
 
         {/* Add Player Modal */}
         <Modal show={showModal} onHide={() => setShowModal(false)}>
-          <Modal.Header closeButton>
+          <Modal.Header closeButton="false">
             <Modal.Title>Add New Player</Modal.Title>
           </Modal.Header>
           <Form onSubmit={handleAddPlayer}>
@@ -359,7 +437,7 @@ export default function Team() {
                       ...newPlayer,
                       name: selected?.name || "",
                       userId: selected?.value || "",
-                      contact: selected?.phoneNumber || "",
+                      phoneNumber: selected?.phoneNumber || "",
                       jerseyNumber: selected?.jerseyNumber || "",
                       jerseyName: selected?.jerseyName || "",
                       jerseySize: selected?.jerseySize || "",
@@ -399,7 +477,7 @@ export default function Team() {
                 <Form.Control
                   type="tel"
                   disabled
-                  value={newPlayer.contact}
+                  value={newPlayer.phoneNumber}
                   placeholder="Contact will be auto-filled"
                 />
               </Form.Group>
@@ -500,6 +578,145 @@ export default function Team() {
                 disabled={!newPlayer.name || !newPlayer.role}
               >
                 Add Player
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
+        {/* Edit Player Modal */}
+        <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Player</Modal.Title>
+          </Modal.Header>
+          <Form onSubmit={handleUpdatePlayer}>
+            <Modal.Body>
+              <Form.Group className="mb-3 formGroup">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={editingPlayer?.name || ""}
+                  disabled
+                />
+              </Form.Group>
+              <Form.Group className="mb-3 formGroup">
+                <Form.Label>Contact</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={editingPlayer?.phoneNumber || ""}
+                  disabled
+                />
+              </Form.Group>
+              <Form.Group className="mb-3 formGroup">
+                <Form.Label>Role</Form.Label>
+                <Form.Select
+                  required
+                  value={editingPlayer?.role || ""}
+                  onChange={(e) =>
+                    setEditingPlayer({ ...editingPlayer, role: e.target.value })
+                  }
+                >
+                  <option value="">Select role</option>
+                  <option value="Batsman">Batsman</option>
+                  <option value="Bowler">Bowler</option>
+                  <option value="All-rounder">All-rounder</option>
+                  <option value="Wicket-keeper">Wicket-keeper</option>
+                </Form.Select>
+              </Form.Group>
+              <Form.Group className="mb-3 formGroup">
+                <Form.Label>Jersey Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Jersey Name"
+                  value={editingPlayer?.jerseyName || ""}
+                  onChange={(e) =>
+                    setEditingPlayer({
+                      ...editingPlayer,
+                      jerseyName: e.target.value,
+                    })
+                  }
+                />
+              </Form.Group>
+              <Form.Group className="mb-3 formGroup">
+                <Form.Label>Jersey Number</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Jersey Number"
+                  value={editingPlayer?.jerseyNumber || ""}
+                  onChange={(e) =>
+                    setEditingPlayer({
+                      ...editingPlayer,
+                      jerseyNumber: e.target.value,
+                    })
+                  }
+                />
+              </Form.Group>
+              <Form.Group className="mb-3 formGroup">
+                <Form.Label>Jersey Size</Form.Label>
+                <Form.Select
+                  value={editingPlayer?.jerseySize || ""}
+                  onChange={(e) =>
+                    setEditingPlayer({
+                      ...editingPlayer,
+                      jerseySize: e.target.value,
+                    })
+                  }
+                >
+                  <option value="">Select Size</option>
+                  <option value="s">S</option>
+                  <option value="m">M</option>
+                  <option value="l">L</option>
+                  <option value="xl">XL</option>
+                  <option value="xxl">XXL</option>
+                </Form.Select>
+              </Form.Group>
+              {(!teamData?.players?.find((p) => p.isCaptain) ||
+                editingPlayer?.isCaptain) && (
+                <Form.Group className="mb-3 formGroup">
+                  <Form.Check
+                    type="checkbox"
+                    id="editIsCaptain"
+                    label="Assign as Team Captain"
+                    checked={editingPlayer?.isCaptain || false}
+                    onChange={(e) =>
+                      setEditingPlayer({
+                        ...editingPlayer,
+                        isCaptain: e.target.checked,
+                        isViceCaptain: e.target.checked
+                          ? false
+                          : editingPlayer.isViceCaptain,
+                      })
+                    }
+                  />
+                </Form.Group>
+              )}
+              {(!teamData?.players?.find((p) => p.isViceCaptain) ||
+                editingPlayer?.isViceCaptain) &&
+                !editingPlayer?.isCaptain && (
+                  <Form.Group className="mb-3 formGroup">
+                    <Form.Check
+                      type="checkbox"
+                      id="editIsViceCaptain"
+                      label="Assign as Team Vice Captain"
+                      checked={editingPlayer?.isViceCaptain || false}
+                      onChange={(e) =>
+                        setEditingPlayer({
+                          ...editingPlayer,
+                          isViceCaptain: e.target.checked,
+                          isCaptain: false,
+                        })
+                      }
+                    />
+                  </Form.Group>
+                )}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setShowEditModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit">
+                Update Player
               </Button>
             </Modal.Footer>
           </Form>
