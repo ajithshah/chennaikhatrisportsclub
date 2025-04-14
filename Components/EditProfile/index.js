@@ -271,7 +271,7 @@ export default function EditProfile() {
                           </Form.Text>
                         )}
                       </Form.Group>
-                    </Col>
+                    </Col> 
 
                     <Col md={6}>
                       <Form.Group className="formGroup">

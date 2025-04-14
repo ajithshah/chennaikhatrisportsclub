@@ -1,16 +1,35 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { Container, Card, Row, Col, Button } from "react-bootstrap";
+import { Container, Card, Row, Col, Button, Badge } from "react-bootstrap";
 import { auth, db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import Header from "../../Components/Header";
 import Meta from "../../Components/Meta";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 export function Profile() {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [teamData, setTeamData] = useState(null);
+
+  const fetchTeamData = async (userData) => {
+    if (!userData?.displayName) return;
+
+    try {
+      const teamsRef = collection(db, "cricket_teams");
+      const q = query(teamsRef, where("email", "==", userData.email));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const teamDoc = querySnapshot.docs[0];
+        setTeamData({ id: teamDoc.id, ...teamDoc.data() });
+      }
+    } catch (error) {
+      console.error("Error fetching team data:", error);
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -19,10 +38,10 @@ export function Profile() {
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
-          setUserData({ ...userSnap.data(), id: user.uid });
+          const userData = { ...userSnap.data(), id: user.uid };
+          setUserData(userData);
+          await fetchTeamData(userData); // Pass the full userData object
         }
-
-        console.log(userSnap.data());
       } else {
         router.push("/");
       }
@@ -136,6 +155,34 @@ export function Profile() {
                   </div>
                 </div>
 
+                {teamData && teamData.email === userData?.email && (
+                  <div className="d-flex align-items-center mb-3">
+                    <div className="text-muted" style={{ width: "140px" }}>
+                      <i className="fas fa-cricket-bat-ball me-2"></i>Cricket
+                      Team:
+                    </div>
+                    <div>
+                      {teamData ? (
+                        <div className="d-flex align-items-center">
+                          <span className="me-2 ">{teamData.name}</span>
+                          <Badge
+                            bg={
+                              teamData.status === "active"
+                                ? "success"
+                                : "secondary"
+                            }
+                            className="rounded-pill px-2  ml-2"
+                          >
+                            {teamData.status}
+                          </Badge>
+                        </div>
+                      ) : (
+                        "Not associated with any team"
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <div className="d-flex gap-3 mt-4">
                   <Button
                     variant="primary"
@@ -153,7 +200,29 @@ export function Profile() {
                     <i className="fas fa-edit me-2"></i>
                     Edit Profile
                   </Button>
-
+                  {/* {teamData &&
+                    teamData.email === userData?.email && (
+                      <Button
+                        variant="outline-success"
+                        onClick={() =>
+                          router.push(`/teams/edit/${teamData.id}`)
+                        }
+                        className="px-2 py-2 rounded-pill ms-2"
+                      >
+                        <i className="fas fa-users me-2"></i>
+                        Edit Team
+                      </Button>
+                    )} */}
+                  {teamData && teamData.email === userData?.email && (
+                    <Button
+                      variant="outline-success"
+                      onClick={() => router.push(`/team/${teamData.id}`)}
+                      className="px-2 py-2 rounded-pill ms-2 ml-2"
+                    >
+                      <i className="fas fa-users me-2"></i>
+                      View My Team
+                    </Button>
+                  )}
                   {userData?.isAdmin && (
                     <Button
                       variant="outline-primary"

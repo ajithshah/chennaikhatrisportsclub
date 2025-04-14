@@ -21,6 +21,7 @@ import {
 } from "firebase/firestore";
 import Header from "@/Components/Header";
 import Meta from "@/Components/Meta";
+import Select from "react-select";
 
 export default function ManageCricketTeam() {
   const router = useRouter();
@@ -28,16 +29,17 @@ export default function ManageCricketTeam() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [availableCaptains, setAvailableCaptains] = useState([]);
   const [teamForm, setTeamForm] = useState({
     name: "",
     captain: "",
-    players: "",
-    contact: "",
+    phoneNumber: "",
     status: "active",
+    email: "",
   });
 
   useEffect(() => {
-    const checkAuthAndFetchTeams = async (currentUser) => {
+    const checkAuthAndFetchData = async (currentUser) => {
       try {
         // Check if user is admin
         const userRef = doc(db, "users", currentUser.uid);
@@ -48,14 +50,18 @@ export default function ManageCricketTeam() {
           return;
         }
 
-        // Fetch teams
-        const teamsSnap = await getDocs(collection(db, "cricket_teams"));
-        const teamsData = teamsSnap.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        // Fetch teams and captains in parallel
+        await Promise.all([
+          fetchAvailableCaptains(),
+          getDocs(collection(db, "cricket_teams")).then((teamsSnap) => {
+            const teamsData = teamsSnap.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            setTeams(teamsData);
+          }),
+        ]);
 
-        setTeams(teamsData);
         setLoading(false);
       } catch (error) {
         console.error("Error:", error);
@@ -65,7 +71,7 @@ export default function ManageCricketTeam() {
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        checkAuthAndFetchTeams(user);
+        checkAuthAndFetchData(user);
       } else {
         router.push("/");
       }
@@ -74,15 +80,32 @@ export default function ManageCricketTeam() {
     return () => unsubscribe();
   }, [router]);
 
+  const fetchAvailableCaptains = async () => {
+    try {
+      const usersSnap = await getDocs(collection(db, "users"));
+      const captains = usersSnap.docs
+        .map((doc) => ({
+          id: doc.id,
+          name: doc.data().name || doc.data().displayName,
+          phoneNumber: doc.data().phoneNumber,
+          email: doc.data().email,
+        }))
+        .filter((captain) => captain.phoneNumber); // Only include users with phone numbers
+
+      setAvailableCaptains(captains);
+    } catch (error) {
+      console.error("Error fetching captains:", error);
+    }
+  };
+
   const handleEditTeam = async (team) => {
     setIsEditing(true);
     setTeamForm({
       id: team.id,
       name: team.name,
       captain: team.captain,
-      players: team.players,
-      contact: team.contact,
       status: team.status || "active",
+      email: team.email,
     });
     setShowModal(true);
   };
@@ -117,8 +140,8 @@ export default function ManageCricketTeam() {
       setTeamForm({
         name: "",
         captain: "",
-        players: "",
-        contact: "",
+        phoneNumber: "",
+        email: "",
         status: "active",
       });
     } catch (error) {
@@ -134,7 +157,6 @@ export default function ManageCricketTeam() {
 
       await addDoc(collection(db, "cricket_teams"), {
         ...teamForm,
-        createdBy: user.uid,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
@@ -143,9 +165,9 @@ export default function ManageCricketTeam() {
       setTeamForm({
         name: "",
         captain: "",
-        players: "",
-        contact: "",
-        status: "active",
+        phoneNumber: "",
+        email: "",
+        status: "",
       });
 
       // Refresh teams list
@@ -180,8 +202,15 @@ export default function ManageCricketTeam() {
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h2 className="fw-bold mb-0">Cricket Teams</h2>
               <div className="d-flex gap-3 align-items-center">
-                <Badge bg="primary" className="px-3 py-2 rounded-pill">
-                  Total Teams: {teams.length}
+                <Badge
+                  bg="primary"
+                  className="px-4 py-3 rounded-pill text-light text-center"
+                  style={{
+                    width: "100%",
+                    maxWidth: "200px",
+                  }}
+                >
+                  Total Team: {teams.length}
                 </Badge>
                 <Button
                   variant="primary"
@@ -207,8 +236,7 @@ export default function ManageCricketTeam() {
                     <tr>
                       <th className="px-4 py-3">Team Name</th>
                       <th className="px-4 py-3">Captain</th>
-                      <th className="px-4 py-3">Players</th>
-                      <th className="px-4 py-3">Contact</th>
+                      <th className="px-4 py-3">phoneNumber</th>
                       <th className="px-4 py-3">Status</th>
                       <th className="px-4 py-3">Actions</th>
                     </tr>
@@ -218,8 +246,7 @@ export default function ManageCricketTeam() {
                       <tr key={team.id}>
                         <td className="px-4 py-3 fw-semibold">{team.name}</td>
                         <td className="px-4 py-3">{team.captain}</td>
-                        <td className="px-4 py-3">{team.players}</td>
-                        <td className="px-4 py-3">{team.contact}</td>
+                        <td className="px-4 py-3">{team.phoneNumber}</td>
                         <td className="px-4 py-3">
                           <Badge
                             bg={
@@ -268,9 +295,9 @@ export default function ManageCricketTeam() {
             setTeamForm({
               name: "",
               captain: "",
-              players: "",
-              contact: "",
+              phoneNumber: "",
               status: "active",
+              email: "",
             });
           }}
         >
@@ -281,7 +308,7 @@ export default function ManageCricketTeam() {
           </Modal.Header>
           <Form onSubmit={isEditing ? handleUpdateTeam : handleAddTeam}>
             <Modal.Body>
-              <Form.Group className="mb-3">
+              <Form.Group className="formGroup">
                 <Form.Label>Team Name</Form.Label>
                 <Form.Control
                   type="text"
@@ -293,49 +320,84 @@ export default function ManageCricketTeam() {
                   placeholder="Enter team name"
                 />
               </Form.Group>
+              <Form.Group className="formGroup">
+                <Form.Label>Captain</Form.Label>
+                <Select
+                  required
+                  value={availableCaptains.find(
+                    (c) => c.name === teamForm.captain
+                  )}
+                  onChange={(selected) =>
+                    setTeamForm({
+                      ...teamForm,
+                      captain: selected ? selected.name : "",
+                      phoneNumber: selected ? selected.phoneNumber : null,
+                      email: selected ? selected.email : null,
+                    })
+                  }
+                  options={availableCaptains.map((captain) => ({
+                    value: captain.id,
+                    label: `${captain.name} ${
+                      captain.phoneNumber
+                        ? `(${captain.phoneNumber})`
+                        : captain.email
+                        ? `(${captain.email})`
+                        : ""
+                    }`,
+                    name: captain.name,
+                    phoneNumber: captain.phoneNumber,
+                    email: captain.email,
+                  }))}
+                  placeholder="Search and select captain..."
+                  isSearchable
+                  className="basic-single"
+                  classNamePrefix="select"
+                />
+                <Form.Text className="text-muted">
+                  Search and select from registered users
+                </Form.Text>
+              </Form.Group>
 
-              <Form.Group className="mb-3">
+              <Form.Group className="formGroup">
                 <Form.Label>Captain Name</Form.Label>
                 <Form.Control
                   type="text"
                   required
+                  disabled={true}
                   value={teamForm.captain}
                   onChange={(e) =>
                     setTeamForm({ ...teamForm, captain: e.target.value })
                   }
-                  placeholder="Enter captain name"
+                  placeholder="Captain will be auto-filled"
                 />
               </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Number of Players</Form.Label>
+              <Form.Group className="formGroup">
+                <Form.Label>Email</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text"
                   required
-                  min="1"
-                  max="30"
-                  value={teamForm.players}
+                  disabled={true}
+                  value={teamForm.email}
                   onChange={(e) =>
-                    setTeamForm({ ...teamForm, players: e.target.value })
+                    setTeamForm({ ...teamForm, email: e.target.value })
                   }
-                  placeholder="Enter number of players"
+                  placeholder="Email will be auto-filled"
                 />
               </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Contact Number</Form.Label>
+              <Form.Group className="formGroup">
+                <Form.Label>Phone Number</Form.Label>
                 <Form.Control
                   type="tel"
                   required
-                  value={teamForm.contact}
+                  value={teamForm.phoneNumber}
+                  disabled={true}
                   onChange={(e) =>
-                    setTeamForm({ ...teamForm, contact: e.target.value })
+                    setTeamForm({ ...teamForm, phoneNumber: e.target.value })
                   }
-                  placeholder="Enter contact number"
+                  placeholder="Contact number will be auto-filled"
                 />
               </Form.Group>
-
-              <Form.Group className="mb-3">
+              <Form.Group className="formGroup">
                 <Form.Label>Status</Form.Label>
                 <Form.Select
                   value={teamForm.status}
@@ -357,9 +419,9 @@ export default function ManageCricketTeam() {
                   setTeamForm({
                     name: "",
                     captain: "",
-                    players: "",
-                    contact: "",
+                    phoneNumber: "",
                     status: "active",
+                    email: "",
                   });
                 }}
               >
