@@ -158,10 +158,17 @@ export function Profile() {
                 {teamData && teamData.email === userData?.email && (
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-cricket-bat-ball me-2"></i>Cricket
-                      Team:
+                      Cricket Team:
                     </div>
-                    <div>Associated {teamData.name}</div>
+                    <div>
+                      Associated With{" "}
+                      <span
+                        className="fw-bold text-primary"
+                        style={{ fontSize: "1.1em" }}
+                      >
+                        {teamData.name || "Unknown Team"}
+                      </span>
+                    </div>
                   </div>
                 )}
 
