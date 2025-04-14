@@ -132,27 +132,34 @@ export default function ManageUsers() {
       <Container className="py-5">
         <Card className="border-0 shadow-sm">
           <Card.Body className="p-4">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <h2 className="fw-bold mb-0">Manage Users</h2>
-              <div className="d-flex gap-3 align-items-center">
+            <div className="d-flex flex-column flex-md-row justify-content-center align-items-center gap-4 mb-2">
+              <h2 className="fw-bold mb-md-0 text-nowrap text-center">
+                Manage Users
+              </h2>
+              <div className="d-flex flex-column flex-md-row align-items-stretch align-items-md-center w-100 w-md-auto justify-content-center gap-4 gap-md-5">
                 <input
                   type="search"
                   placeholder="Search users..."
-                  className="form-control"
+                  className="form-control mb-3 mb-md-0"
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
                   style={{
-                    minWidth: "250px",
+                    width: "100%",
+                    maxWidth: "300px",
                     borderRadius: "8px",
-                    padding: "0.5rem 1rem",
+                    padding: "0.75rem 1rem",
                   }}
                 />
                 <Badge
                   bg="primary"
-                  className="px-3 py-2 rounded-pill text-light"
+                  className="px-4 py-3 rounded-pill text-light text-center"
+                  style={{
+                    width: "100%",
+                    maxWidth: "200px",
+                  }}
                 >
                   Total Users: {filteredUsers.length}
                 </Badge>
