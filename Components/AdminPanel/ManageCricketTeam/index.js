@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import {
   Container,
   Card,
@@ -44,12 +45,12 @@ export default function ManageCricketTeam() {
     status: "active",
     email: "",
     players: [],
+    file: null,
   });
 
   useEffect(() => {
     const checkAuthAndFetchData = async (currentUser) => {
       try {
-        // Check if user is admin
         const userRef = doc(db, "users", currentUser.uid);
         const userSnap = await getDoc(userRef);
 
@@ -58,7 +59,6 @@ export default function ManageCricketTeam() {
           return;
         }
 
-        // Fetch teams and captains in parallel
         await Promise.all([
           fetchAvailableCaptains(),
           getDocs(collection(db, "cricket_teams")).then((teamsSnap) => {
@@ -66,6 +66,9 @@ export default function ManageCricketTeam() {
               id: doc.id,
               ...doc.data(),
             }));
+
+            console.log("teamsData", teamsData);
+            
             setTeams(teamsData);
           }),
         ]);
@@ -98,7 +101,7 @@ export default function ManageCricketTeam() {
           phoneNumber: doc.data().phoneNumber,
           email: doc.data().email,
         }))
-        .filter((captain) => captain.phoneNumber); // Only include users with phone numbers
+        .filter((captain) => captain.phoneNumber);
 
       setAvailableCaptains(captains);
     } catch (error) {
@@ -117,13 +120,14 @@ export default function ManageCricketTeam() {
       viceCaptainPhoneNumber: team.viceCaptainPhoneNumber || "",
       status: team.status || "active",
       email: team.email || "",
+      players: team.players || [],
+      file: null,
     });
     setShowModal(true);
   };
 
   const handleDeleteTeam = async (teamId) => {
     try {
-      // First get the team document to check for members
       const teamRef = doc(db, "cricket_teams", teamId);
       const teamSnap = await getDoc(teamRef);
 
@@ -134,7 +138,6 @@ export default function ManageCricketTeam() {
 
       const teamData = teamSnap.data();
 
-      // Check if team has members
       if (teamData.players && teamData.players.length > 0) {
         alert(
           "Cannot delete team with existing members. Please remove all members first."
@@ -142,7 +145,6 @@ export default function ManageCricketTeam() {
         return;
       }
 
-      // If no members, proceed with deletion after confirmation
       if (window.confirm("Are you sure you want to delete this team?")) {
         await deleteDoc(teamRef);
         setTeams(teams.filter((team) => team.id !== teamId));
@@ -156,21 +158,46 @@ export default function ManageCricketTeam() {
   const handleUpdateTeam = async (e) => {
     e.preventDefault();
     try {
-      // Ensure captain and vice-captain are not the same
       if (teamForm.captain === teamForm.viceCaptain) {
         alert("Captain and Vice-Captain cannot be the same person.");
         return;
       }
 
       const teamRef = doc(db, "cricket_teams", teamForm.id);
-      await updateDoc(teamRef, {
-        ...teamForm,
+      const updateData = {
+        name: teamForm.name,
+        captain: teamForm.captain,
+        viceCaptain: teamForm.viceCaptain,
+        captainPhoneNumber: teamForm.captainPhoneNumber,
+        viceCaptainPhoneNumber: teamForm.viceCaptainPhoneNumber,
+        status: teamForm.status,
+        email: teamForm.email,
+        players: teamForm.players,
         updatedAt: new Date().toISOString(),
-      });
+      };
+
+      if (teamForm.file) {
+        const formData = new FormData();
+        formData.append("file", teamForm.file);
+
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const uploadData = await uploadResponse.json();
+        if (uploadData.error) {
+          alert("Error uploading file: " + uploadData.error);
+          return;
+        }
+        updateData.fileUrl = uploadData.fileUrl;
+      }
+
+      await updateDoc(teamRef, updateData);
 
       setTeams(
         teams.map((team) =>
-          team.id === teamForm.id ? { ...team, ...teamForm } : team
+          team.id === teamForm.id ? { ...team, ...updateData } : team
         )
       );
 
@@ -185,9 +212,11 @@ export default function ManageCricketTeam() {
         status: "active",
         email: "",
         players: [],
+        file: null,
       });
     } catch (error) {
       console.error("Error updating team:", error);
+      alert("Error updating team: " + error.message);
     }
   };
 
@@ -195,15 +224,16 @@ export default function ManageCricketTeam() {
     e.preventDefault();
     try {
       const user = auth.currentUser;
-      if (!user) return;
+      if (!user) {
+        alert("You must be logged in to add a team.");
+        return;
+      }
 
-      // Ensure captain and vice-captain are not the same
       if (teamForm.captain === teamForm.viceCaptain) {
         alert("Captain and Vice-Captain cannot be the same person.");
         return;
       }
 
-      // Check if the selected captain is already assigned to another team
       const existingCaptainTeam = teams.find(
         (team) => team.captain === teamForm.captain
       );
@@ -215,7 +245,6 @@ export default function ManageCricketTeam() {
         return;
       }
 
-      // Check if the selected vice-captain is already assigned to another team
       const existingViceCaptainTeam = teams.find(
         (team) =>
           team.players.some((player) => player.role === "Vice Captain") &&
@@ -229,8 +258,32 @@ export default function ManageCricketTeam() {
         return;
       }
 
+      let fileUrl = null;
+      if (teamForm.file) {
+        const formData = new FormData();
+        formData.append("file", teamForm.file);
+
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const uploadData = await uploadResponse.json();
+        if (uploadData.error) {
+          alert("Error uploading file: " + uploadData.error);
+          return;
+        }
+        fileUrl = uploadData.fileUrl;
+      }
+
       const newTeam = {
-        ...teamForm,
+        name: teamForm.name,
+        captain: teamForm.captain,
+        viceCaptain: teamForm.viceCaptain,
+        captainPhoneNumber: teamForm.captainPhoneNumber,
+        viceCaptainPhoneNumber: teamForm.viceCaptainPhoneNumber,
+        status: teamForm.status,
+        email: teamForm.email,
         players: [
           {
             name: teamForm.captain,
@@ -241,9 +294,10 @@ export default function ManageCricketTeam() {
             jerseyName: "",
             jerseySize: "",
             role: "",
-            userId: availableCaptains.find(
-              (captain) => captain.name === teamForm.captain
-            ).id,
+            userId:
+              availableCaptains.find(
+                (captain) => captain.name === teamForm.captain
+              )?.id || "",
           },
           {
             name: teamForm.viceCaptain,
@@ -254,11 +308,13 @@ export default function ManageCricketTeam() {
             jerseyName: "",
             jerseySize: "",
             role: "",
-            userId: availableCaptains.find(
-              (captain) => captain.name === teamForm.viceCaptain
-            ).id,
+            userId:
+              availableCaptains.find(
+                (captain) => captain.name === teamForm.viceCaptain
+              )?.id || "",
           },
         ],
+        fileUrl: fileUrl,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -272,12 +328,12 @@ export default function ManageCricketTeam() {
         viceCaptain: "",
         captainPhoneNumber: "",
         viceCaptainPhoneNumber: "",
-        email: "",
         status: "active",
+        email: "",
         players: [],
+        file: null,
       });
 
-      // Refresh teams list
       const teamsSnap = await getDocs(collection(db, "cricket_teams"));
       const teamsData = teamsSnap.docs.map((doc) => ({
         id: doc.id,
@@ -286,6 +342,7 @@ export default function ManageCricketTeam() {
       setTeams(teamsData);
     } catch (error) {
       console.error("Error adding team:", error);
+      alert("Error adding team: " + error.message);
     }
   };
 
@@ -296,14 +353,23 @@ export default function ManageCricketTeam() {
 
       if (teamSnap.exists()) {
         const teamData = teamSnap.data();
+        // Convert legacy fileId or view URL to direct URL
+        if (teamData.fileId && !teamData.fileUrl) {
+          teamData.fileUrl = `https://drive.google.com/uc?export=download&id=${teamData.fileId}`;
+        } else if (
+          teamData.fileUrl &&
+          teamData.fileUrl.includes("/file/d/") &&
+          teamData.fileUrl.includes("/view")
+        ) {
+          const fileId = teamData.fileUrl.split("/d/")[1].split("/")[0];
+          teamData.fileUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+        }
         setViewTeamDetails(teamData);
 
-        // Get players array from team document
         const players = teamData.players || [];
 
-        // Transform players data to match the expected format
         const membersData = players.map((player, index) => ({
-          id: index.toString(), // Generate an id since it's an array
+          id: index.toString(),
           name: player.name,
           role: player.isCaptain
             ? "Captain"
@@ -321,6 +387,7 @@ export default function ManageCricketTeam() {
       }
     } catch (error) {
       console.error("Error viewing team:", error);
+      alert("Error viewing team: " + error.message);
     }
   };
 
@@ -356,7 +423,7 @@ export default function ManageCricketTeam() {
                 </Badge>
                 <Button
                   variant="primary"
-                  className="rounded-pill px-3 ml-2"
+                  className="rounded-pill px-3 ms-2"
                   onClick={() => setShowModal(true)}
                 >
                   <i className="fas fa-plus me-2"></i>
@@ -372,72 +439,76 @@ export default function ManageCricketTeam() {
               </div>
             ) : (
               <Table responsive hover className="align-middle">
-                <Table responsive hover className="align-middle">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-3">Team Name</th>
-                      <th className="px-4 py-3">C/VC</th>
-                      <th className="px-4 py-3">Contact</th>
-                      <th className="px-4 py-3">Status</th>
-                      <th className="px-4 py-3">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {teams.map((team) => (
-                      <tr key={team.id}>
-                        <td className="px-4 py-3 fw-semibold">{team.name}</td>
-                        <td className="px-4 py-3">
-                          {team.captain}/{team.viceCaptain}
-                        </td>
-                        <td className="px-4 py-3">
-                          {team.captainPhoneNumber}/
-                          {team.viceCaptainPhoneNumber}
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge
-                            bg={
-                              team.status === "active" ? "success" : "secondary"
-                            }
-                            className="rounded-pill px-3 text-light"
+                <thead>
+                  <tr>
+                    <th className="px-4 py-3">Logo</th>
+                    <th className="px-4 py-3">Team Name</th>
+                    <th className="px-4 py-3">C/VC</th>
+                    <th className="px-4 py-3">Contact</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {teams.map((team) => (
+                    <tr key={team.id}>
+                      <td className="px-4 py-3 fw-semibold">
+                        <img
+                          src={team.fileUrl}
+                          width={50}
+                          height={50}
+                          className="rounded-circle img-fluid"
+                          alt={`${team.name}'s logo`}
+                        />
+                      </td>
+                      <td className="px-4 py-3 fw-semibold">{team.name}</td>
+                      <td className="px-4 py-3">
+                        {team.captain}/{team.viceCaptain}
+                      </td>
+                      <td className="px-4 py-3">
+                        {team.captainPhoneNumber}/{team.viceCaptainPhoneNumber}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge
+                          bg={
+                            team.status === "active" ? "success" : "secondary"
+                          }
+                          className="rounded-pill px-3 text-light"
+                        >
+                          {team.status}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="d-flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline-success"
+                            className="rounded-pill"
+                            onClick={() => handleViewTeam(team.id)}
                           >
-                            {team.status}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="d-flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline-success"
-                              className="rounded-pill"
-                              onClick={() => handleViewTeam(team.id)}
-                            >
-                              {/* <i className="bi-view-list me-1"></i> */}
-                              View
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline-primary"
-                              className="rounded-pill ml-2"
-                              onClick={() => handleEditTeam(team)}
-                            >
-                              {/* <i className="fas fa-edit me-1"></i> */}
-                              Edit
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline-danger"
-                              className="rounded-pill ml-2"
-                              onClick={() => handleDeleteTeam(team.id)}
-                            >
-                              {/* <i className="fas fa-trash-alt me-1"></i> */}
-                              Delete
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                            View
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline-primary"
+                            className="rounded-pill ms-2"
+                            onClick={() => handleEditTeam(team)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline-danger"
+                            className="rounded-pill ms-2"
+                            onClick={() => handleDeleteTeam(team.id)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
               </Table>
             )}
           </Card.Body>
@@ -450,9 +521,13 @@ export default function ManageCricketTeam() {
             setTeamForm({
               name: "",
               captain: "",
-              phoneNumber: "",
+              viceCaptain: "",
+              captainPhoneNumber: "",
+              viceCaptainPhoneNumber: "",
               status: "active",
               email: "",
+              players: [],
+              file: null,
             });
           }}
         >
@@ -463,7 +538,7 @@ export default function ManageCricketTeam() {
           </Modal.Header>
           <Form onSubmit={isEditing ? handleUpdateTeam : handleAddTeam}>
             <Modal.Body>
-              <Form.Group className="formGroup">
+              <Form.Group className="formGroup mb-3">
                 <Form.Label>Team Name</Form.Label>
                 <Form.Control
                   type="text"
@@ -476,7 +551,7 @@ export default function ManageCricketTeam() {
                 />
               </Form.Group>
 
-              <Form.Group className="formGroup">
+              <Form.Group className="formGroup mb-3">
                 <Form.Label>Captain</Form.Label>
                 <Select
                   required
@@ -512,13 +587,13 @@ export default function ManageCricketTeam() {
               </Form.Group>
 
               {teamForm.captain && (
-                <Form.Group className="formGroup">
+                <Form.Group className="formGroup mb-3">
                   <Form.Label>Selected Captain</Form.Label>
                   <Form.Control type="text" value={teamForm.captain} readOnly />
                 </Form.Group>
               )}
 
-              <Form.Group className="formGroup">
+              <Form.Group className="formGroup mb-3">
                 <Form.Label>Vice-Captain</Form.Label>
                 <Select
                   required
@@ -544,7 +619,7 @@ export default function ManageCricketTeam() {
                       name: captain.name,
                       phoneNumber: captain.phoneNumber,
                       email: captain.email,
-                      isDisabled: isCaptain, // Disable option if captain is selected
+                      isDisabled: isCaptain,
                     };
                   })}
                   placeholder="Search and select vice-captain..."
@@ -558,7 +633,7 @@ export default function ManageCricketTeam() {
               </Form.Group>
 
               {teamForm.viceCaptain && (
-                <Form.Group className="formGroup">
+                <Form.Group className="formGroup mb-3">
                   <Form.Label>Selected Vice-Captain</Form.Label>
                   <Form.Control
                     type="text"
@@ -568,7 +643,21 @@ export default function ManageCricketTeam() {
                 </Form.Group>
               )}
 
-              <Form.Group className="formGroup">
+              <Form.Group className="formGroup mb-3">
+                <Form.Label>Team Logo (Optional)</Form.Label>
+                <Form.Control
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif"
+                  onChange={(e) =>
+                    setTeamForm({ ...teamForm, file: e.target.files[0] })
+                  }
+                />
+                <Form.Text className="text-muted">
+                  Upload a team logo (JPEG, PNG, or GIF).
+                </Form.Text>
+              </Form.Group>
+
+              <Form.Group className="formGroup mb-3">
                 <Form.Label>Status</Form.Label>
                 <Form.Select
                   value={teamForm.status}
@@ -597,6 +686,7 @@ export default function ManageCricketTeam() {
                     status: "active",
                     email: "",
                     players: [],
+                    file: null,
                   });
                 }}
               >
@@ -626,6 +716,25 @@ export default function ManageCricketTeam() {
                 <h5 className="text-primary">
                   Team Name: {viewTeamDetails.name}
                 </h5>
+                {viewTeamDetails.fileUrl && (
+                  <div className="mb-3">
+                    <Image
+                      src={viewTeamDetails.fileUrl}
+                      width={200}
+                      height={200}
+                      alt="Team Logo"
+                      priority
+                      className="img-fluid"
+                      onError={(e) => {
+                        console.error(
+                          "Error loading image:",
+                          viewTeamDetails.fileUrl
+                        );
+                        e.target.style.display = "none";
+                      }}
+                    />
+                  </div>
+                )}
                 <hr />
                 <h6 className="mb-3">Team Members</h6>
                 {teamMembers.length > 0 ? (

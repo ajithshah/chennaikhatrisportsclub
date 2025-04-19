@@ -39,7 +39,7 @@ const PlayerCard = ({ player }) => {
         <div className="col-12 col-md-4 d-flex align-items-center justify-content-center">
           <div className="position-relative">
             <Image
-              src="/profile_user.jpg" // You can set the player.profile or other source here
+              src="/profile_user.jpg"
               width={200}
               height={200}
               className="rounded-circle img-fluid"
