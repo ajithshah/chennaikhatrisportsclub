@@ -28,6 +28,11 @@ main {
   display: none !important;
 }
 
+.navbar {
+  position: relative; /* Ensure navbar has the proper stacking context */
+  z-index: 10;  /* Make sure it has a higher z-index if needed */
+}
+
 .profile-dropdown .dropdown-menu {
   position: absolute;
   right: 0;
@@ -38,7 +43,7 @@ main {
   border: none;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1050;
+  z-index: 100;
   transition: all 0.2s ease;
   transform-origin: top right;
 }
@@ -73,6 +78,10 @@ main {
     min-width: 180px;
     border-radius: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+  .navbar {
+    position: relative; /* Ensure navbar has the proper stacking context */
+    z-index: 10;  /* Make sure it has a higher z-index if needed */
   }
 
   .profile-dropdown .dropdown-item {
@@ -181,4 +190,9 @@ main {
     padding-left: 0.5rem !important;
     padding-right: 0.5rem !important;
   }
+}
+
+
+.wide-modal {
+  max-width: 80%;
 }
