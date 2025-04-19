@@ -3,7 +3,7 @@ import { Modal } from "react-bootstrap";
 const PrivacyModel = ({ show, onHide }) => {
   return (
     <Modal show={show} onHide={onHide} centered size="lg">
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Modal.Title className="text-2xl font-bold">
           Terms of Service
         </Modal.Title>

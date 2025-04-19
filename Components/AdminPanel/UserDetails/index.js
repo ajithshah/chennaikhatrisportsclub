@@ -40,7 +40,7 @@ export default function UserDetails({ userId }) {
     return (
       <Container className="py-5 text-center">
         <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
+          <span className="visually-hidden"></span>
         </Spinner>
       </Container>
     );

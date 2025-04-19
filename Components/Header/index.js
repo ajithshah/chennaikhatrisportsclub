@@ -72,13 +72,17 @@ const Header = () => {
     >
       <div className="container-fluid">
         <Navbar.Brand className="d-flex align-items-center">
-          <Image
-            src={logo}
-            alt="Logo"
-            width={50}
-            height={50}
-            className="me-2"
-          />
+          <Link href="/" passHref legacyBehavior>
+            <Nav.Link>
+              <Image
+                src={logo}
+                alt="Logo"
+                width={50}
+                height={50}
+                className="me-2"
+              />
+            </Nav.Link>
+          </Link>
           <div>
             <div className="fs-5 mb-0 text-dark font-weight-bold">
               <Link href="/" passHref legacyBehavior>

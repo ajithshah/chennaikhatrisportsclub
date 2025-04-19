@@ -9,6 +9,7 @@ import {
   Table,
   Button,
   Modal,
+  Spinner,
   Form,
 } from "react-bootstrap";
 import Select from "react-select";
@@ -90,6 +91,12 @@ export default function Team() {
       alert("This player is already in the team!");
       return;
     }
+    // Check if team has reached maximum number of players
+    if (teamData?.players?.length >= 15) {
+      alert("You can only add up to 15 players to the team!");
+      return;
+    }
+
     try {
       const teamRef = doc(db, "cricket_teams", id);
       const players = teamData.players || [];
@@ -151,43 +158,43 @@ export default function Team() {
     }
   };
 
-  const handleEditTeam = async (e) => {
-    e.preventDefault();
-    if (!editTeam.name || !editTeam.phoneNumber || !editTeam.status) return;
+  // const handleEditTeam = async (e) => {
+  //   e.preventDefault();
+  //   if (!editTeam.name || !editTeam.phoneNumber || !editTeam.status) return;
 
-    try {
-      const teamRef = doc(db, "cricket_teams", id);
-      await updateDoc(teamRef, {
-        name: editTeam.name,
-        phoneNumber: editTeam.phoneNumber,
-        status: editTeam.status,
-        jerseyNumber: editTeam.jerseyNumber,
-        jerseyName: editTeam.jerseyName,
-        jerseySize: editTeam.jerseySize,
-        role: editTeam.role,
-        isCaptain: editTeam.isCaptain,
-        isViceCaptain: editTeam.isViceCaptain,
-      });
+  //   try {
+  //     const teamRef = doc(db, "cricket_teams", id);
+  //     await updateDoc(teamRef, {
+  //       name: editTeam.name,
+  //       phoneNumber: editTeam.phoneNumber,
+  //       status: editTeam.status,
+  //       jerseyNumber: editTeam.jerseyNumber,
+  //       jerseyName: editTeam.jerseyName,
+  //       jerseySize: editTeam.jerseySize,
+  //       role: editTeam.role,
+  //       isCaptain: editTeam.isCaptain,
+  //       isViceCaptain: editTeam.isViceCaptain,
+  //     });
 
-      // Update local state
-      setTeamData({
-        ...teamData,
-        name: editTeam.name,
-        phoneNumber: editTeam.phoneNumber,
-        status: editTeam.status,
-        jerseyNumber: editTeam.jerseyNumber,
-        jerseyName: editTeam.jerseyName,
-        jerseySize: editTeam.jerseySize,
-        role: editTeam.role,
-        isCaptain: editTeam.isCaptain,
-        isViceCaptain: editTeam.isViceCaptain,
-      });
+  //     // Update local state
+  //     setTeamData({
+  //       ...teamData,
+  //       name: editTeam.name,
+  //       phoneNumber: editTeam.phoneNumber,
+  //       status: editTeam.status,
+  //       jerseyNumber: editTeam.jerseyNumber,
+  //       jerseyName: editTeam.jerseyName,
+  //       jerseySize: editTeam.jerseySize,
+  //       role: editTeam.role,
+  //       isCaptain: editTeam.isCaptain,
+  //       isViceCaptain: editTeam.isViceCaptain,
+  //     });
 
-      setShowEditModal(false);
-    } catch (error) {
-      console.error("Error updating team:", error);
-    }
-  };
+  //     setShowEditModal(false);
+  //   } catch (error) {
+  //     console.error("Error updating team:", error);
+  //   }
+  // };
 
   const handleEditPlayer = (index) => {
     const player = teamData.players[index];
@@ -225,9 +232,11 @@ export default function Team() {
 
   if (loading) {
     return (
-      <div className="text-center py-5">
-        <h2>Loading team details...</h2>
-      </div>
+      <Container className="py-5 text-center">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden"></span>
+        </Spinner>
+      </Container>
     );
   }
 
@@ -321,7 +330,7 @@ export default function Team() {
                   <div className="text-muted" style={{ width: "140px" }}>
                     Contact:
                   </div>
-                  <div>{teamData?.phoneNumber}</div>
+                  <div>{teamData?.captainPhoneNumber}</div>
                 </div>
               </Col>
             </Row>
@@ -427,7 +436,7 @@ export default function Team() {
 
         {/* Add Player Modal */}
         <Modal show={showModal} onHide={() => setShowModal(false)}>
-          <Modal.Header closeButton="false">
+          <Modal.Header>
             <Modal.Title>Add New Player</Modal.Title>
           </Modal.Header>
           <Form onSubmit={handleAddPlayer}>
@@ -591,7 +600,7 @@ export default function Team() {
         </Modal>
         {/* Edit Player Modal */}
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>Edit Player</Modal.Title>
           </Modal.Header>
           <Form onSubmit={handleUpdatePlayer}>

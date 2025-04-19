@@ -6,19 +6,19 @@ import {
   Button,
   Table,
   Badge,
+  Alert,
   Modal,
   Form,
+  Spinner,
 } from "react-bootstrap";
 import { auth, db } from "../../../firebase";
 import {
   collection,
   addDoc,
   getDocs,
-  query,
   doc,
   getDoc,
   updateDoc,
-  where,
   deleteDoc,
 } from "firebase/firestore";
 import Header from "@/Components/Header";
@@ -36,11 +36,14 @@ export default function ManageCricketTeam() {
   const [availableCaptains, setAvailableCaptains] = useState([]);
   const [viewTeamDetails, setViewTeamDetails] = useState(null);
   const [teamForm, setTeamForm] = useState({
-    teamame: "",
+    name: "",
     captain: "",
-    phoneNumber: "",
+    viceCaptain: "",
+    captainPhoneNumber: "",
+    viceCaptainPhoneNumber: "",
     status: "active",
     email: "",
+    players: [],
   });
 
   useEffect(() => {
@@ -109,12 +112,15 @@ export default function ManageCricketTeam() {
       id: team.id,
       name: team.name,
       captain: team.captain,
+      viceCaptain: team.viceCaptain || "",
+      captainPhoneNumber: team.captainPhoneNumber || "",
+      viceCaptainPhoneNumber: team.viceCaptainPhoneNumber || "",
       status: team.status || "active",
-      phoneNumber: team.phoneNumber,
-      email: team.email,
+      email: team.email || "",
     });
     setShowModal(true);
   };
+
   const handleDeleteTeam = async (teamId) => {
     try {
       // First get the team document to check for members
@@ -150,6 +156,12 @@ export default function ManageCricketTeam() {
   const handleUpdateTeam = async (e) => {
     e.preventDefault();
     try {
+      // Ensure captain and vice-captain are not the same
+      if (teamForm.captain === teamForm.viceCaptain) {
+        alert("Captain and Vice-Captain cannot be the same person.");
+        return;
+      }
+
       const teamRef = doc(db, "cricket_teams", teamForm.id);
       await updateDoc(teamRef, {
         ...teamForm,
@@ -167,9 +179,12 @@ export default function ManageCricketTeam() {
       setTeamForm({
         name: "",
         captain: "",
-        phoneNumber: "",
-        email: "",
+        viceCaptain: "",
+        captainPhoneNumber: "",
+        viceCaptainPhoneNumber: "",
         status: "active",
+        email: "",
+        players: [],
       });
     } catch (error) {
       console.error("Error updating team:", error);
@@ -182,19 +197,84 @@ export default function ManageCricketTeam() {
       const user = auth.currentUser;
       if (!user) return;
 
-      await addDoc(collection(db, "cricket_teams"), {
+      // Ensure captain and vice-captain are not the same
+      if (teamForm.captain === teamForm.viceCaptain) {
+        alert("Captain and Vice-Captain cannot be the same person.");
+        return;
+      }
+
+      // Check if the selected captain is already assigned to another team
+      const existingCaptainTeam = teams.find(
+        (team) => team.captain === teamForm.captain
+      );
+
+      if (existingCaptainTeam) {
+        alert(
+          `Captain ${teamForm.captain} is already assigned to another team. Please select a different captain.`
+        );
+        return;
+      }
+
+      // Check if the selected vice-captain is already assigned to another team
+      const existingViceCaptainTeam = teams.find(
+        (team) =>
+          team.players.some((player) => player.role === "Vice Captain") &&
+          team.viceCaptain === teamForm.viceCaptain
+      );
+
+      if (existingViceCaptainTeam) {
+        alert(
+          `Vice-Captain ${teamForm.viceCaptain} is already assigned to another team. Please select a different vice-captain.`
+        );
+        return;
+      }
+
+      const newTeam = {
         ...teamForm,
+        players: [
+          {
+            name: teamForm.captain,
+            isCaptain: true,
+            isViceCaptain: false,
+            phoneNumber: teamForm.captainPhoneNumber,
+            jerseyNumber: "",
+            jerseyName: "",
+            jerseySize: "",
+            role: "",
+            userId: availableCaptains.find(
+              (captain) => captain.name === teamForm.captain
+            ).id,
+          },
+          {
+            name: teamForm.viceCaptain,
+            isCaptain: false,
+            isViceCaptain: true,
+            phoneNumber: teamForm.viceCaptainPhoneNumber,
+            jerseyNumber: "",
+            jerseyName: "",
+            jerseySize: "",
+            role: "",
+            userId: availableCaptains.find(
+              (captain) => captain.name === teamForm.viceCaptain
+            ).id,
+          },
+        ],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      });
+      };
+
+      await addDoc(collection(db, "cricket_teams"), newTeam);
 
       setShowModal(false);
       setTeamForm({
         name: "",
         captain: "",
-        phoneNumber: "",
+        viceCaptain: "",
+        captainPhoneNumber: "",
+        viceCaptainPhoneNumber: "",
         email: "",
-        status: "",
+        status: "active",
+        players: [],
       });
 
       // Refresh teams list
@@ -246,11 +326,11 @@ export default function ManageCricketTeam() {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center min-vh-100">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
+      <Container className="py-5 text-center">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden"></span>
+        </Spinner>
+      </Container>
     );
   }
 
@@ -265,7 +345,7 @@ export default function ManageCricketTeam() {
               <h2 className="fw-bold mb-0">Cricket Teams</h2>
               <div className="d-flex align-items-center">
                 <Badge
-                  bg="primary"
+                  bg="success"
                   className="px-4 py-3 rounded-pill text-light text-center"
                   style={{
                     width: "100%",
@@ -279,16 +359,16 @@ export default function ManageCricketTeam() {
                   className="rounded-pill px-3 ml-2"
                   onClick={() => setShowModal(true)}
                 >
-                  {/* <i className="fas fa-plus me-2"></i> */}
+                  <i className="fas fa-plus me-2"></i>
                 </Button>
               </div>
             </div>
 
             {teams.length === 0 ? (
               <div className="text-center py-5 text-muted">
-                {/* <i className="fas fa-users fa-3x mb-3"></i> */}
+                <i className="fas fa-users fa-3x mb-3"></i>
                 <h5>No teams added yet</h5>
-                <p>Click the Add Team button to create your first team</p>
+                <p>Click the + button to create your first team</p>
               </div>
             ) : (
               <Table responsive hover className="align-middle">
@@ -296,7 +376,7 @@ export default function ManageCricketTeam() {
                   <thead>
                     <tr>
                       <th className="px-4 py-3">Team Name</th>
-                      <th className="px-4 py-3">Captain</th>
+                      <th className="px-4 py-3">C/VC</th>
                       <th className="px-4 py-3">Contact</th>
                       <th className="px-4 py-3">Status</th>
                       <th className="px-4 py-3">Actions</th>
@@ -306,8 +386,13 @@ export default function ManageCricketTeam() {
                     {teams.map((team) => (
                       <tr key={team.id}>
                         <td className="px-4 py-3 fw-semibold">{team.name}</td>
-                        <td className="px-4 py-3">{team.captain}</td>
-                        <td className="px-4 py-3">{team.phoneNumber}</td>
+                        <td className="px-4 py-3">
+                          {team.captain}/{team.viceCaptain}
+                        </td>
+                        <td className="px-4 py-3">
+                          {team.captainPhoneNumber}/
+                          {team.viceCaptainPhoneNumber}
+                        </td>
                         <td className="px-4 py-3">
                           <Badge
                             bg={
@@ -371,7 +456,7 @@ export default function ManageCricketTeam() {
             });
           }}
         >
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>
               {isEditing ? "Edit Team" : "Add New Cricket Team"}
             </Modal.Title>
@@ -390,6 +475,7 @@ export default function ManageCricketTeam() {
                   placeholder="Enter team name"
                 />
               </Form.Group>
+
               <Form.Group className="formGroup">
                 <Form.Label>Captain</Form.Label>
                 <Select
@@ -401,18 +487,19 @@ export default function ManageCricketTeam() {
                     setTeamForm({
                       ...teamForm,
                       captain: selected ? selected.name : "",
-                      phoneNumber: selected ? selected.phoneNumber : null,
-                      email: selected ? selected.email : null,
+                      captainPhoneNumber: selected ? selected.phoneNumber : "",
+                      email: selected ? selected.email : "",
                     })
                   }
                   options={availableCaptains.map((captain) => ({
                     value: captain.id,
-                    label: `${captain.name} ${
-                      captain.phoneNumber ? `(${captain.phoneNumber})` : ""
+                    label: `${captain.name}${
+                      captain.phoneNumber ? ` (${captain.phoneNumber})` : ""
                     }`,
                     name: captain.name,
                     phoneNumber: captain.phoneNumber,
                     email: captain.email,
+                    isDisabled: false,
                   }))}
                   placeholder="Search and select captain..."
                   isSearchable
@@ -424,45 +511,63 @@ export default function ManageCricketTeam() {
                 </Form.Text>
               </Form.Group>
 
+              {teamForm.captain && (
+                <Form.Group className="formGroup">
+                  <Form.Label>Selected Captain</Form.Label>
+                  <Form.Control type="text" value={teamForm.captain} readOnly />
+                </Form.Group>
+              )}
+
               <Form.Group className="formGroup">
-                <Form.Label>Captain Name</Form.Label>
-                <Form.Control
-                  type="text"
+                <Form.Label>Vice-Captain</Form.Label>
+                <Select
                   required
-                  disabled={true}
-                  value={teamForm.captain}
-                  onChange={(e) =>
-                    setTeamForm({ ...teamForm, captain: e.target.value })
+                  value={availableCaptains.find(
+                    (c) => c.name === teamForm.viceCaptain
+                  )}
+                  onChange={(selected) =>
+                    setTeamForm({
+                      ...teamForm,
+                      viceCaptain: selected ? selected.name : "",
+                      viceCaptainPhoneNumber: selected
+                        ? selected.phoneNumber
+                        : "",
+                    })
                   }
-                  placeholder="Captain will be auto-filled"
+                  options={availableCaptains.map((captain) => {
+                    const isCaptain = teamForm.captain === captain.name;
+                    return {
+                      value: captain.id,
+                      label: `${captain.name}${
+                        captain.phoneNumber ? ` (${captain.phoneNumber})` : ""
+                      }`,
+                      name: captain.name,
+                      phoneNumber: captain.phoneNumber,
+                      email: captain.email,
+                      isDisabled: isCaptain, // Disable option if captain is selected
+                    };
+                  })}
+                  placeholder="Search and select vice-captain..."
+                  isSearchable
+                  className="basic-single"
+                  classNamePrefix="select"
                 />
+                <Form.Text className="text-muted">
+                  Search and select from registered users
+                </Form.Text>
               </Form.Group>
-              <Form.Group className="formGroup">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                  type="text"
-                  required
-                  disabled={true}
-                  value={teamForm.email}
-                  onChange={(e) =>
-                    setTeamForm({ ...teamForm, email: e.target.value })
-                  }
-                  placeholder="Email will be auto-filled"
-                />
-              </Form.Group>
-              <Form.Group className="formGroup">
-                <Form.Label>Phone Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  required
-                  value={teamForm.phoneNumber}
-                  disabled={true}
-                  onChange={(e) =>
-                    setTeamForm({ ...teamForm, phoneNumber: e.target.value })
-                  }
-                  placeholder="Contact number will be auto-filled"
-                />
-              </Form.Group>
+
+              {teamForm.viceCaptain && (
+                <Form.Group className="formGroup">
+                  <Form.Label>Selected Vice-Captain</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={teamForm.viceCaptain}
+                    readOnly
+                  />
+                </Form.Group>
+              )}
+
               <Form.Group className="formGroup">
                 <Form.Label>Status</Form.Label>
                 <Form.Select
@@ -486,9 +591,12 @@ export default function ManageCricketTeam() {
                   setTeamForm({
                     name: "",
                     captain: "",
-                    phoneNumber: "",
+                    viceCaptain: "",
+                    captainPhoneNumber: "",
+                    viceCaptainPhoneNumber: "",
                     status: "active",
                     email: "",
+                    players: [],
                   });
                 }}
               >
@@ -507,25 +615,28 @@ export default function ManageCricketTeam() {
             setViewTeamDetails(null);
             setTeamMembers([]);
           }}
+          className="wide-modal"
         >
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>Team Details</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             {viewTeamDetails && (
-              <>
-                <h5>Team Name: {viewTeamDetails.name}</h5>
+              <Container className="p-3">
+                <h5 className="text-primary">
+                  Team Name: {viewTeamDetails.name}
+                </h5>
                 <hr />
                 <h6 className="mb-3">Team Members</h6>
                 {teamMembers.length > 0 ? (
-                  <Table responsive size="sm">
+                  <Table responsive="sm" striped variant="dark">
                     <thead>
                       <tr>
                         <th>Name</th>
                         <th>Role</th>
                         <th>Contact</th>
                         <th>Jersey Name</th>
-                        <th>Jersey Number</th>
+                        <th>Jersey No</th>
                         <th>Jersey Size</th>
                       </tr>
                     </thead>
@@ -537,15 +648,17 @@ export default function ManageCricketTeam() {
                           <td>{member.phoneNumber}</td>
                           <td>{member.jerseyName}</td>
                           <td>{member.jerseyNumber}</td>
-                          <td>{member.jerseySize}</td>
+                          <td>{member.jerseySize.toUpperCase()}</td>
                         </tr>
                       ))}
                     </tbody>
                   </Table>
                 ) : (
-                  <p className="text-muted">No team members added yet.</p>
+                  <Alert variant="warning" className="text-center">
+                    No team members added yet.
+                  </Alert>
                 )}
-              </>
+              </Container>
             )}
           </Modal.Body>
           <Modal.Footer>

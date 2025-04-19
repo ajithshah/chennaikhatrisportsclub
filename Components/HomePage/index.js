@@ -4,7 +4,7 @@ import Image from "next/image";
 import { auth } from "../../firebase";
 import PrivacyModel from "../Model/PrivacyModel";
 import TermsModal from "../Model/TermsModal";
-
+import Team from "@/Components/HomePage/Team";
 import {
   signInWithPopup,
   GoogleAuthProvider,
@@ -48,7 +48,7 @@ const HomePage = () => {
 
   if (user) {
     return (
-      <div className="d-flex flex-column min-vh-100">
+      <div className="d-flex flex-column">
         <main className="flex-grow-1">
           <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center px-4">
             <div className="max-w-4xl mx-auto">
@@ -74,6 +74,7 @@ const HomePage = () => {
             </div>
           </div>
         </main>
+        <Team />
       </div>
     );
   }
@@ -129,7 +130,7 @@ const HomePage = () => {
                   <button
                     onClick={signInWithGoogle}
                     disabled={isLoading}
-                    className="inline-flex items-center justify-center px-6 py-3 rounded-xl gap-3 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 btn btn-primary rounded-pill"
+                    className="inline-flex items-center justify-center px-6 py-3 rounded-xl gap-3 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 btn btn-primary rounded-pill mb-3"
                     style={{
                       transition: "all 0.3s ease",
                       transform: "translateY(0)",
