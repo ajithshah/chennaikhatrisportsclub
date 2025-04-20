@@ -1,107 +1,98 @@
-import { google } from 'googleapis';
+import { put } from '@vercel/blob';
 import multer from 'multer';
-import stream from 'stream';
 
 // Configure multer for in-memory storage
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Disable Next.js body parser to handle multipart form data
+// Disable Next.js body parser for multipart form data
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
-// Middleware to parse multipart form data
-const runMiddleware = (req, res, fn) =>
-  new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) return reject(result);
-      return resolve(result);
+// Allowed MIME types for images
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+
+// Validate environment variables
+const validateEnv = () => {
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    throw new Error('Missing BLOB_READ_WRITE_TOKEN environment variable');
+  }
+};
+
+// Process file upload with multer
+const processFileUpload = (req) => {
+  return new Promise((resolve, reject) => {
+    upload.single('file')(req, {}, (err) => {
+      if (err) return reject(err);
+      if (!req.file) return reject(new Error('No file provided'));
+      resolve(req.file);
     });
   });
+};
 
 export default async function handler(req, res) {
   try {
-    // Run multer middleware
-    await runMiddleware(req, res, upload.single('file'));
-
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file provided' });
+    // Validate request method
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    // Restrict to image files
-    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    if (!allowedMimeTypes.includes(req.file.mimetype)) {
-      return res.status(400).json({ error: 'Only JPEG, PNG, or GIF images are allowed' });
+    // Validate environment variables
+    validateEnv();
+
+    // Process file upload
+    const file = await processFileUpload(req);
+
+    // Validate MIME type
+    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+      return res.status(400).json({
+        error: `Only ${ALLOWED_MIME_TYPES.join(', ')} files are allowed`,
+      });
     }
 
-    console.log('Environment Variables:', {
-      folderId: process.env.GOOGLE_FOLDER_ID,
-    });
-
-    if (!process.env.GOOGLE_FOLDER_ID) {
-      return res.status(500).json({ error: 'Missing GOOGLE_FOLDER_ID' });
+    // Check file size (Vercel serverless function limit: 4.5 MB)
+    const maxSize = 4.5 * 1024 * 1024; // 4.5 MB in bytes
+    if (file.size > maxSize) {
+      return res.status(400).json({
+        error: `File size exceeds 4.5 MB limit.`,
+      });
     }
 
-    if (!process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
-      return res.status(500).json({ error: 'Missing GOOGLE_SERVICE_ACCOUNT_KEY' });
-    }
+    // Upload to Vercel Blob
+    console.log('Uploading file:', { name: file.originalname });
+    const blob = await put(
+      `team-logos/${file.originalname}`,
+      file.buffer,
+      {
+        access: 'public',
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+        addRandomSuffix: false,
+      }
+    );
 
-    // Authenticate with base64-encoded service account key
-    const serviceAccountKey = Buffer.from(
-      process.env.GOOGLE_SERVICE_ACCOUNT_KEY,
-      'base64'
-    ).toString();
-    const auth = new google.auth.GoogleAuth({
-      credentials: JSON.parse(serviceAccountKey),
-      scopes: ['https://www.googleapis.com/auth/drive'],
+    console.log('Uploaded file:', {
+      pathname: blob.pathname,
+      url: blob.url,
+      contentType: blob.contentType,
     });
 
-    const drive = google.drive({ version: 'v3', auth });
-
-    // Convert buffer to stream
-    const bufferStream = new stream.PassThrough();
-    bufferStream.end(req.file.buffer);
-
-    // Upload file to Google Drive
-    const fileMetadata = {
-      name: req.file.originalname,
-      parents: [process.env.GOOGLE_FOLDER_ID],
-    };
-
-    const media = {
-      mimeType: req.file.mimetype,
-      body: bufferStream,
-    };
-
-    const { data } = await drive.files.create({
-      resource: fileMetadata,
-      media,
-      fields: 'id, name',
-    });
-
-    console.log('Uploaded file:', data);
-
-    // Set file permissions to "Anyone with the link"
-    await drive.permissions.create({
-      fileId: data.id,
-      requestBody: {
-        role: 'reader',
-        type: 'anyone',
-      },
-    });
-
-    // Generate direct URL for embedding
-    const fileUrl = `https://drive.google.com/uc?export=download&id=${data.id}`;
-
+    // Respond with format compatible with ManageCricketTeam.js
     res.status(200).json({
-      message: 'File uploaded',
-      fileId: data.id,
-      fileUrl,
+      message: 'File uploaded successfully',
+      fileId: blob.pathname,
+      fileUrl: blob.url,
     });
   } catch (error) {
-    console.error('Error uploading to Google Drive:', error);
-    res.status(500).json({ error: error.message, details: error.response?.data });
+    console.error('Error in upload handler:', error);
+    const status = error.message.includes('No file provided') ||
+                  error.message.includes('Only') ||
+                  error.message.includes('File size') ? 400 : 500;
+
+    res.status(status).json({
+      error: error.message,
+      details: error.response?.data || null,
+    });
   }
 }

@@ -1,6 +1,6 @@
+"use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import {
   Container,
   Card,
@@ -22,6 +22,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
+import Image from "next/image";
 import Header from "@/Components/Header";
 import Meta from "@/Components/Meta";
 import Select from "react-select";
@@ -66,9 +67,6 @@ export default function ManageCricketTeam() {
               id: doc.id,
               ...doc.data(),
             }));
-
-            console.log("teamsData", teamsData);
-            
             setTeams(teamsData);
           }),
         ]);
@@ -109,6 +107,152 @@ export default function ManageCricketTeam() {
     }
   };
 
+  const handleAddTeam = async (e) => {
+    e.preventDefault();
+    try {
+      // Validate user authentication
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("You must be logged in to add a team.");
+      }
+
+      // Validate captain and vice-captain
+      if (teamForm.captain === teamForm.viceCaptain) {
+        throw new Error("Captain and Vice-Captain cannot be the same person.");
+      }
+
+      let fileUrl = null;
+      if (teamForm.file) {
+        // Log file details
+        console.log("File selected for upload:", {
+          name: teamForm.file.name,
+          type: teamForm.file.type,
+          size: teamForm.file.size,
+        });
+
+        // Validate file existence and type
+        if (!teamForm.file.name) {
+          throw new Error("No file selected for upload.");
+        }
+        if (!/\.(jpe?g|png|gif)$/i.test(teamForm.file.name)) {
+          throw new Error("Only JPEG, PNG, or GIF files are allowed.");
+        }
+
+        // Request upload URL from /api/blob-upload
+        console.log("Requesting upload URL for:", {
+          filename: teamForm.file.name,
+        });
+        const uploadUrlResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: JSON.stringify({ filename: teamForm.file.name }),
+          headers: { "Content-Type": "application/json" },
+        });
+
+        // Handle non-JSON responses
+        let urlData;
+        try {
+          urlData = await uploadUrlResponse.json();
+        } catch (jsonError) {
+          const responseText = await uploadUrlResponse.text();
+          console.error("Non-JSON response from /api/upload:", {
+            status: uploadUrlResponse.status,
+            text: responseText.slice(0, 200),
+          });
+          throw new Error(
+            `Invalid response from upload API: ${uploadUrlResponse.status}`
+          );
+        }
+
+        // Check for HTTP errors
+        if (!uploadUrlResponse.ok) {
+          console.error("Upload URL request failed:", {
+            status: uploadUrlResponse.status,
+            error: urlData.error,
+            details: urlData.details,
+          });
+          throw new Error(
+            urlData.error ||
+              `Failed to generate upload URL: HTTP ${uploadUrlResponse.status}`
+          );
+        }
+
+        // Validate response data
+        const { url, pathname } = urlData;
+        console.log("Received upload URL:", { url, pathname });
+        if (!url) {
+          console.error("No URL in response:", urlData);
+          throw new Error("No upload URL returned");
+        }
+
+        // Upload file to Vercel Blob
+        console.log("Uploading file to:", url);
+        const fileUploadResponse = await fetch(url, {
+          method: "PUT",
+          body: teamForm.file,
+        });
+
+        if (!fileUploadResponse.ok) {
+          const errorText = await fileUploadResponse.text();
+          console.error("File upload failed:", {
+            status: fileUploadResponse.status,
+            error: errorText,
+          });
+          throw new Error(
+            `Failed to upload file to Vercel Blob: ${
+              errorText || fileUploadResponse.status
+            }`
+          );
+        }
+
+        fileUrl = url;
+        console.log("File uploaded successfully:", { fileUrl });
+      } else {
+        console.log("No file selected for upload.");
+      }
+
+      // Create new team object
+      const newTeam = {
+        name: teamForm.name,
+        captain: teamForm.captain,
+        viceCaptain: teamForm.viceCaptain,
+        captainPhoneNumber: teamForm.captainPhoneNumber,
+        viceCaptainPhoneNumber: teamForm.viceCaptainPhoneNumber,
+        status: teamForm.status,
+        email: teamForm.email,
+        players: teamForm.players,
+        fileUrl,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      // Save to Firestore
+      console.log("Saving team to Firestore:", { name: newTeam.name, fileUrl });
+      const docRef = await addDoc(collection(db, "cricket_teams"), newTeam);
+      setTeams([...teams, { id: docRef.id, ...newTeam }]);
+
+      // Reset form and close modal
+      setShowModal(false);
+      setTeamForm({
+        name: "",
+        captain: "",
+        viceCaptain: "",
+        captainPhoneNumber: "",
+        viceCaptainPhoneNumber: "",
+        status: "active",
+        email: "",
+        players: [],
+        file: null,
+      });
+      console.log("Team added successfully:", { id: docRef.id });
+    } catch (error) {
+      console.error("Error adding team:", {
+        message: error.message,
+        stack: error.stack,
+      });
+      alert(`Error adding team: ${error.message}`);
+    }
+  };
+
   const handleEditTeam = async (team) => {
     setIsEditing(true);
     setTeamForm({
@@ -124,6 +268,96 @@ export default function ManageCricketTeam() {
       file: null,
     });
     setShowModal(true);
+  };
+
+  const handleUpdateTeam = async (e) => {
+    e.preventDefault();
+    try {
+      if (teamForm.captain === teamForm.viceCaptain) {
+        alert("Captain and Vice-Captain cannot be the same person.");
+        return;
+      }
+
+      const teamRef = doc(db, "cricket_teams", teamForm.id);
+      const updateData = {
+        name: teamForm.name,
+        captain: teamForm.captain,
+        viceCaptain: teamForm.viceCaptain,
+        captainPhoneNumber: teamForm.captainPhoneNumber,
+        viceCaptainPhoneNumber: teamForm.viceCaptainPhoneNumber,
+        status: teamForm.status,
+        email: teamForm.email,
+        players: teamForm.players,
+        updatedAt: new Date().toISOString(),
+      };
+
+      if (teamForm.file) {
+        // Validate file type client-side
+        if (!/\.(jpe?g|png|gif)$/i.test(teamForm.file.name)) {
+          alert("Only JPEG, PNG, or GIF files are allowed.");
+          return;
+        }
+
+        // Client-side upload to Vercel Blob
+        console.log("Requesting upload URL for:", teamForm.file.name);
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: JSON.stringify({ filename: teamForm.file.name }),
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error("Blob upload error:", errorData);
+          throw new Error(errorData.error || `HTTP error ${response.status}`);
+        }
+
+        const { url } = await response.json();
+        console.log("Received upload URL:", url);
+        if (!url) {
+          throw new Error("No upload URL returned");
+        }
+
+        // Upload file directly
+        console.log("Uploading file to:", url);
+        const uploadResponse = await fetch(url, {
+          method: "PUT",
+          body: teamForm.file,
+        });
+
+        if (!uploadResponse.ok) {
+          console.error("Upload failed:", await uploadResponse.text());
+          throw new Error("Failed to upload file to Vercel Blob");
+        }
+
+        updateData.fileUrl = url;
+      }
+
+      await updateDoc(teamRef, updateData);
+
+      setTeams(
+        teams.map((team) =>
+          team.id === teamForm.id ? { ...team, ...updateData } : team
+        )
+      );
+
+      setShowModal(false);
+      setIsEditing(false);
+      setTeamForm({
+        name: "",
+        captain: "",
+        viceCaptain: "",
+        captainPhoneNumber: "",
+        viceCaptainPhoneNumber: "",
+        status: "active",
+        email: "",
+        players: [],
+        file: null,
+      });
+    } catch (error) {
+      console.error("Error updating team:", error);
+      alert("Error updating team: " + error.message);
+    }
   };
 
   const handleDeleteTeam = async (teamId) => {
@@ -155,197 +389,6 @@ export default function ManageCricketTeam() {
     }
   };
 
-  const handleUpdateTeam = async (e) => {
-    e.preventDefault();
-    try {
-      if (teamForm.captain === teamForm.viceCaptain) {
-        alert("Captain and Vice-Captain cannot be the same person.");
-        return;
-      }
-
-      const teamRef = doc(db, "cricket_teams", teamForm.id);
-      const updateData = {
-        name: teamForm.name,
-        captain: teamForm.captain,
-        viceCaptain: teamForm.viceCaptain,
-        captainPhoneNumber: teamForm.captainPhoneNumber,
-        viceCaptainPhoneNumber: teamForm.viceCaptainPhoneNumber,
-        status: teamForm.status,
-        email: teamForm.email,
-        players: teamForm.players,
-        updatedAt: new Date().toISOString(),
-      };
-
-      if (teamForm.file) {
-        const formData = new FormData();
-        formData.append("file", teamForm.file);
-
-        const uploadResponse = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-        const uploadData = await uploadResponse.json();
-        if (uploadData.error) {
-          alert("Error uploading file: " + uploadData.error);
-          return;
-        }
-        updateData.fileUrl = uploadData.fileUrl;
-      }
-
-      await updateDoc(teamRef, updateData);
-
-      setTeams(
-        teams.map((team) =>
-          team.id === teamForm.id ? { ...team, ...updateData } : team
-        )
-      );
-
-      setShowModal(false);
-      setIsEditing(false);
-      setTeamForm({
-        name: "",
-        captain: "",
-        viceCaptain: "",
-        captainPhoneNumber: "",
-        viceCaptainPhoneNumber: "",
-        status: "active",
-        email: "",
-        players: [],
-        file: null,
-      });
-    } catch (error) {
-      console.error("Error updating team:", error);
-      alert("Error updating team: " + error.message);
-    }
-  };
-
-  const handleAddTeam = async (e) => {
-    e.preventDefault();
-    try {
-      const user = auth.currentUser;
-      if (!user) {
-        alert("You must be logged in to add a team.");
-        return;
-      }
-
-      if (teamForm.captain === teamForm.viceCaptain) {
-        alert("Captain and Vice-Captain cannot be the same person.");
-        return;
-      }
-
-      const existingCaptainTeam = teams.find(
-        (team) => team.captain === teamForm.captain
-      );
-
-      if (existingCaptainTeam) {
-        alert(
-          `Captain ${teamForm.captain} is already assigned to another team. Please select a different captain.`
-        );
-        return;
-      }
-
-      const existingViceCaptainTeam = teams.find(
-        (team) =>
-          team.players.some((player) => player.role === "Vice Captain") &&
-          team.viceCaptain === teamForm.viceCaptain
-      );
-
-      if (existingViceCaptainTeam) {
-        alert(
-          `Vice-Captain ${teamForm.viceCaptain} is already assigned to another team. Please select a different vice-captain.`
-        );
-        return;
-      }
-
-      let fileUrl = null;
-      if (teamForm.file) {
-        const formData = new FormData();
-        formData.append("file", teamForm.file);
-
-        const uploadResponse = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-        const uploadData = await uploadResponse.json();
-        if (uploadData.error) {
-          alert("Error uploading file: " + uploadData.error);
-          return;
-        }
-        fileUrl = uploadData.fileUrl;
-      }
-
-      const newTeam = {
-        name: teamForm.name,
-        captain: teamForm.captain,
-        viceCaptain: teamForm.viceCaptain,
-        captainPhoneNumber: teamForm.captainPhoneNumber,
-        viceCaptainPhoneNumber: teamForm.viceCaptainPhoneNumber,
-        status: teamForm.status,
-        email: teamForm.email,
-        players: [
-          {
-            name: teamForm.captain,
-            isCaptain: true,
-            isViceCaptain: false,
-            phoneNumber: teamForm.captainPhoneNumber,
-            jerseyNumber: "",
-            jerseyName: "",
-            jerseySize: "",
-            role: "",
-            userId:
-              availableCaptains.find(
-                (captain) => captain.name === teamForm.captain
-              )?.id || "",
-          },
-          {
-            name: teamForm.viceCaptain,
-            isCaptain: false,
-            isViceCaptain: true,
-            phoneNumber: teamForm.viceCaptainPhoneNumber,
-            jerseyNumber: "",
-            jerseyName: "",
-            jerseySize: "",
-            role: "",
-            userId:
-              availableCaptains.find(
-                (captain) => captain.name === teamForm.viceCaptain
-              )?.id || "",
-          },
-        ],
-        fileUrl: fileUrl,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      await addDoc(collection(db, "cricket_teams"), newTeam);
-
-      setShowModal(false);
-      setTeamForm({
-        name: "",
-        captain: "",
-        viceCaptain: "",
-        captainPhoneNumber: "",
-        viceCaptainPhoneNumber: "",
-        status: "active",
-        email: "",
-        players: [],
-        file: null,
-      });
-
-      const teamsSnap = await getDocs(collection(db, "cricket_teams"));
-      const teamsData = teamsSnap.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setTeams(teamsData);
-    } catch (error) {
-      console.error("Error adding team:", error);
-      alert("Error adding team: " + error.message);
-    }
-  };
-
   const handleViewTeam = async (teamId) => {
     try {
       const teamRef = doc(db, "cricket_teams", teamId);
@@ -353,21 +396,30 @@ export default function ManageCricketTeam() {
 
       if (teamSnap.exists()) {
         const teamData = teamSnap.data();
-        // Convert legacy fileId or view URL to direct URL
-        if (teamData.fileId && !teamData.fileUrl) {
-          teamData.fileUrl = `https://drive.google.com/uc?export=download&id=${teamData.fileId}`;
-        } else if (
+        // Convert legacy Google Drive URLs to inline view URL
+        if (
           teamData.fileUrl &&
-          teamData.fileUrl.includes("/file/d/") &&
-          teamData.fileUrl.includes("/view")
+          (teamData.fileUrl.includes("/file/d/") ||
+            teamData.fileUrl.includes("uc?export=download") ||
+            teamData.fileUrl.includes("drive.usercontent.google.com/download"))
         ) {
-          const fileId = teamData.fileUrl.split("/d/")[1].split("/")[0];
-          teamData.fileUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+          const fileIdMatch = teamData.fileUrl.match(
+            /\/d\/([^/]+)\/|id=([^&]+)/
+          );
+          const fileId = fileIdMatch ? fileIdMatch[1] || fileIdMatch[2] : null;
+          if (fileId) {
+            teamData.fileUrl = `https://drive.google.com/uc?id=${fileId}`;
+            await updateDoc(teamRef, { fileUrl: teamData.fileUrl });
+          }
+        }
+        // Legacy fileId support
+        if (teamData.fileId && !teamData.fileUrl) {
+          teamData.fileUrl = `https://drive.google.com/uc?id=${teamData.fileId}`;
+          await updateDoc(teamRef, { fileUrl: teamData.fileUrl, fileId: null });
         }
         setViewTeamDetails(teamData);
 
         const players = teamData.players || [];
-
         const membersData = players.map((player, index) => ({
           id: index.toString(),
           name: player.name,
@@ -395,7 +447,7 @@ export default function ManageCricketTeam() {
     return (
       <Container className="py-5 text-center">
         <Spinner animation="border" role="status">
-          <span className="visually-hidden"></span>
+          <span className="visually-hidden">Loading...</span>
         </Spinner>
       </Container>
     );
@@ -453,13 +505,25 @@ export default function ManageCricketTeam() {
                   {teams.map((team) => (
                     <tr key={team.id}>
                       <td className="px-4 py-3 fw-semibold">
-                        <img
-                          src={team.fileUrl}
-                          width={50}
-                          height={50}
-                          className="rounded-circle img-fluid"
-                          alt={`${team.name}'s logo`}
-                        />
+                        {team.fileUrl ? (
+                          <Image
+                            src={team.fileUrl}
+                            width={50}
+                            height={50}
+                            className="rounded-circle img-fluid"
+                            alt={`${team.name}'s logo`}
+                            onError={(e) => {
+                              console.error(
+                                "Error loading image:",
+                                team.fileUrl
+                              );
+                              e.target.style.display = "none";
+                              e.target.nextSibling.style.display = "block";
+                            }}
+                          />
+                        ) : (
+                          <span>No Logo</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 fw-semibold">{team.name}</td>
                       <td className="px-4 py-3">
@@ -653,7 +717,7 @@ export default function ManageCricketTeam() {
                   }
                 />
                 <Form.Text className="text-muted">
-                  Upload a team logo (JPEG, PNG, or GIF).
+                  Upload a team logo (JPEG, PNG, or GIF). Max 10 MB.
                 </Form.Text>
               </Form.Group>
 
@@ -723,7 +787,6 @@ export default function ManageCricketTeam() {
                       width={200}
                       height={200}
                       alt="Team Logo"
-                      priority
                       className="img-fluid"
                       onError={(e) => {
                         console.error(
@@ -731,8 +794,10 @@ export default function ManageCricketTeam() {
                           viewTeamDetails.fileUrl
                         );
                         e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "block";
                       }}
                     />
+                    <span style={{ display: "none" }}>No Logo</span>
                   </div>
                 )}
                 <hr />
