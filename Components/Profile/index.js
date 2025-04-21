@@ -262,7 +262,7 @@ export default function Profile() {
                       <Badge
                         bg="primary"
                         text="light"
-                        className="rounded-pill px-3 py-2 ms-1"
+                        className="rounded-pill px-3 py-2 ms-1 ml-2"
                       >
                         {teamData.name}
                       </Badge>
