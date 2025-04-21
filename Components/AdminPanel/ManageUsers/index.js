@@ -155,7 +155,7 @@ export default function ManageUsers() {
                 />
                 <Badge
                   bg="primary"
-                  className="px-4 py-3 rounded-pill text-light text-center"
+                  className="px-4 py-3 rounded-pill text-light text-center ml-2"
                   style={{
                     width: "100%",
                     maxWidth: "200px",
@@ -173,7 +173,7 @@ export default function ManageUsers() {
                     <th>Profile</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Phone</th>
+                    <th>Contact</th>
                     <th>DOB</th>
                     <th>Role</th>
                     <th>Actions</th>
@@ -212,7 +212,7 @@ export default function ManageUsers() {
                           size="sm"
                           variant="light"
                           className="rounded-pill"
-                          onClick={() => router.push(`/admin/users/${user.id}`)}
+                          onClick={() => router.push(`/adminpanel/users/${user.id}`)}
                         >
                           View Details
                         </Button>

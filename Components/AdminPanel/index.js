@@ -107,7 +107,7 @@ export default function AdminPanel() {
                       className="rounded-pill px-4 w-100"
                       onClick={() => router.push(sport.link)}
                     >
-                      <i className="fas fa-tasks me-2"></i>
+                      {/* <i className="fas fa-tasks me-2"></i> */}
                       Manage
                     </Button>
                   </div>

@@ -72,13 +72,17 @@ const Header = () => {
     >
       <div className="container-fluid">
         <Navbar.Brand className="d-flex align-items-center">
-          <Image
-            src={logo}
-            alt="Logo"
-            width={50}
-            height={50}
-            className="me-2"
-          />
+          <Link href="/" passHref legacyBehavior>
+            <Nav.Link>
+              <Image
+                src={logo}
+                alt="Logo"
+                width={50}
+                height={50}
+                className="me-2"
+              />
+            </Nav.Link>
+          </Link>
           <div>
             <div className="fs-5 mb-0 text-dark font-weight-bold">
               <Link href="/" passHref legacyBehavior>
@@ -101,9 +105,9 @@ const Header = () => {
             {/* <Link href="/about" passHref legacyBehavior>
               <Nav.Link className="px-3 text-dark">About</Nav.Link>
             </Link> */}
-            {/* <Link href="/contact" passHref legacyBehavior>
+            <Link href="/contact" passHref legacyBehavior>
               <Nav.Link className="px-3 text-dark">Contact</Nav.Link>
-            </Link> */}
+            </Link>
           </Nav>
           <Nav className="d-flex align-items-center justify-content-end gap-3 w-100">
             {user ? (
@@ -128,13 +132,6 @@ const Header = () => {
                           {user.displayName}
                         </span>
                       </div>
-                      <i
-                        className="fas fa-chevron-down text-muted"
-                        style={{
-                          fontSize: "12px",
-                          transition: "transform 0.2s ease",
-                        }}
-                      ></i>
                     </div>
                   }
                   id="nav-dropdown"

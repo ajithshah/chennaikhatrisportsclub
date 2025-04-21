@@ -1,16 +1,131 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { Container, Card, Row, Col, Button } from "react-bootstrap";
+import { Container, Card, Row, Col, Button, Badge } from "react-bootstrap";
 import { auth, db } from "../../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import Header from "../../Components/Header";
 import Meta from "../../Components/Meta";
 
-export function Profile() {
+export default function Profile() {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [teamData, setTeamData] = useState(null);
+
+  const fetchTeamData = async (userData) => {
+    if (!userData?.phoneNumber) {
+      console.error("No phone number found for user");
+      return;
+    }
+
+    try {
+      const teamsRef = collection(db, "cricket_teams");
+      const userPhone = userData.phoneNumber;
+
+      // First check if user is a team owner (captain or viceCaptain)
+      const teamQuery = query(
+        teamsRef,
+        where("captainPhoneNumber", "==", userPhone)
+      );
+      const teamSnapshot = await getDocs(teamQuery);
+
+      // Check if user is vice captain
+      const viceCaptainQuery = query(
+        teamsRef,
+        where("viceCaptainPhoneNumber", "==", userPhone)
+      );
+      const viceCaptainSnapshot = await getDocs(viceCaptainQuery);
+
+      let foundAsOwner = false;
+
+      if (!teamSnapshot.empty) {
+        const teamDoc = teamSnapshot.docs[0];
+        const teamData = teamDoc.data();
+        foundAsOwner = true;
+        setTeamData({
+          id: teamDoc.id,
+          ...teamData,
+          role: "Captain",
+          jerseyNumber:
+            teamData.players?.find((p) => p.phoneNumber === userPhone)
+              ?.jerseyNumber || "",
+          jerseyName:
+            teamData.players?.find((p) => p.phoneNumber === userPhone)
+              ?.jerseyName || "",
+          jerseySize:
+            teamData.players?.find((p) => p.phoneNumber === userPhone)
+              ?.jerseySize || "",
+          isCaptain: true,
+          isViceCaptain: false,
+        });
+      } else if (!viceCaptainSnapshot.empty) {
+        const teamDoc = viceCaptainSnapshot.docs[0];
+        const teamData = teamDoc.data();
+        foundAsOwner = true;
+        setTeamData({
+          id: teamDoc.id,
+          ...teamData,
+          role: "Vice Captain",
+          jerseyNumber:
+            teamData.players?.find((p) => p.phoneNumber === userPhone)
+              ?.jerseyNumber || "",
+          jerseyName:
+            teamData.players?.find((p) => p.phoneNumber === userPhone)
+              ?.jerseyName || "",
+          jerseySize:
+            teamData.players?.find((p) => p.phoneNumber === userPhone)
+              ?.jerseySize || "",
+          isCaptain: false,
+          isViceCaptain: true,
+        });
+      }
+
+      if (!foundAsOwner) {
+        // Then check if user exists in any team's players array
+        const teamsSnapshot = await getDocs(teamsRef);
+        let playerTeam = null;
+
+        // Search through all teams for matching player
+        for (const doc of teamsSnapshot.docs) {
+          const team = doc.data();
+          const playerMatch = team.players?.find(
+            (player) => player.phoneNumber === userPhone
+          );
+          if (playerMatch) {
+            playerTeam = { id: doc.id, ...team, playerDetails: playerMatch };
+            break;
+          }
+        }
+
+        if (playerTeam) {
+          setTeamData({
+            id: playerTeam.id,
+            name: playerTeam.name,
+            role: "Player",
+            jerseyNumber: playerTeam.playerDetails.jerseyNumber || "",
+            jerseyName: playerTeam.playerDetails.jerseyName || "",
+            jerseySize: playerTeam.playerDetails.jerseySize || "",
+            isCaptain: playerTeam.playerDetails.isCaptain || false,
+            isViceCaptain: playerTeam.playerDetails.isViceCaptain || false,
+          });
+        } else {
+          console.log("User not found in any team");
+          setTeamData(null);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching team data:", error);
+      setTeamData(null);
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -19,10 +134,10 @@ export function Profile() {
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
-          setUserData({ ...userSnap.data(), id: user.uid });
+          const userData = { ...userSnap.data(), id: user.uid };
+          setUserData(userData);
+          await fetchTeamData(userData); // Pass the full userData object
         }
-
-        console.log(userSnap.data());
       } else {
         router.push("/");
       }
@@ -73,28 +188,28 @@ export function Profile() {
                 <div className="mb-4">
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-map-marker-alt me-2"></i>Name:
+                      Name:
                     </div>
                     <div>{userData?.displayName || "Not provided"}</div>
                   </div>
 
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-envelope me-2"></i>Email:
+                      Email:
                     </div>
                     <div>{userData?.email || "Not provided"}</div>
                   </div>
 
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-phone me-2"></i>Mobile:
+                      Mobile:
                     </div>
                     <div>{userData?.phoneNumber || "Not provided"}</div>
                   </div>
 
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-phone me-2"></i>Date Of Birth:
+                      Date Of Birth:
                     </div>
                     <div>{userData?.dateOfBirth || "Not provided"}</div>
                   </div>
@@ -126,7 +241,33 @@ export function Profile() {
 
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
-                      <i className="fas fa-clock me-2"></i>Last Login:
+                      Address:
+                    </div>
+                    <div>
+                      {userData?.address ? (
+                        <>
+                          {userData.address.street && (
+                            <div>{userData.address.street}</div>
+                          )}
+                          <div>
+                            {[
+                              userData.address.city,
+                              userData.address.state,
+                              userData.address.pincode,
+                            ]
+                              .filter(Boolean)
+                              .join(", ") || "Not provided"}
+                          </div>
+                        </>
+                      ) : (
+                        "Not provided"
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="d-flex align-items-center mb-3">
+                    <div className="text-muted" style={{ width: "140px" }}>
+                      Last Login:
                     </div>
                     <div>
                       {userData?.lastLogin
@@ -136,24 +277,76 @@ export function Profile() {
                   </div>
                 </div>
 
-                <div className="d-flex gap-3 mt-4">
+                {teamData && (
+                  <div className="d-flex align-items-center mb-3">
+                    <div className="text-muted" style={{ width: "140px" }}>
+                      Cricket Team:
+                    </div>
+                    <div className="d-flex align-items-center gap-2">
+                      Associated with
+                      <Badge
+                        bg="primary"
+                        text="light"
+                        className="rounded-pill px-3 py-2 ms-1 ml-2"
+                      >
+                        {teamData.name}
+                      </Badge>
+                    </div>
+                  </div>
+                )}
+
+                <div className="d-flex flex-wrap gap-2 gap-md-3 mt-4">
+                  <Button
+                    variant="primary"
+                    onClick={() => router.push("/")}
+                    className="px-3 py-2 rounded-pill"
+                  >
+                    <i className="fas fa-home me-md-2"></i>
+                    <span className="d-none d-md-inline">Home</span>
+                  </Button>
                   <Button
                     variant="primary"
                     onClick={() => router.push("/profile/edit")}
-                    className="px-4 py-2 rounded-pill"
+                    className="px-3 py-2 rounded-pill ml-1"
                   >
-                    <i className="fas fa-edit me-2"></i>
-                    Edit Profile
+                    <i className="fas fa-edit me-md-2 mr-1"></i>
+                    <span className="d-none d-md-inline">Edit Profile</span>
                   </Button>
-
+                  {teamData && (
+                    <Button
+                      variant="outline-success"
+                      disabled="true"
+                      onClick={() => router.push(`/team/${teamData.id}`)}
+                      className="px-3 py-2 rounded-pill ml-1"
+                    >
+                      <i className="fas fa-users me-md-2 mr-1"></i>
+                      <span className="d-none d-md-inline">View Team</span>
+                    </Button>
+                  )}
+                  {teamData &&
+                    (userData.phoneNumber === teamData.captainPhoneNumber ||
+                      userData.phoneNumber ===
+                        teamData.viceCaptainPhoneNumber) && (
+                      <Button
+                        variant="outline-success"
+                        disabled="true"
+                        onClick={() =>
+                          router.push(`/team/manage/${teamData.id}`)
+                        }
+                        className="px-3 py-2 rounded-pill ml-1"
+                      >
+                        <i className="fas fa-user-cog me-md-2 mr-1"></i>
+                        <span className="d-none d-md-inline">Manage Team</span>
+                      </Button>
+                    )}
                   {userData?.isAdmin && (
                     <Button
                       variant="outline-primary"
                       onClick={() => router.push("/adminpanel")}
-                      className="px-2 py-2 rounded-pill ms-2 ml-2"
+                      className="px-3 py-2 rounded-pill ml-1"
                     >
-                      <i className="fas fa-users-cog me-2"></i>
-                      Admin Panel
+                      <i className="fas fa-users-cog me-md-2 mr-1"></i>
+                      <span className="d-none d-md-inline">Admin Panel</span>
                     </Button>
                   )}
                 </div>
@@ -165,5 +358,3 @@ export function Profile() {
     </>
   );
 }
-
-export default Profile;

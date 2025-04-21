@@ -1,3 +1,22 @@
+// import React from "react";
+// import Header from "@/Components/Header";
+// import Footer from "@/Components/Footer";
+// import Meta from "@/Components/Meta";
+// import HomePage from "@/Components/HomePage";
+
+// export default function Home() {
+//   return (
+//     <div className="d-flex flex-column min-vh-100">
+//       <Meta />
+//       <main className="flex-grow-1">
+//         <Header />
+//         <HomePage />
+//       </main>
+//       <Footer />
+//     </div>
+//   );
+// }
+
 import React, { useState, useEffect } from "react";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
