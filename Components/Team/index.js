@@ -288,7 +288,7 @@ export default function Team() {
 
   return (
     <>
-      <Meta title={`Team - ${teamData?.name || "Loading..."}`} />
+      <Meta />
       <Container className="py-5">
         <Card className="border-0 shadow-sm">
           <Card.Body className="p-4">

@@ -1,98 +1,100 @@
-import { put } from '@vercel/blob';
-import multer from 'multer';
+import { put } from "@vercel/blob";
+import multer from "multer";
+import { config as dotenvConfig } from "dotenv";
 
-// Configure multer for in-memory storage
+// Initialize configuration for environment variables
+dotenvConfig();
+
+// Setup multer to use memory storage
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Disable Next.js body parser for multipart form data
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
-// Allowed MIME types for images
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+// Allowed MIME types for validation
+const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/jpg"];
 
-// Validate environment variables
+// File size limit (4.5 MB)
+const FILE_SIZE_LIMIT = 4.5 * 1024 * 1024;
+
+// Validate necessary environment variables
 const validateEnv = () => {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    throw new Error('Missing BLOB_READ_WRITE_TOKEN environment variable');
+    throw new Error("Missing BLOB_READ_WRITE_TOKEN environment variable");
   }
 };
 
-// Process file upload with multer
+// Processing file upload using multer middleware
 const processFileUpload = (req) => {
   return new Promise((resolve, reject) => {
-    upload.single('file')(req, {}, (err) => {
+    upload.single("file")(req, {}, (err) => {
       if (err) return reject(err);
-      if (!req.file) return reject(new Error('No file provided'));
+      if (!req.file) return reject(new Error("No file provided"));
       resolve(req.file);
     });
   });
 };
 
+// Main handler for the API route
 export default async function handler(req, res) {
-  try {
-    // Validate request method
-    if (req.method !== 'POST') {
-      return res.status(405).json({ error: 'Method not allowed' });
-    }
+  // Ensure that only POST method is allowed
+  if (req.method !== "POST") {
+    console.log("Method not allowed");
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
+  try {
     // Validate environment variables
     validateEnv();
 
     // Process file upload
     const file = await processFileUpload(req);
+    // console.log("Received file:", file);
 
     // Validate MIME type
     if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+      console.log("Invalid MIME type:", file.mimetype);
       return res.status(400).json({
-        error: `Only ${ALLOWED_MIME_TYPES.join(', ')} files are allowed`,
+        error: `Only ${ALLOWED_MIME_TYPES.join(", ")} files are allowed`,
       });
     }
 
-    // Check file size (Vercel serverless function limit: 4.5 MB)
-    const maxSize = 4.5 * 1024 * 1024; // 4.5 MB in bytes
-    if (file.size > maxSize) {
+    // Validate file size
+    if (file.size > FILE_SIZE_LIMIT) {
+      console.log("File size limit exceeded:", file.size);
       return res.status(400).json({
-        error: `File size exceeds 4.5 MB limit.`,
+        error: `File size exceeds ${FILE_SIZE_LIMIT / (1024 * 1024)} MB limit.`,
       });
     }
 
-    // Upload to Vercel Blob
-    console.log('Uploading file:', { name: file.originalname });
-    const blob = await put(
-      `team-logos/${file.originalname}`,
-      file.buffer,
-      {
-        access: 'public',
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-        addRandomSuffix: false,
-      }
-    );
-
-    console.log('Uploaded file:', {
-      pathname: blob.pathname,
-      url: blob.url,
-      contentType: blob.contentType,
+    // Upload the file to Vercel Blob storage
+    const blob = await put(`team-logos/${file.originalname}`, file.buffer, {
+      access: "public",
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+      allowOverwrite: true,
+      addRandomSuffix: false,
     });
 
-    // Respond with format compatible with ManageCricketTeam.js
-    res.status(200).json({
-      message: 'File uploaded successfully',
-      fileId: blob.pathname,
+    // console.log("File uploaded successfully:", blob);
+    return res.status(200).json({
+      message: "File uploaded successfully",
       fileUrl: blob.url,
+      fileId: blob.pathname,
     });
   } catch (error) {
-    console.error('Error in upload handler:', error);
-    const status = error.message.includes('No file provided') ||
-                  error.message.includes('Only') ||
-                  error.message.includes('File size') ? 400 : 500;
+    console.error("Error in upload handler:", error);
 
-    res.status(status).json({
-      error: error.message,
-      details: error.response?.data || null,
-    });
+    // Determine appropriate status code based on error message
+    const status =
+      error.message.includes("No file provided") ||
+      error.message.includes("Only") ||
+      error.message.includes("File size")
+        ? 400
+        : 500;
+
+    return res.status(status).json({ error: error.message });
   }
 }
