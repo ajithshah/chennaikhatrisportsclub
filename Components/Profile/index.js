@@ -213,6 +213,31 @@ export default function Profile() {
                     </div>
                     <div>{userData?.dateOfBirth || "Not provided"}</div>
                   </div>
+                  <div className="d-flex align-items-center mb-3">
+                    <div className="text-muted" style={{ width: "140px" }}>
+                      <i className="fas fa-clock me-2"></i>Address:
+                    </div>
+                    <div>
+                      {userData?.address ? (
+                        <>
+                          {userData.address.street && (
+                            <div>{userData.address.street}</div>
+                          )}
+                          <div>
+                            {[
+                              userData.address.city,
+                              userData.address.state,
+                              userData.address.pincode,
+                            ]
+                              .filter(Boolean)
+                              .join(", ") || "Not provided"}
+                          </div>
+                        </>
+                      ) : (
+                        "Not provided"
+                      )}
+                    </div>
+                  </div>
 
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-muted" style={{ width: "140px" }}>
