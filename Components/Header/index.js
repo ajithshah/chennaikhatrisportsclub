@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import logo from "../../public/logo.png";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
@@ -10,6 +11,7 @@ import { auth, db } from "../../firebase";
 const Header = () => {
   const [user, setUser] = useState(null);
   const provider = new GoogleAuthProvider();
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -62,6 +64,11 @@ const Header = () => {
     }
   };
 
+  // Check current path
+  const currentPath = router.pathname;
+  const isHomePage = currentPath === '/';
+  const isContactPage = currentPath === '/contact';
+
   return (
     <Navbar
       bg="light"
@@ -99,15 +106,18 @@ const Header = () => {
           className="justify-content-between"
         >
           <Nav>
-            <Link href="/" passHref legacyBehavior>
-              <Nav.Link className="px-3 text-dark">Home</Nav.Link>
-            </Link>
-            {/* <Link href="/about" passHref legacyBehavior>
-              <Nav.Link className="px-3 text-dark">About</Nav.Link>
-            </Link> */}
-            <Link href="/contact" passHref legacyBehavior>
-              <Nav.Link className="px-3 text-dark">Contact</Nav.Link>
-            </Link>
+            {/* Only show Home link if NOT on home page */}
+            {!isHomePage && (
+              <Link href="/" passHref legacyBehavior>
+                <Nav.Link className="px-3 text-dark">Home</Nav.Link>
+              </Link>
+            )}
+            {/* Only show Contact link if NOT on contact page */}
+            {!isContactPage && (
+              <Link href="/contact" passHref legacyBehavior>
+                <Nav.Link className="px-3 text-dark">Contact</Nav.Link>
+              </Link>
+            )}
           </Nav>
           <Nav className="d-flex align-items-center justify-content-end gap-3 w-100">
             {user ? (

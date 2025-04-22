@@ -2,7 +2,7 @@ import React from "react";
 import Footer from "@/Components/Footer";
 import Meta from "@/Components/Meta";
 import Header from "@/Components/Header";
-import Team from "@/Components/Team";
+import ManageTeam from "@/Components/ManageTeam";
 
 const ProfilePage = () => {
   return (
@@ -10,7 +10,7 @@ const ProfilePage = () => {
       <Meta />
       <Header />
       <main className="flex-grow-1">
-        <Team />
+        <ManageTeam />
       </main>
       <Footer />
     </div>

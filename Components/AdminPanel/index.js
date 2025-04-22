@@ -26,7 +26,7 @@ export default function AdminPanel() {
       description: "Manage User",
       color: "#F44336",
       link: "/adminpanel/users",
-    },
+    }
   ];
 
   useEffect(() => {
