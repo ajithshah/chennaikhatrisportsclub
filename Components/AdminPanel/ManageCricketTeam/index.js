@@ -350,29 +350,83 @@ export default function ManageCricketTeam() {
         teamLogoUrl = urlData.fileUrl;
       }
 
-      // Update player roles in the players array
-      const updatedPlayers = teamForm.players.map((player) => {
-        if (player.name === teamForm.captain) {
-          return {
-            ...player,
-            isCaptain: true,
-            isViceCaptain: false,
-            role: "",
-            name: teamForm.captain,
-            phoneNumber: teamForm.captainPhoneNumber,
-          };
-        } else if (player.name === teamForm.viceCaptain) {
-          return {
-            ...player,
-            isCaptain: false,
-            isViceCaptain: true,
-            role: "",
-            name: teamForm.viceCaptain,
-            phoneNumber: teamForm.viceCaptainPhoneNumber,
-          };
-        }
-        return player;
-      });
+      // Create updated players array with correct captain assignments
+      let updatedPlayers = [];
+      const captainExists = teamForm.players.some(p => p.name === teamForm.captain);
+      const viceCaptainExists = teamForm.players.some(p => p.name === teamForm.viceCaptain);
+      
+      // First, check if the captain and vice-captain are in the existing players
+      if (teamForm.players && teamForm.players.length > 0) {
+        // Map through existing players and update captain/vice-captain flags
+        updatedPlayers = teamForm.players.map((player) => {
+          // If this player is now the captain
+          if (player.name === teamForm.captain) {
+            return {
+              ...player,
+              isCaptain: true,
+              isViceCaptain: false,
+              phoneNumber: teamForm.captainPhoneNumber,
+              userId: availableCaptains.find(
+                (captain) => captain.name === teamForm.captain
+              )?.id || player.userId || "",
+            };
+          } 
+          // If this player is now the vice-captain
+          else if (player.name === teamForm.viceCaptain) {
+            return {
+              ...player,
+              isCaptain: false,
+              isViceCaptain: true,
+              phoneNumber: teamForm.viceCaptainPhoneNumber,
+              userId: availableCaptains.find(
+                (captain) => captain.name === teamForm.viceCaptain
+              )?.id || player.userId || "",
+            };
+          } 
+          // For any other player, ensure they are not marked as captain or vice-captain
+          else {
+            return {
+              ...player,
+              isCaptain: false,
+              isViceCaptain: false,
+            };
+          }
+        });
+      }
+
+      // If the captain doesn't exist in the player list, add them
+      if (!captainExists) {
+        updatedPlayers.push({
+          name: teamForm.captain,
+          isCaptain: true,
+          isViceCaptain: false,
+          phoneNumber: teamForm.captainPhoneNumber,
+          jerseyNumber: "",
+          jerseyName: "",
+          jerseySize: "",
+          role: "",
+          userId: availableCaptains.find(
+            (captain) => captain.name === teamForm.captain
+          )?.id || "",
+        });
+      }
+
+      // If the vice-captain doesn't exist in the player list, add them
+      if (!viceCaptainExists) {
+        updatedPlayers.push({
+          name: teamForm.viceCaptain,
+          isCaptain: false,
+          isViceCaptain: true,
+          phoneNumber: teamForm.viceCaptainPhoneNumber,
+          jerseyNumber: "",
+          jerseyName: "",
+          jerseySize: "",
+          role: "",
+          userId: availableCaptains.find(
+            (captain) => captain.name === teamForm.viceCaptain
+          )?.id || "",
+        });
+      }
 
       const teamRef = doc(db, "cricket_teams", teamForm.id);
       const updateData = {
@@ -1593,7 +1647,7 @@ export default function ManageCricketTeam() {
                         type="file"
                         name="file"
                         id="teamLogo"
-                        required={true}
+                        required={!isEditing}
                         accept="image/jpeg,image/png,image/jpg"
                         onChange={handleFileChange}
                         className="file-upload-input"

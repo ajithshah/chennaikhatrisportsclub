@@ -11,9 +11,6 @@ const Footer = () => {
           <p className="copyright mb-1">
             © {new Date().getFullYear()} Chennai Khatri Sports Club. All rights reserved.
           </p>
-          <p className="developer-credit mb-0">
-            Designed and Developed by <span className="developer-name">Shanthosh Kumar Shah</span> & <span className="developer-name">Ajith Kumar Shah</span>
-          </p>
         </Container>
       </div>
       

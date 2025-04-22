@@ -6,6 +6,7 @@ import Link from "next/link";
 import PrivacyModel from "../Model/PrivacyModel";
 import TermsModal from "../Model/TermsModal";
 import Team from "@/Components/HomePage/Team";
+import AboutUs from "../About";
 import {
   signInWithPopup,
   GoogleAuthProvider,
@@ -19,6 +20,23 @@ const HomePage = () => {
   const [user, setUser] = useState(null);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showPrivacyModel, setShowPrivacyModel] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if viewport is mobile
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Set initial value
+    handleResize();
+
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -116,7 +134,7 @@ const HomePage = () => {
 
               .floating-item {
                 position: absolute;
-                font-size: 2rem;
+                font-size: ${isMobile ? "1.5rem" : "2rem"};
                 opacity: 0.3;
                 filter: blur(0.5px);
                 animation-timing-function: ease-in-out;
@@ -193,7 +211,11 @@ const HomePage = () => {
               style={{ zIndex: 1 }}
             >
               <div className="row min-vh-100 align-items-center">
-                <div className="col-lg-6 text-center mb-5 mb-lg-0">
+                <div
+                  className={`col-lg-6 text-center ${
+                    isMobile ? "mb-4" : "mb-5 mb-lg-0"
+                  }`}
+                >
                   <div
                     className="bg-white bg-opacity-10 p-4 rounded-circle d-inline-block mb-4 logo-container"
                     style={{ backdropFilter: "blur(5px)" }}
@@ -201,34 +223,53 @@ const HomePage = () => {
                     <Image
                       src="/logo.png"
                       alt="Chennai Khatri Sports Club"
-                      width={240}
-                      height={240}
+                      width={isMobile ? 160 : 240}
+                      height={isMobile ? 160 : 240}
                       className="img-fluid pulsing-logo"
                       priority
                     />
                   </div>
-                  <h2 className="text-white fw-bold mb-3 slide-in-text">
+                  <h2
+                    className="text-white fw-bold mb-3 slide-in-text"
+                    style={{ fontSize: isMobile ? "1.5rem" : "2rem" }}
+                  >
                     Chennai Khatri Sports Club
                   </h2>
                 </div>
 
                 <div className="col-lg-6">
-                  <div className="card border-0 shadow-lg rounded-4 p-4 p-md-5 fade-in-card">
+                  <div
+                    className={`card border-0 shadow-lg rounded-4 ${
+                      isMobile ? "p-3" : "p-4 p-md-5"
+                    } fade-in-card`}
+                  >
                     <div className="card-body">
                       <div className="badge bg-primary text-white px-3 py-2 mb-3 badge-pop">
                         MEMBER PROFILE
                       </div>
-                      <h1 className="display-5 fw-bold text-primary mb-3">
+                      <h1
+                        className={`${
+                          isMobile ? "h3" : "display-5"
+                        } fw-bold text-primary mb-3`}
+                      >
                         Welcome, {user.displayName}
                       </h1>
-                      <p className="lead text-secondary mb-4">
+                      <p
+                        className={`${
+                          isMobile ? "" : "lead"
+                        } text-secondary mb-4`}
+                      >
                         Join our community of sports enthusiasts and stay
                         updated with latest events and tournaments
                       </p>
 
                       <div className="d-flex flex-wrap gap-3 mt-4">
                         <Link href="/profile" passHref legacyBehavior>
-                          <a className="btn btn-primary rounded-pill px-4 py-2 pulse-btn">
+                          <a
+                            className={`btn btn-primary rounded-pill ${
+                              isMobile ? "px-3 py-2 w-100" : "px-4 py-2"
+                            } pulse-btn`}
+                          >
                             <i className="fas fa-user-circle me-2 mr-2"></i>
                             My Profile
                           </a>
@@ -244,6 +285,8 @@ const HomePage = () => {
             <style jsx>{`
               .logo-container {
                 animation: appear 1s ease-out forwards;
+                width: ${isMobile ? "180px" : "260px"};
+                height: ${isMobile ? "180px" : "260px"};
               }
 
               .pulsing-logo {
@@ -395,7 +438,7 @@ const HomePage = () => {
             {/* Keep existing CSS for wave animation */}
             <style jsx>{`
               .wave-container {
-                height: 150px;
+                height: ${isMobile ? "100px" : "150px"};
                 overflow: hidden;
               }
 
@@ -404,7 +447,7 @@ const HomePage = () => {
                 bottom: 0;
                 left: 0;
                 width: 100%;
-                height: 100px;
+                height: ${isMobile ? "80px" : "100px"};
               }
 
               .wave1 {
@@ -437,6 +480,7 @@ const HomePage = () => {
             `}</style>
           </section>
         </main>
+        <AboutUs />
         <Team />
       </div>
     );
@@ -465,7 +509,9 @@ const HomePage = () => {
           <div className="silhouette shuttle">🏸</div>
         </div>
 
-        <div className="w-full max-w-md relative z-10">
+        <div
+          className={`w-full ${isMobile ? "px-3" : "max-w-md"} relative z-10`}
+        >
           <div
             className={`glass-card transform transition-all duration-500 zoom-in ${
               showSuccess ? "scale-105 success-glow" : "hover:scale-102"
@@ -478,21 +524,33 @@ const HomePage = () => {
                     <Image
                       src="/logo.png"
                       alt="Chennai Khatri Sports Club"
-                      width={280}
-                      height={280}
+                      width={isMobile ? 180 : 280}
+                      height={isMobile ? 180 : 280}
                       className="object-contain rotating-glow"
                       priority
                     />
                   </div>
-                  <h1 className="text-4xl font-bold mb-3 text-gradient slide-up ml-2">
+                  <h1
+                    className={`${
+                      isMobile ? "text-2xl" : "text-4xl"
+                    } font-bold mb-3 text-gradient slide-up ml-2`}
+                  >
                     Welcome to Chennai Khatri Sports Club
                   </h1>
-                  <p className="text-gray-700 text-lg mb-8 fade-in-delayed">
+                  <p
+                    className={`text-gray-700 ${
+                      isMobile ? "text-base" : "text-lg"
+                    } mb-8 fade-in-delayed`}
+                  >
                     Join our community of sports enthusiasts and stay updated
                     with latest events
                   </p>
                   <div className="mt-8 text-center fade-in-delayed-more">
-                    <p className="text-sm text-gray-600">
+                    <p
+                      className={`${
+                        isMobile ? "text-xs" : "text-sm"
+                      } text-gray-600`}
+                    >
                       By signing in, you agree to our{" "}
                       <a
                         onClick={() => setShowTermsModal(true)}
@@ -515,6 +573,7 @@ const HomePage = () => {
                     onClick={signInWithGoogle}
                     disabled={isLoading}
                     className="login-btn"
+                    style={{ width: isMobile ? "100%" : "90%" }}
                   >
                     <div className="btn-content">
                       <span className="btn-text">Sign In with Google</span>
@@ -554,7 +613,7 @@ const HomePage = () => {
             rgba(255, 255, 255, 0.2) 1px,
             transparent 1px
           );
-          background-size: 40px 40px;
+          background-size: ${isMobile ? "25px 25px" : "40px 40px"};
           animation: particles 15s linear infinite;
         }
 
@@ -563,7 +622,7 @@ const HomePage = () => {
             background-position: 0 0;
           }
           100% {
-            background-position: 40px 40px;
+            background-position: ${isMobile ? "25px 25px" : "40px 40px"};
           }
         }
 
@@ -591,40 +650,40 @@ const HomePage = () => {
         }
 
         .circle1 {
-          width: 400px;
-          height: 400px;
+          width: ${isMobile ? "250px" : "400px"};
+          height: ${isMobile ? "250px" : "400px"};
           left: -150px;
           top: -150px;
           animation: float-circle1 25s ease-in-out infinite alternate;
         }
 
         .circle2 {
-          width: 300px;
-          height: 300px;
+          width: ${isMobile ? "200px" : "300px"};
+          height: ${isMobile ? "200px" : "300px"};
           right: -100px;
           top: 60%;
           animation: float-circle2 18s ease-in-out infinite alternate;
         }
 
         .circle3 {
-          width: 200px;
-          height: 200px;
+          width: ${isMobile ? "150px" : "200px"};
+          height: ${isMobile ? "150px" : "200px"};
           right: 30%;
           top: 10%;
           animation: float-circle3 22s ease-in-out infinite alternate;
         }
 
         .circle4 {
-          width: 150px;
-          height: 150px;
+          width: ${isMobile ? "100px" : "150px"};
+          height: ${isMobile ? "100px" : "150px"};
           left: 30%;
           bottom: 10%;
           animation: float-circle4 15s ease-in-out infinite alternate;
         }
 
         .circle5 {
-          width: 350px;
-          height: 350px;
+          width: ${isMobile ? "250px" : "350px"};
+          height: ${isMobile ? "250px" : "350px"};
           left: -100px;
           bottom: -100px;
           animation: float-circle5 20s ease-in-out infinite alternate;
@@ -752,7 +811,7 @@ const HomePage = () => {
 
         .silhouette {
           position: absolute;
-          font-size: 6rem;
+          font-size: ${isMobile ? "4rem" : "6rem"};
           opacity: 0.08;
           filter: blur(1px);
           color: white;
@@ -889,7 +948,7 @@ const HomePage = () => {
           background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(10px);
           border-radius: 24px;
-          padding: 2.5rem;
+          padding: ${isMobile ? "1.5rem" : "2.5rem"};
           box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
           border: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -901,8 +960,8 @@ const HomePage = () => {
 
         .logo-container {
           display: inline-block;
-          padding: 1rem;
-          margin-bottom: 1.5rem;
+          padding: ${isMobile ? "0.5rem" : "1rem"};
+          margin-bottom: ${isMobile ? "1rem" : "1.5rem"};
           border-radius: 50%;
           background: rgba(255, 255, 255, 0.8);
           box-shadow: 0 8px 32px rgba(0, 83, 175, 0.2);
@@ -1032,9 +1091,8 @@ const HomePage = () => {
           position: relative;
           transition: all 0.3s ease;
           box-shadow: 0 4px 15px rgba(0, 83, 175, 0.3);
-          width: 90%;
           max-width: 300px;
-          height: 54px;
+          height: ${isMobile ? "48px" : "54px"};
         }
 
         .login-btn:hover {
@@ -1062,10 +1120,11 @@ const HomePage = () => {
         .btn-text {
           margin-right: 0.5rem;
           transition: transform 0.3s ease;
+          font-size: ${isMobile ? "0.9rem" : "1rem"};
         }
 
         .btn-icon {
-          font-size: 1.25rem;
+          font-size: ${isMobile ? "1.1rem" : "1.25rem"};
           transition: transform 0.3s ease;
         }
 

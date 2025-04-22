@@ -155,6 +155,54 @@ export default function ManageTeam() {
 
   // Handle removing player
   const handleRemovePlayer = async (index) => {
+    // Get current user
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      alert("You need to be logged in to manage the team");
+      return;
+    }
+
+    // Get the player to be removed
+    const playerToRemove = teamData.players[index];
+
+    // Check if current user is captain or vice-captain of the team
+    const captainUser = teamData.players.find(
+      (player) => player.isCaptain
+    )?.userId;
+    const viceCaptainUser = teamData.players.find(
+      (player) => player.isViceCaptain
+    )?.userId;
+
+    const isUserCaptain = currentUser.uid === captainUser;
+    const isUserViceCaptain = currentUser.uid === viceCaptainUser;
+
+    // Only captain or vice-captain can remove players
+    if (!isUserCaptain && !isUserViceCaptain) {
+      alert("Only team captain or vice-captain can remove players");
+      return;
+    }
+
+    // Captain and vice-captain can't remove themselves
+    if (
+      (isUserCaptain && playerToRemove.isCaptain) ||
+      (isUserViceCaptain && playerToRemove.isViceCaptain)
+    ) {
+      alert("You cannot remove yourself from the team");
+      return;
+    }
+
+    // Captain cannot remove vice-captain
+    if (isUserCaptain && playerToRemove.isViceCaptain) {
+      alert("Captain cannot remove Vice-Captain from the team");
+      return;
+    }
+
+    // Vice-captain cannot remove captain
+    if (isUserViceCaptain && playerToRemove.isCaptain) {
+      alert("Vice-Captain cannot remove Captain from the team");
+      return;
+    }
+
     if (!window.confirm("Are you sure you want to remove this player?")) return;
 
     try {
@@ -965,43 +1013,6 @@ export default function ManageTeam() {
                     <option value="xxl">XXL</option>
                   </Form.Select>
                 </Form.Group>
-                {!teamData?.players?.find((player) => player.isCaptain) && (
-                  <Form.Group className="mb-3 formGroup">
-                    <Form.Check
-                      type="checkbox"
-                      id="isCaptain"
-                      label="Assign as Team Captain"
-                      checked={newPlayer.isCaptain}
-                      onChange={(e) =>
-                        setNewPlayer({
-                          ...newPlayer,
-                          isCaptain: e.target.checked,
-                          isViceCaptain: e.target.checked
-                            ? false
-                            : newPlayer.isViceCaptain,
-                        })
-                      }
-                    />
-                  </Form.Group>
-                )}
-                {!teamData?.players?.find((player) => player.isViceCaptain) &&
-                  !newPlayer.isCaptain && (
-                    <Form.Group className="mb-3 formGroup">
-                      <Form.Check
-                        type="checkbox"
-                        id="isViceCaptain"
-                        label="Assign as Team Vice Captain"
-                        checked={newPlayer.isViceCaptain}
-                        onChange={(e) =>
-                          setNewPlayer({
-                            ...newPlayer,
-                            isViceCaptain: e.target.checked,
-                            isCaptain: false,
-                          })
-                        }
-                      />
-                    </Form.Group>
-                  )}
               </Modal.Body>
               <Modal.Footer>
                 <Button
@@ -1141,45 +1152,6 @@ export default function ManageTeam() {
                     <option value="xxl">XXL</option>
                   </Form.Select>
                 </Form.Group>
-                {(!teamData?.players?.find((p) => p.isCaptain) ||
-                  editingPlayer?.isCaptain) && (
-                  <Form.Group className="mb-3 formGroup">
-                    <Form.Check
-                      type="checkbox"
-                      id="editIsCaptain"
-                      label="Assign as Team Captain"
-                      checked={editingPlayer?.isCaptain || false}
-                      onChange={(e) =>
-                        setEditingPlayer({
-                          ...editingPlayer,
-                          isCaptain: e.target.checked,
-                          isViceCaptain: e.target.checked
-                            ? false
-                            : editingPlayer.isViceCaptain,
-                        })
-                      }
-                    />
-                  </Form.Group>
-                )}
-                {(!teamData?.players?.find((p) => p.isViceCaptain) ||
-                  editingPlayer?.isViceCaptain) &&
-                  !editingPlayer?.isCaptain && (
-                    <Form.Group className="mb-3 formGroup">
-                      <Form.Check
-                        type="checkbox"
-                        id="editIsViceCaptain"
-                        label="Assign as Team Vice Captain"
-                        checked={editingPlayer?.isViceCaptain || false}
-                        onChange={(e) =>
-                          setEditingPlayer({
-                            ...editingPlayer,
-                            isViceCaptain: e.target.checked,
-                            isCaptain: false,
-                          })
-                        }
-                      />
-                    </Form.Group>
-                  )}
               </Modal.Body>
               <Modal.Footer>
                 <Button

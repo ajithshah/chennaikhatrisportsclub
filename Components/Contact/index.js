@@ -3,20 +3,23 @@ import React, { useEffect } from "react";
 export default function Contact() {
   useEffect(() => {
     // Optional: add intersection observer for more advanced animations
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('show');
-        }
-      });
-    }, { threshold: 0.1 });
-    
-    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll(".animate-on-scroll").forEach((el) => {
       observer.observe(el);
     });
-    
+
     return () => {
-      document.querySelectorAll('.animate-on-scroll').forEach(el => {
+      document.querySelectorAll(".animate-on-scroll").forEach((el) => {
         observer.unobserve(el);
       });
     };
@@ -38,7 +41,10 @@ export default function Contact() {
                   Chintadripet, Chennai
                 </p>
 
-                <div className="mb-3 slide-up" style={{ animationDelay: "0.2s" }}>
+                <div
+                  className="mb-3 slide-up"
+                  style={{ animationDelay: "0.2s" }}
+                >
                   <p className="mb-1 fw-bold">
                     <i className="fas fa-phone me-2 text-primary mr-2 icon-pulse"></i>
                     Contact Numbers:
@@ -47,10 +53,16 @@ export default function Contact() {
                     <li className="mb-1 list-item-animation">
                       Vinoth Kumar BG - (+91) 98408-80873
                     </li>
-                    <li className="mb-1 list-item-animation" style={{ animationDelay: "0.1s" }}>
+                    <li
+                      className="mb-1 list-item-animation"
+                      style={{ animationDelay: "0.1s" }}
+                    >
                       Sushil - (+91) 98417-12284
                     </li>
-                    <li className="mb-1 list-item-animation" style={{ animationDelay: "0.2s" }}>
+                    <li
+                      className="mb-1 list-item-animation"
+                      style={{ animationDelay: "0.2s" }}
+                    >
                       Rajani - (+91) 98415-26709
                     </li>
                   </ul>
@@ -62,10 +74,15 @@ export default function Contact() {
                 </p>
               </div>
 
-              <h4 className="mt-4 mb-3 fade-in" style={{ animationDelay: "0.5s" }}>Connect With Us</h4>
+              <h4
+                className="mt-4 mb-3 fade-in"
+                style={{ animationDelay: "0.5s" }}
+              >
+                Connect With Us
+              </h4>
               <div className="social-links d-flex gap-3 social-container">
                 <a
-                  href="https://instagram.com/chennai_khatri_sports_club"
+                  href="https://www.instagram.com/chennai_khatri_sports.club?igsh=azVtaWhnMDRmNnpz"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="social-icon mr-2 bg-light social-pop"
@@ -83,7 +100,7 @@ export default function Contact() {
                   <i className="fab fa-youtube fs-4 text-danger"></i>
                 </a>
                 <a
-                  href="https://wa.me/911234567890"
+                  href="https://wa.me/919840880873"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="social-icon social-pop"
@@ -119,7 +136,7 @@ export default function Contact() {
           animation: fadeInDown 0.8s ease-out forwards;
           opacity: 0;
         }
-        
+
         @keyframes fadeInDown {
           from {
             opacity: 0;
@@ -130,75 +147,83 @@ export default function Contact() {
             transform: translateY(0);
           }
         }
-        
+
         .card-left {
           opacity: 0;
           transform: translateX(-30px);
           transition: all 0.8s ease-out;
         }
-        
+
         .card-right {
           opacity: 0;
           transform: translateX(30px);
           transition: all 0.8s ease-out;
         }
-        
+
         .animate-on-scroll.show {
           opacity: 1;
           transform: translateX(0);
         }
-        
+
         .fade-in {
           opacity: 0;
           animation: fadeIn 0.8s ease-out forwards;
         }
-        
+
         @keyframes fadeIn {
-          to { opacity: 1; }
+          to {
+            opacity: 1;
+          }
         }
-        
+
         .slide-up {
           opacity: 0;
           transform: translateY(20px);
           animation: slideUp 0.6s ease-out forwards;
         }
-        
+
         @keyframes slideUp {
           to {
             opacity: 1;
             transform: translateY(0);
           }
         }
-        
+
         .list-item-animation {
           opacity: 0;
           transform: translateX(15px);
           animation: slideInRight 0.5s ease-out forwards;
           animation-delay: 0.3s;
         }
-        
+
         @keyframes slideInRight {
           to {
             opacity: 1;
             transform: translateX(0);
           }
         }
-        
+
         .icon-pulse {
           display: inline-block;
           animation: iconPulse 2s infinite;
         }
-        
+
         @keyframes iconPulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.2); }
-          100% { transform: scale(1); }
+          0% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.2);
+          }
+          100% {
+            transform: scale(1);
+          }
         }
-        
+
         .social-container {
           perspective: 1000px;
         }
-        
+
         .social-pop {
           display: inline-flex;
           align-items: center;
@@ -212,33 +237,33 @@ export default function Contact() {
           animation: socialPop 0.5s ease-out forwards;
           animation-delay: 0.6s;
         }
-        
+
         @keyframes socialPop {
-          0% { 
+          0% {
             opacity: 0;
             transform: scale(0.5) rotateY(90deg);
           }
-          70% { 
+          70% {
             opacity: 1;
             transform: scale(1.1) rotateY(0deg);
           }
-          100% { 
+          100% {
             opacity: 1;
             transform: scale(1) rotateY(0deg);
           }
         }
-        
+
         .social-icon:hover {
           transform: translateY(-3px);
           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        
+
         .map-container {
           position: relative;
           overflow: hidden;
           border-radius: 0.25rem;
         }
-        
+
         .map-overlay {
           position: absolute;
           top: 0;
@@ -250,18 +275,25 @@ export default function Contact() {
           animation: fadeOut 1.5s ease-out forwards;
           animation-delay: 1s;
         }
-        
+
         @keyframes fadeOut {
-          to { opacity: 0; visibility: hidden; }
+          to {
+            opacity: 0;
+            visibility: hidden;
+          }
         }
-        
+
         .map-frame {
           animation: zoomIn 1.5s ease-out;
         }
-        
+
         @keyframes zoomIn {
-          from { transform: scale(1.1); }
-          to { transform: scale(1); }
+          from {
+            transform: scale(1.1);
+          }
+          to {
+            transform: scale(1);
+          }
         }
       `}</style>
     </div>

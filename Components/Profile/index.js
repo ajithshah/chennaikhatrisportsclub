@@ -712,7 +712,7 @@ export default function Profile() {
                       <div className="info-value">
                         {userData?.dateOfBirth || "Not provided"}
                         {userData?.dateOfBirth && (
-                          <Badge bg="secondary" className="ms-2 text-light">
+                          <Badge bg="secondary" className="ms-2 text-light ml-1">
                             {calculateAge(userData.dateOfBirth)}
                           </Badge>
                         )}
@@ -772,7 +772,7 @@ export default function Profile() {
                           <span>Member of</span>
                           <Badge
                             bg="primary"
-                            className="team-badge px-3 py-2 ms-2 text-light"
+                            className="team-badge px-3 py-2 ms-2 text-light ml-1"
                           >
                             {teamData.name}
                           </Badge>
@@ -780,14 +780,14 @@ export default function Profile() {
                             teamData.role === "Captain") && (
                             <Badge
                               bg="success"
-                              className="px-3 py-2 text-light"
+                              className="px-3 py-2 text-light ml-1"
                             >
                               Team Captain
                             </Badge>
                           )}
                           {(teamData.isViceCaptain ||
                             teamData.role === "Vice Captain") && (
-                            <Badge bg="info" className="px-3 py-2 text-light">
+                            <Badge bg="info" className="px-3 py-2 text-light ml-1">
                               Vice Captain
                             </Badge>
                           )}
