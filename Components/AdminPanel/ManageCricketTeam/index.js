@@ -352,9 +352,13 @@ export default function ManageCricketTeam() {
 
       // Create updated players array with correct captain assignments
       let updatedPlayers = [];
-      const captainExists = teamForm.players.some(p => p.name === teamForm.captain);
-      const viceCaptainExists = teamForm.players.some(p => p.name === teamForm.viceCaptain);
-      
+      const captainExists = teamForm.players.some(
+        (p) => p.name === teamForm.captain
+      );
+      const viceCaptainExists = teamForm.players.some(
+        (p) => p.name === teamForm.viceCaptain
+      );
+
       // First, check if the captain and vice-captain are in the existing players
       if (teamForm.players && teamForm.players.length > 0) {
         // Map through existing players and update captain/vice-captain flags
@@ -366,11 +370,14 @@ export default function ManageCricketTeam() {
               isCaptain: true,
               isViceCaptain: false,
               phoneNumber: teamForm.captainPhoneNumber,
-              userId: availableCaptains.find(
-                (captain) => captain.name === teamForm.captain
-              )?.id || player.userId || "",
+              userId:
+                availableCaptains.find(
+                  (captain) => captain.name === teamForm.captain
+                )?.id ||
+                player.userId ||
+                "",
             };
-          } 
+          }
           // If this player is now the vice-captain
           else if (player.name === teamForm.viceCaptain) {
             return {
@@ -378,11 +385,14 @@ export default function ManageCricketTeam() {
               isCaptain: false,
               isViceCaptain: true,
               phoneNumber: teamForm.viceCaptainPhoneNumber,
-              userId: availableCaptains.find(
-                (captain) => captain.name === teamForm.viceCaptain
-              )?.id || player.userId || "",
+              userId:
+                availableCaptains.find(
+                  (captain) => captain.name === teamForm.viceCaptain
+                )?.id ||
+                player.userId ||
+                "",
             };
-          } 
+          }
           // For any other player, ensure they are not marked as captain or vice-captain
           else {
             return {
@@ -405,9 +415,10 @@ export default function ManageCricketTeam() {
           jerseyName: "",
           jerseySize: "",
           role: "",
-          userId: availableCaptains.find(
-            (captain) => captain.name === teamForm.captain
-          )?.id || "",
+          userId:
+            availableCaptains.find(
+              (captain) => captain.name === teamForm.captain
+            )?.id || "",
         });
       }
 
@@ -422,9 +433,10 @@ export default function ManageCricketTeam() {
           jerseyName: "",
           jerseySize: "",
           role: "",
-          userId: availableCaptains.find(
-            (captain) => captain.name === teamForm.viceCaptain
-          )?.id || "",
+          userId:
+            availableCaptains.find(
+              (captain) => captain.name === teamForm.viceCaptain
+            )?.id || "",
         });
       }
 
@@ -743,34 +755,7 @@ export default function ManageCricketTeam() {
           transform: translateY(-3px);
           box-shadow: 0 6px 12px rgba(25, 135, 84, 0.2);
         }
-        
-        .add-button {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.25rem;
-          box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
-          transition: all 0.3s ease;
-          border: none;
-          opacity: 0;
-          animation: fadeIn 0.5s ease forwards 0.7s;
-          margin-left: 1rem;
-        }
 
-        .add-button:hover {
-          transform: translateY(-3px) scale(1.05);
-          box-shadow: 0 8px 15px rgba(13, 110, 253, 0.3);
-        }
-
-        .add-button:active {
-          transform: translateY(-1px) scale(0.98);
-        }
-        
         .status-badge {
           padding: 0.4rem 1rem;
           border-radius: 50px;
@@ -822,7 +807,8 @@ export default function ManageCricketTeam() {
 
         .add-button {
           width: 50px;
-          height: 50px;
+          height: 40px;
+          dorder: 2px solid #0d6efd;
           border-radius: 50%;
           background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
           color: white;
@@ -1284,16 +1270,20 @@ export default function ManageCricketTeam() {
         @media (max-width: 768px) {
           .admin-card {
             border-radius: 12px;
+            margin: 0 -0.5rem;
           }
 
           .card-title {
             font-size: 1.5rem;
+            margin-bottom: 1rem;
           }
 
           .card-header-container {
             flex-direction: column;
             align-items: flex-start;
             gap: 1rem;
+            width: 100%;
+            margin-bottom: 2rem;
           }
 
           .badge-container {
@@ -1304,19 +1294,33 @@ export default function ManageCricketTeam() {
           }
 
           .teams-count-badge {
-            width: auto;
             flex-grow: 1;
             text-align: center;
+            max-width: 70%;
+            white-space: normal;
+            height: auto;
+            line-height: 1.5;
+            padding: 0.6rem 1rem;
           }
 
           .add-button {
             position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            z-index: 1000;
-            width: 60px;
-            height: 60px;
-            font-size: 1.5rem;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            width: 65px;
+            height: 65px;
+            font-size: 1.8rem;
+            box-shadow: 0 6px 15px rgba(13, 110, 253, 0.4);
+            border: 2px solid white;
+            margin-left: 0;
+          }
+
+          .add-button:hover,
+          .add-button:focus,
+          .add-button:active {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.5);
           }
 
           .action-button-group {
@@ -1328,6 +1332,54 @@ export default function ManageCricketTeam() {
 
           .action-button-group .action-button {
             width: 100%;
+            padding: 0.6rem 0;
+            font-size: 0.9rem;
+          }
+
+          /* Table improvements for mobile */
+          .teams-table th,
+          .teams-table td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.9rem;
+          }
+
+          .teams-table .team-logo-container {
+            margin: 0 auto;
+          }
+
+          /* Modal improvements for mobile */
+          .modal-title {
+            font-size: 1.3rem;
+          }
+
+          .modal-body {
+            padding: 1rem;
+          }
+
+          /* Better form experience on mobile */
+          .formGroup {
+            margin-bottom: 1.25rem;
+          }
+
+          .file-upload-label {
+            min-height: 100px;
+            padding: 1rem;
+          }
+
+          /* Team details view mobile improvements */
+          .team-details-header {
+            padding: 1.2rem;
+          }
+
+          .team-logo-display {
+            width: 120px;
+            height: 120px;
+          }
+
+          .team-members-table th,
+          .team-members-table td {
+            padding: 0.5rem;
+            font-size: 0.85rem;
           }
         }
       `}</style>
@@ -1339,9 +1391,6 @@ export default function ManageCricketTeam() {
             <div className="loading-spinner-inner"></div>
           </div>
           <h3 className="loading-text">Loading Cricket Teams</h3>
-          <p className="loading-subtext">
-            Please wait while we fetch the data...
-          </p>
         </div>
       ) : (
         <div className="admin-container">
@@ -1350,24 +1399,59 @@ export default function ManageCricketTeam() {
               <Card.Body className="p-4">
                 <div className="card-header-container">
                   <h2 className="card-title">Cricket Teams</h2>
-                  <div className="d-flex align-items-center badge-container">
+                  <div
+                    className="d-flex align-items-center justify-content-between"
+                    style={{ width: "100%", maxWidth: "300px" }}
+                  >
                     <Badge
                       bg="success"
-                      className="teams-count-badge text-light"
+                      className="teams-count-badge text-light w-100"
                     >
                       <i className="fas fa-users me-2"></i>
                       Total Teams: {teams.length}
                     </Badge>
                     <Button
                       variant="primary"
-                      className="add-button"
+                      className="add-button d-none d-md-flex"
                       onClick={() => setShowModal(true)}
                       aria-label="Add new team"
+                      style={{
+                        zIndex: 1050,
+                        position: "relative",
+                        // borderRadius: "50%",
+                        justifyContent: "center",
+                        boxShadow: "0 6px 15px rgba(13, 110, 253, 0.4)",
+                        border: "2px solid white",
+                      }}
                     >
                       <i className="fas fa-plus"></i>
                     </Button>
                   </div>
                 </div>
+
+                {/* Mobile floating action button */}
+                <Button
+                  variant="primary"
+                  className="d-md-none mobile-add-button"
+                  onClick={() => setShowModal(true)}
+                  aria-label="Add new team"
+                  style={{
+                    position: "fixed",
+                    bottom: "2rem",
+                    right: "2rem",
+                    zIndex: 9999,
+                    width: "55px",
+                    height: "55px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0 6px 15px rgba(13, 110, 253, 0.4)",
+                    border: "2px solid white",
+                  }}
+                >
+                  <i className="fas fa-plus" style={{ fontSize: "1.8rem" }}></i>
+                </Button>
 
                 {teams.length === 0 ? (
                   <div className="empty-state">
@@ -1511,7 +1595,7 @@ export default function ManageCricketTeam() {
                   </>
                 ) : (
                   <>
-                    <i className="fas fa-plus-circle me-2 mr-1"></i>Add New Cricket
+                    <i className="fas fa-plus-circle me-2"></i>Add New Cricket
                     Team
                   </>
                 )}
@@ -1688,8 +1772,8 @@ export default function ManageCricketTeam() {
                     value={teamForm.status}
                     onChange={handleFormChange}
                   >
-                    <option value="active">Active</option>
                     <option value="freeze">Freeze</option>
+                    <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
                   </Form.Select>
                 </Form.Group>

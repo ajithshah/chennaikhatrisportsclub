@@ -179,13 +179,33 @@ export default function Profile() {
       <Header />
       <style jsx global>{`
         /* Base animations */
-        @keyframes floatUp {
+        @keyframes fadeIn {
           from {
-            transform: translateY(40px);
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideInUp {
+          from {
+            transform: translateY(30px);
             opacity: 0;
           }
           to {
             transform: translateY(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideInLeft {
+          from {
+            transform: translateX(-20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
             opacity: 1;
           }
         }
@@ -201,48 +221,26 @@ export default function Profile() {
           }
         }
 
-        @keyframes fadeIn {
+        @keyframes scaleIn {
           from {
+            transform: scale(0.9);
             opacity: 0;
           }
           to {
+            transform: scale(1);
             opacity: 1;
           }
         }
 
-        @keyframes expandWidth {
-          from {
-            width: 0;
-          }
-          to {
-            width: 50px;
-          }
-        }
-
-        @keyframes pulse {
+        @keyframes borderPulse {
           0% {
-            transform: scale(0.95);
-            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.4);
+            border-color: rgba(13, 110, 253, 0.7);
           }
-          70% {
-            transform: scale(1);
-            box-shadow: 0 0 0 10px rgba(13, 110, 253, 0);
+          50% {
+            border-color: rgba(13, 110, 253, 0.3);
           }
           100% {
-            transform: scale(0.95);
-            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
-          }
-        }
-
-        @keyframes glow {
-          0% {
-            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
-          }
-          70% {
-            box-shadow: 0 0 0 10px rgba(13, 110, 253, 0);
-          }
-          100% {
-            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+            border-color: rgba(13, 110, 253, 0.7);
           }
         }
 
@@ -252,33 +250,31 @@ export default function Profile() {
           }
         }
 
-        @keyframes wave {
+        @keyframes shimmer {
           0% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-8px);
+            background-position: -1000px 0;
           }
           100% {
-            transform: translateY(0);
+            background-position: 1000px 0;
           }
         }
 
-        /* Loading animation */
+        /* Loading animation styling */
         .loading-container {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          min-height: 70vh;
+          min-height: 75vh;
           text-align: center;
+          background: linear-gradient(165deg, #f8f9fa 0%, #e9ecef 100%);
         }
 
         .loading-spinner-container {
           position: relative;
-          width: 80px;
-          height: 80px;
-          margin-bottom: 2rem;
+          width: 100px;
+          height: 100px;
+          margin-bottom: 2.5rem;
         }
 
         .loading-spinner {
@@ -287,19 +283,19 @@ export default function Profile() {
           left: 0;
           width: 100%;
           height: 100%;
-          border: 4px solid rgba(13, 110, 253, 0.1);
+          border: 5px solid rgba(13, 110, 253, 0.1);
           border-radius: 50%;
           border-top-color: #0d6efd;
-          animation: spin 1s linear infinite;
+          animation: spin 1.2s linear infinite;
         }
 
         .loading-spinner-inner {
           position: absolute;
-          top: 15px;
-          left: 15px;
-          width: 50px;
-          height: 50px;
-          border: 4px solid rgba(13, 110, 253, 0.1);
+          top: 20px;
+          left: 20px;
+          width: 60px;
+          height: 60px;
+          border: 5px solid rgba(13, 110, 253, 0.15);
           border-radius: 50%;
           border-top-color: #0d6efd;
           opacity: 0.7;
@@ -307,133 +303,120 @@ export default function Profile() {
         }
 
         .loading-text {
-          font-size: 1.5rem;
-          font-weight: 600;
+          font-size: 1.8rem;
+          font-weight: 700;
           color: #0d6efd;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.8rem;
           opacity: 0;
-          animation: fadeIn 0.5s ease forwards 0.3s,
-            pulse 2s ease-in-out infinite alternate;
+          animation: fadeIn 0.6s ease forwards 0.3s;
+          background: linear-gradient(90deg, #0d6efd, #0099ff);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .loading-subtext {
           color: #6c757d;
+          font-size: 1.1rem;
           opacity: 0;
-          animation: fadeIn 0.5s ease forwards 0.5s;
+          animation: fadeIn 0.6s ease forwards 0.6s;
         }
 
-        /* Profile card styling */
+        /* Main profile styles */
         .profile-container {
-          padding: 3rem 1rem;
-          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
           min-height: calc(100vh - 56px);
+          background: linear-gradient(165deg, #f8f9fa 0%, #e9ecef 100%);
+          padding: 3rem 1rem;
         }
 
-        .profile-card {
-          border-radius: 15px;
-          overflow: hidden;
-          background: #fff;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-          transform: translateY(40px);
+        .profile-wrapper {
+          max-width: 1000px;
+          margin: 0 auto;
           opacity: 0;
-          animation: floatUp 0.8s ease forwards;
+          animation: fadeIn 0.8s ease forwards;
+        }
+
+        .profile-header-card {
           border: none;
-        }
-
-        .profile-card:hover {
-          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-          transform: translateY(-5px);
-          transition: all 0.5s ease;
-        }
-
-        .profile-section {
-          padding: 2rem;
-          border-radius: 15px;
-        }
-
-        /* Profile image styling */
-        .profile-header {
-          position: relative;
-        }
-
-        .profile-bg {
-          height: 120px;
-          width: 100%;
-          background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
-          position: relative;
+          border-radius: 20px;
           overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+          margin-bottom: 1.5rem;
+          background: white;
+          opacity: 0;
+          animation: slideInUp 0.8s ease forwards;
         }
 
-        .profile-bg::before {
-          content: "";
+        .profile-header-bg {
+          height: 180px;
+          background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+          position: relative;
+        }
+
+        .profile-header-pattern {
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
-          background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+          opacity: 0.1;
+          background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
-        .profile-image-container {
-          position: relative;
-          display: inline-block;
-          margin-top: -60px;
+        .profile-image-outer {
+          width: 180px;
+          height: 180px;
           border-radius: 50%;
-          padding: 5px;
           background: white;
-          z-index: 1;
+          padding: 6px;
+          margin: -90px auto 0;
+          position: relative;
+          z-index: 2;
+          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
           opacity: 0;
-          animation: fadeIn 0.8s ease forwards 0.3s;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+          animation: scaleIn 0.8s ease forwards 0.3s;
+        }
+
+        .profile-image-inner {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          overflow: hidden;
+          border: 4px solid #3a7bd5;
+          animation: borderPulse 3s infinite;
         }
 
         .profile-image {
-          transition: all 0.3s ease;
-          border: 4px solid #0d6efd !important;
-          box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.8);
-        }
-
-        .profile-image-container:hover {
-          transform: translateY(-5px);
-          transition: transform 0.3s ease;
-        }
-
-        .profile-image-container::after {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          border-radius: 50%;
-          box-shadow: 0 0 0 8px rgba(13, 110, 253, 0.3);
-          animation: pulse 2s infinite;
-          pointer-events: none;
-          z-index: -1;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
 
         .profile-placeholder {
-          width: 150px;
-          height: 150px;
+          width: 100%;
+          height: 100%;
           border-radius: 50%;
-          background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #6c757d;
-          font-size: 3rem;
+          font-size: 4rem;
           font-weight: 700;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+          color: white;
+          background: linear-gradient(135deg, #3a7bd5, #00d2ff);
         }
 
-        /* Profile content styling */
-        .profile-name {
-          font-size: 1.75rem;
-          font-weight: 700;
-          margin-top: 0.5rem;
-          color: #212529;
+        .profile-name-section {
+          text-align: center;
+          padding: 1rem 1rem 2rem;
           opacity: 0;
-          animation: fadeIn 0.5s ease forwards 0.6s;
+          animation: fadeIn 0.8s ease forwards 0.5s;
+        }
+
+        .profile-name {
+          font-size: 2.2rem;
+          font-weight: 700;
+          color: #212529;
+          margin-bottom: 0.5rem;
           position: relative;
           display: inline-block;
         }
@@ -441,204 +424,418 @@ export default function Profile() {
         .profile-name::after {
           content: "";
           position: absolute;
-          bottom: -8px;
-          left: 50%;
-          transform: translateX(-50%);
-          height: 3px;
-          background: #0d6efd;
-          border-radius: 3px;
-          animation: expandWidth 0.5s ease forwards 0.8s;
+          bottom: -12px;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+          border-radius: 2px;
+          width: 60px;
+          margin: 0 auto;
         }
 
-        .info-label {
-          color: #6c757d;
+        .profile-team-badge {
+          display: inline-block;
+          margin-top: 1.5rem;
+          padding: 0.6rem 1.5rem;
+          border-radius: 50px;
           font-weight: 600;
+          font-size: 1.1rem;
+          color: white !important;
+          background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+          box-shadow: 0 5px 15px rgba(58, 123, 213, 0.3);
+          transition: all 0.3s ease;
+          animation: fadeIn 0.8s ease forwards 0.8s;
+          opacity: 0;
+        }
+
+        .profile-team-badge:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 8px 20px rgba(58, 123, 213, 0.4);
+        }
+
+        .role-badge {
+          display: inline-block;
+          margin: 0.5rem 0.5rem 0;
+          padding: 0.5rem 1rem;
+          border-radius: 50px;
+          font-weight: 600;
+          font-size: 0.9rem;
+          opacity: 0;
+          animation: fadeIn 0.8s ease forwards 1s;
+        }
+
+        .captain-badge {
+          background: linear-gradient(90deg, #28a745, #20c997);
+          color: white !important;
+          box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .vice-captain-badge {
+          background: linear-gradient(90deg, #17a2b8, #0dcaf0);
+          color: white !important;
+          box-shadow: 0 4px 10px rgba(23, 162, 184, 0.3);
+        }
+
+        /* Profile details card */
+        .profile-details-card {
+          border: none;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+          background: white;
+          opacity: 0;
+          animation: slideInUp 0.8s ease forwards 0.2s;
+        }
+
+        .profile-details-header {
+          padding: 1.5rem 2rem;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+          background: linear-gradient(
+            to right,
+            rgba(58, 123, 213, 0.05),
+            rgba(0, 210, 255, 0.05)
+          );
+        }
+
+        .profile-details-title {
+          margin: 0;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #3a7bd5;
+          position: relative;
+          display: inline-block;
+          padding-left: 15px;
+        }
+
+        .profile-details-title::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 5px;
+          background: linear-gradient(to bottom, #3a7bd5, #00d2ff);
+          border-radius: 5px;
+        }
+
+        .profile-details-body {
+          padding: 2rem;
+        }
+
+        .detail-group {
+          margin-bottom: 2rem;
+          opacity: 0;
+        }
+
+        .detail-group:nth-child(odd) {
+          animation: slideInLeft 0.8s ease forwards
+            calc(0.7s + (var(--i) * 0.1s));
+        }
+
+        .detail-group:nth-child(even) {
+          animation: slideInRight 0.8s ease forwards
+            calc(0.7s + (var(--i) * 0.1s));
+        }
+
+        .detail-label {
+          font-size: 0.85rem;
+          font-weight: 700;
           text-transform: uppercase;
+          letter-spacing: 1px;
+          color: #6c757d;
+          margin-bottom: 0.5rem;
+          display: flex;
+          align-items: center;
+        }
+
+        .detail-label i {
+          margin-right: 0.5rem;
+          color: #3a7bd5;
+          font-size: 1.1rem;
+        }
+
+        .detail-value {
+          background-color: #f8f9fa;
+          border-radius: 10px;
+          padding: 1rem 1.25rem;
+          position: relative;
+          font-weight: 500;
+          color: #212529;
+          transition: all 0.3s ease;
+          border-left: 4px solid #3a7bd5;
+          overflow: hidden;
+        }
+
+        .detail-value::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 4px;
+          background: linear-gradient(to bottom, #3a7bd5, #00d2ff);
+        }
+
+        .detail-value:hover {
+          transform: translateX(8px);
+          background-color: #f0f7ff;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-value .badge {
+          margin-left: 0.5rem;
+          font-weight: 600;
+          padding: 0.5rem 0.75rem;
           font-size: 0.8rem;
-          letter-spacing: 0.5px;
+        }
+
+        /* Address formatting */
+        .address-line {
           margin-bottom: 0.25rem;
         }
 
-        .info-value {
-          color: #212529;
-          font-weight: 500;
-          background-color: #f8f9fa;
-          padding: 0.75rem 1rem;
-          border-radius: 8px;
-          border-left: 3px solid #0d6efd;
-          transition: all 0.3s ease;
+        .address-line:last-child {
+          margin-bottom: 0;
         }
 
-        .info-value:hover {
-          background-color: #e9ecef;
-          transform: translateX(5px);
-        }
-
-        .profile-detail {
-          margin-bottom: 1.25rem;
-          opacity: 0;
-          transform: translateX(20px);
-          animation: slideInRight 0.5s ease forwards;
-        }
-
-        .profile-detail:nth-child(1) {
-          animation-delay: 0.7s;
-        }
-        .profile-detail:nth-child(2) {
-          animation-delay: 0.8s;
-        }
-        .profile-detail:nth-child(3) {
-          animation-delay: 0.9s;
-        }
-        .profile-detail:nth-child(4) {
-          animation-delay: 1s;
-        }
-        .profile-detail:nth-child(5) {
-          animation-delay: 1.1s;
-        }
-        .profile-detail:nth-child(6) {
-          animation-delay: 1.2s;
-        }
-        .profile-detail:nth-child(7) {
-          animation-delay: 1.3s;
-        }
-        .profile-detail:nth-child(8) {
-          animation-delay: 1.4s;
-        }
-
-        /* Team badge styling */
-        .team-badge {
+        /* Admin badge */
+        .admin-badge {
+          display: inline-block;
           padding: 0.5rem 1rem;
-          border-radius: 30px;
+          background: linear-gradient(90deg, #dc3545, #fd7e14);
+          color: white !important;
+          border-radius: 8px;
           font-weight: 600;
-          letter-spacing: 0.5px;
-          box-shadow: 0 4px 8px rgba(13, 110, 253, 0.15);
-          transition: all 0.3s ease;
-          animation: pulse 3s infinite;
+          box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
         }
 
-        .team-badge:hover {
-          transform: translateY(-3px) scale(1.05);
-          box-shadow: 0 8px 16px rgba(13, 110, 253, 0.2);
-        }
-
-        .badge {
-          font-weight: 600;
-          letter-spacing: 0.3px;
-        }
-
-        /* Button styling */
-        .profile-buttons {
-          opacity: 0;
-          animation: fadeIn 0.8s ease forwards 1.6s;
-          padding-top: 1.5rem;
-          margin-top: 1.5rem;
-          border-top: 1px solid #dee2e6;
+        /* Action buttons section */
+        .profile-actions {
+          margin-top: 2rem;
           display: flex;
           flex-wrap: wrap;
-          justify-content: center;
           gap: 1rem;
+          justify-content: center;
+          opacity: 0;
+          animation: fadeIn 0.8s ease forwards 1.3s;
+          padding-top: 1rem;
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
 
-        .profile-btn {
+        .profile-action-btn {
+          padding: 0.9rem 2rem;
           border-radius: 50px;
-          padding: 0.6rem 1.5rem;
           font-weight: 600;
+          font-size: 1.05rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           transition: all 0.3s ease;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+          min-width: 180px;
           position: relative;
           overflow: hidden;
         }
 
-        .profile-btn:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .profile-btn::after {
+        .profile-action-btn::after {
           content: "";
           position: absolute;
-          top: 0;
-          left: 0;
           width: 100%;
           height: 100%;
-          background: rgba(255, 255, 255, 0.2);
-          transform: translateX(-100%);
-          transition: transform 0.4s ease;
+          top: 0;
+          left: -100%;
+          background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0.3),
+            rgba(255, 255, 255, 0)
+          );
+          transition: all 0.6s ease;
         }
 
-        .profile-btn:hover::after {
-          transform: translateX(100%);
+        .profile-action-btn:hover::after {
+          left: 100%;
         }
 
-        .btn-primary {
-          background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
-          border: none;
+        .profile-action-btn:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
-        .btn-outline-success {
-          border-color: #198754;
-          color: #198754;
-        }
-
-        .btn-outline-success:hover {
-          background: linear-gradient(135deg, #198754 0%, #157347 100%);
-          color: white;
-          border-color: transparent;
-        }
-
-        .btn-outline-primary {
-          border-color: #0d6efd;
-          color: #0d6efd;
-        }
-
-        .btn-outline-primary:hover {
-          background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
-          color: white;
-          border-color: transparent;
-        }
-
-        .edit-button-glow {
-          animation: glow 1.5s ease-in-out;
-        }
-
-        /* Icon styling */
-        .btn i {
-          margin-right: 0.5rem;
+        .profile-action-btn i {
+          margin-right: 0.75rem;
+          font-size: 1.1rem;
           transition: all 0.3s ease;
         }
 
-        .btn:hover i {
-          transform: translateY(-2px);
+        .profile-action-btn:hover i {
+          transform: translateY(-3px);
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-          .profile-card {
-            border-radius: 12px;
-          }
+        .btn-home {
+          background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+          border: none;
+          color: white;
+        }
 
-          .profile-section {
-            padding: 1.5rem;
-          }
+        .btn-edit {
+          background: linear-gradient(90deg, #6c5ce7, #a29bfe);
+          border: none;
+          color: white;
+        }
 
-          .profile-image-container {
-            margin-top: -50px;
+        .btn-team {
+          background: white;
+          border: 2px solid #20c997;
+          color: #20c997;
+        }
+
+        .btn-team:hover {
+          background: linear-gradient(90deg, #20c997, #0acf97);
+          color: white;
+          border-color: transparent;
+        }
+
+        .btn-manage {
+          background: white;
+          border: 2px solid #28a745;
+          color: #28a745;
+        }
+
+        .btn-manage:hover {
+          background: linear-gradient(90deg, #28a745, #20c997);
+          color: white;
+          border-color: transparent;
+        }
+
+        .btn-admin {
+          background: white;
+          border: 2px solid #dc3545;
+          color: #dc3545;
+        }
+
+        .btn-admin:hover {
+          background: linear-gradient(90deg, #dc3545, #fd7e14);
+          color: white;
+          border-color: transparent;
+        }
+
+        /* Animation for edit button glow */
+        .edit-button-glow {
+          animation: editGlow 2s ease-in-out;
+        }
+
+        @keyframes editGlow {
+          0% {
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+          }
+          50% {
+            box-shadow: 0 5px 30px rgba(108, 92, 231, 0.8);
+          }
+          100% {
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+          }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+          .profile-image-outer {
+            width: 160px;
+            height: 160px;
+            margin: -80px auto 0;
           }
 
           .profile-name {
-            font-size: 1.5rem;
+            font-size: 2rem;
           }
 
-          .profile-buttons {
+          .profile-details-body {
+            padding: 1.5rem;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .profile-container {
+            padding: 1.5rem 0.5rem;
+          }
+
+          .profile-header-bg {
+            height: 150px;
+          }
+
+          .profile-image-outer {
+            width: 140px;
+            height: 140px;
+            margin: -70px auto 0;
+          }
+
+          .profile-name {
+            font-size: 1.8rem;
+          }
+
+          .profile-team-badge {
+            padding: 0.5rem 1.2rem;
+            font-size: 1rem;
+          }
+
+          .profile-details-header {
+            padding: 1.25rem 1.5rem;
+          }
+
+          .profile-details-title {
+            font-size: 1.3rem;
+          }
+
+          .profile-details-body {
+            padding: 1.25rem;
+          }
+
+          .detail-value {
+            padding: 0.9rem 1rem;
+          }
+
+          .profile-actions {
             flex-direction: column;
-            align-items: center;
+            gap: 0.8rem;
           }
 
-          .profile-btn {
+          .profile-action-btn {
             width: 100%;
-            margin-bottom: 0.5rem;
-            text-align: center;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .profile-header-bg {
+            height: 130px;
+          }
+
+          .profile-image-outer {
+            width: 120px;
+            height: 120px;
+            margin: -60px auto 0;
+          }
+
+          .profile-name {
+            font-size: 1.6rem;
+          }
+
+          .profile-placeholder {
+            font-size: 3rem;
+          }
+
+          .detail-label {
+            font-size: 0.8rem;
+          }
+
+          .detail-value {
+            padding: 0.8rem 0.9rem;
+            font-size: 0.95rem;
+          }
+
+          .profile-action-btn {
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
           }
         }
       `}</style>
@@ -656,80 +853,128 @@ export default function Profile() {
         </div>
       ) : (
         <div className="profile-container">
-          <Container>
-            <Card className="profile-card">
-              <div className="profile-header">
-                <div className="profile-bg"></div>
-                <div className="text-center">
+          <div className="profile-wrapper">
+            {/* Profile Header Card */}
+            <Card className="profile-header-card">
+              <div className="profile-header-bg">
+                <div className="profile-header-pattern"></div>
+              </div>
+
+              <div className="profile-image-outer">
+                <div className="profile-image-inner">
                   {userData?.photoURL ? (
-                    <div className="profile-image-container">
-                      <Image
-                        src={userData.photoURL}
-                        alt="Profile"
-                        width={150}
-                        height={150}
-                        className="profile-image rounded-circle"
-                        priority
-                      />
-                    </div>
+                    <Image
+                      src={userData.photoURL}
+                      alt="Profile"
+                      width={180}
+                      height={180}
+                      className="profile-image"
+                      priority
+                    />
                   ) : (
-                    <div className="profile-image-container">
-                      <div className="profile-placeholder">
-                        {userData?.displayName?.charAt(0) || "U"}
-                      </div>
+                    <div className="profile-placeholder">
+                      {userData?.displayName?.charAt(0) || "U"}
                     </div>
                   )}
-                  <h2 className="profile-name">{userData?.displayName}</h2>
                 </div>
               </div>
 
-              <Card.Body className="profile-section">
+              <div className="profile-name-section">
+                <h2 className="profile-name">{userData?.displayName}</h2>
+
+                {teamData && (
+                  <>
+                    <div className="profile-team-badge">{teamData.name}</div>
+
+                    {(teamData.isCaptain || teamData.role === "Captain") && (
+                      <div className="role-badge captain-badge">
+                        <i className="fas fa-crown me-1"></i> Team Captain
+                      </div>
+                    )}
+
+                    {(teamData.isViceCaptain ||
+                      teamData.role === "Vice Captain") && (
+                      <div className="role-badge vice-captain-badge">
+                        <i className="fas fa-chess-knight me-1"></i> Vice
+                        Captain
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {userData?.isAdmin && (
+                  <div className="admin-badge mt-2">
+                    <i className="fas fa-user-shield me-1"></i> Administrator
+                  </div>
+                )}
+              </div>
+            </Card>
+
+            {/* Profile Details Card */}
+            <Card className="profile-details-card">
+              <div className="profile-details-header">
+                <h3 className="profile-details-title">Personal Information</h3>
+              </div>
+
+              <div className="profile-details-body">
                 <Row className="g-4">
                   <Col lg={6}>
-                    <div className="profile-detail">
-                      <div className="info-label">Full Name</div>
-                      <div className="info-value">
+                    <div className="detail-group" style={{ "--i": 1 }}>
+                      <div className="detail-label">
+                        <i className="fas fa-user"></i> Full Name
+                      </div>
+                      <div className="detail-value">
                         {userData?.displayName || "Not provided"}
                       </div>
                     </div>
 
-                    <div className="profile-detail">
-                      <div className="info-label">Email Address</div>
-                      <div className="info-value">
+                    <div className="detail-group" style={{ "--i": 2 }}>
+                      <div className="detail-label">
+                        <i className="fas fa-envelope"></i> Email Address
+                      </div>
+                      <div className="detail-value">
                         {userData?.email || "Not provided"}
                       </div>
                     </div>
 
-                    <div className="profile-detail">
-                      <div className="info-label">Phone Number</div>
-                      <div className="info-value">
-                        {userData?.phoneNumber || "Not provided"}
+                    <div className="detail-group" style={{ "--i": 3 }}>
+                      <div className="detail-label">
+                        <i className="fas fa-phone-alt"></i> Phone Number
                       </div>
-                    </div>
-
-                    <div className="profile-detail">
-                      <div className="info-label">Date of Birth</div>
-                      <div className="info-value">
-                        {userData?.dateOfBirth || "Not provided"}
-                        {userData?.dateOfBirth && (
-                          <Badge bg="secondary" className="ms-2 text-light ml-1">
-                            {calculateAge(userData.dateOfBirth)}
-                          </Badge>
-                        )}
+                      <div className="detail-value">
+                        {userData?.phoneNumber || "Not provided"}
                       </div>
                     </div>
                   </Col>
 
                   <Col lg={6}>
-                    <div className="profile-detail">
-                      <div className="info-label">Address</div>
-                      <div className="info-value">
+                    <div className="detail-group" style={{ "--i": 1 }}>
+                      <div className="detail-label">
+                        <i className="fas fa-birthday-cake"></i> Date of Birth
+                      </div>
+                      <div className="detail-value">
+                        {userData?.dateOfBirth || "Not provided"}
+                        {userData?.dateOfBirth && (
+                          <Badge bg="secondary" className="ms-2">
+                            {calculateAge(userData.dateOfBirth)}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="detail-group" style={{ "--i": 2 }}>
+                      <div className="detail-label">
+                        <i className="fas fa-map-marker-alt"></i> Address
+                      </div>
+                      <div className="detail-value">
                         {userData?.address ? (
                           <>
                             {userData.address.street && (
-                              <div>{userData.address.street}</div>
+                              <div className="address-line">
+                                {userData.address.street}
+                              </div>
                             )}
-                            <div>
+                            <div className="address-line">
                               {[
                                 userData.address.city,
                                 userData.address.state,
@@ -745,63 +990,24 @@ export default function Profile() {
                       </div>
                     </div>
 
-                    <div className="profile-detail">
-                      <div className="info-label">Last Login</div>
-                      <div className="info-value">
+                    <div className="detail-group" style={{ "--i": 3 }}>
+                      <div className="detail-label">
+                        <i className="fas fa-clock"></i> Last Login
+                      </div>
+                      <div className="detail-value">
                         {userData?.lastLogin
                           ? new Date(userData.lastLogin).toLocaleString()
                           : "Not available"}
                       </div>
                     </div>
-
-                    {userData?.isAdmin && (
-                      <div className="profile-detail">
-                        <div className="info-label">Access Level</div>
-                        <div className="info-value">
-                          <Badge bg="danger" className="px-3 py-2 text-light">
-                            Administrator
-                          </Badge>
-                        </div>
-                      </div>
-                    )}
-
-                    {teamData && (
-                      <div className="profile-detail">
-                        <div className="info-label">Cricket Team</div>
-                        <div className="info-value d-flex align-items-center flex-wrap gap-2">
-                          <span>Member of</span>
-                          <Badge
-                            bg="primary"
-                            className="team-badge px-3 py-2 ms-2 text-light ml-1"
-                          >
-                            {teamData.name}
-                          </Badge>
-                          {(teamData.isCaptain ||
-                            teamData.role === "Captain") && (
-                            <Badge
-                              bg="success"
-                              className="px-3 py-2 text-light ml-1"
-                            >
-                              Team Captain
-                            </Badge>
-                          )}
-                          {(teamData.isViceCaptain ||
-                            teamData.role === "Vice Captain") && (
-                            <Badge bg="info" className="px-3 py-2 text-light ml-1">
-                              Vice Captain
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    )}
                   </Col>
                 </Row>
 
-                <div className="profile-buttons">
+                <div className="profile-actions">
                   <Button
                     variant="primary"
                     onClick={() => router.push("/")}
-                    className="profile-btn"
+                    className="profile-action-btn btn-home"
                   >
                     <i className="fas fa-home"></i>
                     Home
@@ -810,7 +1016,7 @@ export default function Profile() {
                   <Button
                     variant="primary"
                     onClick={() => router.push("/profile/edit")}
-                    className={`profile-btn ${
+                    className={`profile-action-btn btn-edit ${
                       animateEdit ? "edit-button-glow" : ""
                     }`}
                   >
@@ -821,9 +1027,9 @@ export default function Profile() {
                   {teamData && (
                     <Button
                       variant="outline-success"
-                      disabled={true}
+                      // disabled={true}
                       onClick={() => router.push(`/team/${teamData.id}`)}
-                      className="profile-btn"
+                      className="profile-action-btn btn-team"
                     >
                       <i className="fas fa-users"></i>
                       View Team
@@ -840,7 +1046,7 @@ export default function Profile() {
                         onClick={() =>
                           router.push(`/team/manage/${teamData.id}`)
                         }
-                        className="profile-btn"
+                        className="profile-action-btn btn-manage"
                       >
                         <i className="fas fa-user-cog"></i>
                         Manage Team
@@ -851,16 +1057,16 @@ export default function Profile() {
                     <Button
                       variant="outline-primary"
                       onClick={() => router.push("/adminpanel")}
-                      className="profile-btn"
+                      className="profile-action-btn btn-admin"
                     >
                       <i className="fas fa-users-cog"></i>
                       Admin Panel
                     </Button>
                   )}
                 </div>
-              </Card.Body>
+              </div>
             </Card>
-          </Container>
+          </div>
         </div>
       )}
     </>

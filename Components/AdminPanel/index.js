@@ -26,7 +26,7 @@ export default function AdminPanel() {
       description: "Manage User",
       color: "#F44336",
       link: "/adminpanel/users",
-    }
+    },
   ];
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function AdminPanel() {
 
   return (
     <>
-      <Meta />
+      <Meta title="Admin Panel" />
       <Header />
       <Container className="py-5">
         <Row className="g-4">

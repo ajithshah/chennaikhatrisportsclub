@@ -7,11 +7,9 @@ import PrivacyModel from "../Model/PrivacyModel";
 import TermsModal from "../Model/TermsModal";
 import Team from "@/Components/HomePage/Team";
 import AboutUs from "../About";
-import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  onAuthStateChanged,
-} from "firebase/auth";
+import Banner from "../Banner";
+import { onAuthStateChanged } from "firebase/auth";
+import { signInWithGoogle as authSignInWithGoogle } from "../../utils/auth";
 
 const HomePage = () => {
   const router = useRouter();
@@ -53,12 +51,24 @@ const HomePage = () => {
   const signInWithGoogle = async () => {
     try {
       setIsLoading(true);
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+      const user = await authSignInWithGoogle(
+        // Success callback
+        (user) => {
+          setShowSuccess(true);
+          setUser(user);
+          router.push("/");
+        },
+        // Error callback
+        (error) => {
+          console.error("Error signing in with Google:", error);
+          setIsLoading(false);
+        },
+        setIsLoading
+      );
 
-      setShowSuccess(true);
-      setUser(result.user);
-      router.push("/");
+      if (!user) {
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error("Error signing in with Google:", error);
       setIsLoading(false);
@@ -480,6 +490,7 @@ const HomePage = () => {
             `}</style>
           </section>
         </main>
+        <Banner />
         <AboutUs />
         <Team />
       </div>

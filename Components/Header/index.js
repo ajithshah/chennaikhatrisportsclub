@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import logo from "../../public/logo.png";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
-import { getDoc, setDoc, doc } from "firebase/firestore";
-import { auth, db } from "../../firebase";
+import { auth } from "../../firebase";
+import {
+  signInWithGoogle,
+  handleSignOut as signOutUser,
+} from "../../utils/auth";
 
 const Header = () => {
   const [user, setUser] = useState(null);
-  const provider = new GoogleAuthProvider();
   const router = useRouter();
 
   useEffect(() => {
@@ -24,50 +25,36 @@ const Header = () => {
     return () => unsubscribe();
   }, []);
 
-  const signInWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-
-        const userData = {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          providerId: user.providerData[0].providerId,
-          lastLogin: new Date().toISOString(),
-        };
-
-        await setDoc(userRef, userData, { merge: true });
-
-        if (!userSnap.exists()) {
-          userData.isAdmin = false;
-          userData.createdAt = new Date().toISOString();
-        }
-
-        await setDoc(userRef, userData, { merge: true });
+  const handleGoogleSignIn = () => {
+    signInWithGoogle(
+      // Success callback
+      (user) => {
+        // No need to set user here as onAuthStateChanged will handle it
+      },
+      // Error callback
+      (error) => {
+        console.error("Error signing in:", error);
       }
-    } catch (error) {
-      console.error("Error signing in with Google:", error);
-    }
+    );
   };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      setUser(null);
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
+  const handleSignOut = () => {
+    signOutUser(
+      // Success callback
+      () => {
+        setUser(null);
+      },
+      // Error callback
+      (error) => {
+        console.error("Error signing out:", error);
+      }
+    );
   };
 
   // Check current path
   const currentPath = router.pathname;
-  const isHomePage = currentPath === '/';
-  const isContactPage = currentPath === '/contact';
+  const isHomePage = currentPath === "/";
+  const isContactPage = currentPath === "/contact";
 
   return (
     <Navbar
@@ -161,7 +148,7 @@ const Header = () => {
               </div>
             ) : (
               <button
-                onClick={signInWithGoogle}
+                onClick={handleGoogleSignIn}
                 className="px-4 py-2 btn btn-primary rounded-pill"
                 style={{
                   transition: "all 0.3s ease",
@@ -178,7 +165,7 @@ const Header = () => {
                   e.currentTarget.style.boxShadow = "none";
                 }}
               >
-                Sign Up with Google
+                Sign In with Google
               </button>
             )}
           </Nav>

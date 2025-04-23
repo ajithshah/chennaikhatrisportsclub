@@ -309,7 +309,7 @@ export default function ManageTeam() {
 
   return (
     <>
-      <Meta />
+      <Meta title={teamData?.name || "Manage Team"}/>
       <style jsx global>{`
         /* Animation for card */
         .team-card {

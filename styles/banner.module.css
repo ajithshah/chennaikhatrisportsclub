@@ -1,0 +1,67 @@
+/* Banner Styles */
+.bannerContainer {
+    width: 100%;
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .bannerContent {
+    text-align: center;
+    color: white;
+    padding: 20px;
+    max-width: 80%;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+  }
+  
+  .bannerTitle {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .bannerDescription {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  
+  /* Simple Scroll Text Banner */
+  .scrollContainer {
+    width: 100%;
+    overflow: hidden;
+    background: #1a2a6c;
+    padding: 10px 0;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    position: relative;
+    border-radius: 4px;
+  }
+  
+  .scrollText {
+    white-space: nowrap;
+    animation: scrollText 25s linear infinite;
+    color: white;
+    font-size: 16px;
+    padding: 0 20px;
+  }
+  
+  @keyframes scrollText {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  
