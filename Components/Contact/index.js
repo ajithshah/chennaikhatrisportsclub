@@ -51,7 +51,7 @@ export default function Contact() {
                   </p>
                   <ul className="list-unstyled ps-4">
                     <li className="mb-1 list-item-animation">
-                      Vinoth Kumar BG - (+91) 98408-80873
+                      Vinod Kumar BG - (+91) 98408-80873
                     </li>
                     <li
                       className="mb-1 list-item-animation"
@@ -63,7 +63,7 @@ export default function Contact() {
                       className="mb-1 list-item-animation"
                       style={{ animationDelay: "0.2s" }}
                     >
-                      Rajani - (+91) 98415-26709
+                      Rajini - (+91) 98415-26709
                     </li>
                   </ul>
                 </div>

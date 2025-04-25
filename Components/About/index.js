@@ -20,6 +20,11 @@ const AboutUs = () => {
       name: "Sushil",
       image: "/founder1.jpeg",
     },
+    {
+      id: 4,
+      name: "Kamal",
+      image: "/founder4.jpeg",
+    },
   ];
 
   return (
