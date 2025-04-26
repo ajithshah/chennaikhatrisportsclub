@@ -3,10 +3,11 @@ import styles from "../../styles/banner.module.css";
 
 const Banner = () => {
   const announcements = [
-    // "🏏 Chennai Khatri Premier League starting July 2025",
+    "📢 upcomming Events :",
     // "🏆 Summer Cricket Tournament registrations open",
-    // "📢 Youth Cricket Camp coming soon",
-    // "🎉 Join us for Community Day on May 5, 2025"
+    "🏏 KPL Season 3 @ July 4,5,6",
+    "🎉 KPL Senior Season 1 (Men's above age 50)",
+    " Register Today ",
   ];
 
   // Skip rendering if no announcements

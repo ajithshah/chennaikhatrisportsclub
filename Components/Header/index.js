@@ -54,7 +54,7 @@ const Header = () => {
   // Check current path
   const currentPath = router.pathname;
   const isHomePage = currentPath === "/";
-  const isContactPage = currentPath === "/contact";
+  // const isContactPage = currentPath === "/contact";
 
   return (
     <Navbar
@@ -100,11 +100,12 @@ const Header = () => {
               </Link>
             )}
             {/* Only show Contact link if NOT on contact page */}
-            {!isContactPage && (
+            {/* Contactus Page not required for now */}
+            {/*!isContactPage && (
               <Link href="/contact" passHref legacyBehavior>
                 <Nav.Link className="px-3 text-dark">Contact</Nav.Link>
               </Link>
-            )}
+            )*/}
           </Nav>
           <Nav className="d-flex align-items-center justify-content-end gap-3 w-100">
             {user ? (

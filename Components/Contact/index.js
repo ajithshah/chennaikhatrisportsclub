@@ -70,7 +70,7 @@ export default function Contact() {
 
                 <p className="mb-2 slide-up" style={{ animationDelay: "0.4s" }}>
                   <i className="fas fa-envelope me-2 text-primary mr-2 icon-pulse"></i>
-                  ckpc@gmail.com
+                  chennaikhatrisportsclub@hotmail.com
                 </p>
               </div>
 
@@ -99,21 +99,12 @@ export default function Contact() {
                 >
                   <i className="fab fa-youtube fs-4 text-danger"></i>
                 </a>
-                <a
-                  href="https://wa.me/919840880873"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-icon social-pop"
-                  style={{ animationDelay: "0.2s" }}
-                >
-                  <i className="fab fa-whatsapp fs-4 text-success"></i>
-                </a>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="col-md-6">
+       {/* <div className="col-md-6">
           <div className="card shadow-lg animate-on-scroll card-right">
             <div className="card-body p-0 map-container">
               <div className="map-overlay"></div>
@@ -128,7 +119,7 @@ export default function Contact() {
               ></iframe>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <style jsx>{`

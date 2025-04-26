@@ -5,50 +5,85 @@ import { Container, Row, Col } from "react-bootstrap";
 const Footer = () => {
   return (
     <footer className="footer position-relative">
-      
-      <div className="footer-bottom">
-        <Container className="text-center">
-          <p className="copyright mb-1">
-            © {new Date().getFullYear()} Chennai Khatri Sports Club. All rights reserved.
-          </p>
-        </Container>
-      </div>
-      
+      <Container>
+      <Row className="mt-3">
+          <Col className="text-center">
+            <p className="copyright mb-1">
+              © {new Date().getFullYear()} Chennai Khatri Sports Club. All rights reserved.
+            </p>
+            {<p className="developer-credit">
+             Developed by <span className="developer-name">Shanthosh sha , Ajith sha</span>
+             </p>}
+          </Col>
+        </Row>
+        <Row className="align-items-center justify-content-between flex-wrap">
+        
+          {/* Left side */}
+          <Col xs="auto" className="d-flex flex-column align-items-start">
+            <p className="follow-us mb-2">Follow Us</p>
+            <div className="social-links d-flex gap-3 social-container">
+              <a
+                href="https://www.instagram.com/chennai_khatri_sports.club?igsh=azVtaWhnMDRmNnpz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon bg-light"
+              >
+                <i className="fab fa-instagram fs-4 text-danger"></i>
+              </a>
+              <a
+                href="https://www.youtube.com/@KhatriSportsClub"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon bg-light"
+              >
+                <i className="fab fa-youtube fs-4 text-danger"></i>
+              </a>
+            </div>
+          </Col>
+
+          {/* Right side */}
+          <Col xs="auto" className="d-flex flex-column align-items-end text-end">
+            <p className="contact-us mb-1">Contact Us</p>
+            <a
+              className="contact-link text-decoration-none"
+            >
+              Vinod Kumar +91 98408 80873
+            </a>
+            <a
+              className="contact-link text-decoration-none"
+            >  
+              Sushil +91-98417 12284
+            </a>
+            <a
+              className="contact-link text-decoration-none"
+            >
+              Rajini +91-98415 26709
+            </a>
+          </Col>
+        </Row>
+
+        {/* Bottom row */}
+
+      </Container>
+
       <style jsx>{`
         .footer {
           background: linear-gradient(to right, #0a2540, #0d6efd);
           color: white;
-          z-index: 10;
-          position: relative;
+          padding-top: 2rem;
+          padding-bottom: 1rem;
         }
-        
-        .footer-top {
-          padding: 2rem 0;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+        .follow-us {
+          font-size: 1rem;
+          font-weight: 600;
+          margin-left: 10px;
         }
-        
-        .footer-bottom {
-          padding: 1.5rem 0;
-          background-color: rgba(0, 0, 0, 0.1);
+
+        .social-container {
+          margin-left: 10px;
         }
-        
-        .footer-logo {
-          display: inline-block;
-        }
-        
-        .logo-text {
-          font-size: 1.8rem;
-          font-weight: 800;
-          color: white;
-          letter-spacing: 2px;
-        }
-        
-        .social-icons {
-          display: flex;
-          justify-content: center;
-          gap: 1rem;
-        }
-        
+
         .social-icon {
           display: flex;
           align-items: center;
@@ -60,54 +95,33 @@ const Footer = () => {
           color: white;
           transition: all 0.3s ease;
         }
-        
+
         .social-icon:hover {
           background-color: white;
           color: #0d6efd;
           transform: translateY(-3px);
         }
-        
-        .footer-nav {
-          display: flex;
-          justify-content: flex-end;
-          gap: 1.5rem;
+
+        .contact-us {
+          font-size: 1rem;
+          font-weight: 600;
         }
-        
-        .footer-link {
+
+        .contact-link {
           color: rgba(255, 255, 255, 0.8);
-          text-decoration: none;
+          font-size: 1rem;
           font-weight: 500;
           transition: color 0.3s ease;
         }
-        
-        .footer-link:hover {
+
+        .contact-link:hover {
           color: white;
         }
-        
+
         .copyright {
           font-size: 0.9rem;
           color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .developer-credit {
-          font-size: 0.8rem;
-          color: rgba(255, 255, 255, 0.6);
-        }
-        
-        .developer-name {
-          color: white;
-          font-weight: 500;
-        }
-        
-        @media (max-width: 768px) {
-          .footer-nav {
-            justify-content: center;
-            margin-top: 1rem;
-          }
-          
-          .logo-text {
-            font-size: 1.5rem;
-          }
+          margin-top: 0;
         }
       `}</style>
     </footer>

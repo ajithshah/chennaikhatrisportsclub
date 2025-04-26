@@ -233,9 +233,9 @@ const HomePage = () => {
                     <Image
                       src="/logo.png"
                       alt="Chennai Khatri Sports Club"
-                      width={isMobile ? 160 : 240}
-                      height={isMobile ? 160 : 240}
-                      className="img-fluid pulsing-logo"
+                      width={isMobile ? 200 : 280}
+                      height={isMobile ? 200 : 280}
+                      className="img-fluid pulsing-logo "
                       priority
                     />
                   </div>
@@ -295,8 +295,8 @@ const HomePage = () => {
             <style jsx>{`
               .logo-container {
                 animation: appear 1s ease-out forwards;
-                width: ${isMobile ? "180px" : "260px"};
-                height: ${isMobile ? "180px" : "260px"};
+                width: ${isMobile ? "240px" : "320px"};
+                height: ${isMobile ? "240px" : "320px"};
               }
 
               .pulsing-logo {
