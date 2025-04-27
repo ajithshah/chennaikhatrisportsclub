@@ -3,7 +3,7 @@ import styles from "../../styles/banner.module.css";
 
 const Banner = () => {
   const announcements = [
-    "📢 upcomming Events :",
+    "📢 upcoming Events :",
     // "🏆 Summer Cricket Tournament registrations open",
     "🏏 KPL Season 3 @ July 5,6",
     "🎉 KPL Senior Season 1 (Men's above age 50)",
