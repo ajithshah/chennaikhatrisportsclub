@@ -5,7 +5,7 @@ const Banner = () => {
   const announcements = [
     "📢 upcoming Events :",
     // "🏆 Summer Cricket Tournament registrations open",
-    "🏏 KPL Season 3 @ July 5,6",
+    "🏏 KPL Season 3 On July 5,6 at Pachaiyappas College Ground, Chennai",
     "🎉 KPL Senior Season 1 (Men's above age 50)",
     " Register Today ",
   ];
