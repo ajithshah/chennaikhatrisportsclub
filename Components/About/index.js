@@ -61,14 +61,14 @@ const AboutUs = () => {
                   </p>
                 </div>
               </Col>
-              <Col lg={6} md={12} className="d-flex justify-content-end">
+              <Col lg={6} md={12} className="d-flex justify-content-center">
                 <div className="about-image-container">
                   <div className="about-image">
                     <Image
-                      src="/cricket.png"
+                      src="/cricket.jpeg"
                       alt="Chennai Khatri Sports Club"
-                      width={300}
-                      height={250}
+                      width={250}
+                      height={150}
                       className="img-fluid rounded shadow"
                     />
                   </div>
