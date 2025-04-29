@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { auth, db } from "../../firebase";
+import { auth, db } from "../../../firebase";
 import Link from "next/link";
-import PrivacyModel from "../Model/PrivacyModel";
-import TermsModal from "../Model/TermsModal";
+import PrivacyModel from "@/Components/Model/PrivacyModel";
+import TermsModal from "@/Components/Model/TermsModal";
 import Team from "@/Components/HomePage/Team";
-import AboutUs from "../About";
-import Banner from "../Banner";
+import AboutUs from "@/Components/About";
+import Banner from "@/Components/Banner";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { signInWithGoogle as authSignInWithGoogle } from "../../utils/auth";
+import { signInWithGoogle as authSignInWithGoogle } from "../../../utils/auth";
 
 const HomePage = () => {
   const router = useRouter();
