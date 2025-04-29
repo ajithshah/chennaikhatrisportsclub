@@ -23,6 +23,7 @@ export default function EditProfile() {
     phoneNumber: "",
     email: "",
     dateOfBirth: "",
+    photoURL: "",
     address: {
       street: "",
       city: "",
@@ -30,6 +31,7 @@ export default function EditProfile() {
       pincode: "",
     },
   });
+  const [imageUploading, setImageUploading] = useState(false);
   const INDIAN_STATES = [
     "Tamil Nadu",
     "Karnataka",
@@ -46,6 +48,70 @@ export default function EditProfile() {
     "Tiruvallur",
   ];
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const fileType = file.type;
+    if (!["image/jpeg", "image/png", "image/jpg"].includes(fileType)) {
+      alert("Only JPG, JPEG and PNG images are allowed");
+      return;
+    }
+
+    // Validate file size (4.5MB)
+    const maxSize = 4.5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert("File size exceeds 4.5MB limit");
+      return;
+    }
+
+    try {
+      setImageUploading(true);
+
+      // Get current user
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("You must be logged in to upload a profile image");
+      }
+
+      // Create form data for upload
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // Upload to the API with user ID in the query parameter
+      const response = await fetch(`/api/profile_upload?userId=${user.uid}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to upload image");
+      }
+
+      const result = await response.json();
+
+      // Update the form data with the new image URL
+      setFormData((prev) => ({
+        ...prev,
+        photoURL: result.fileUrl,
+      }));
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Failed to upload image. Please try again.");
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
+  const removeProfileImage = () => {
+    setFormData((prev) => ({
+      ...prev,
+      photoURL: "",
+    }));
+  };
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -59,6 +125,7 @@ export default function EditProfile() {
             phoneNumber: userData.phoneNumber || "",
             email: userData.email || "",
             dateOfBirth: userData.dateOfBirth || "",
+            photoURL: userData.photoURL || "",
             address: userData.address || {
               street: "",
               city: "",
@@ -690,20 +757,69 @@ export default function EditProfile() {
 
               <div className="edit-profile-body">
                 <Form onSubmit={handleSubmit}>
+                  <h3 className="section-title">Profile Image</h3>
+                  <Row className="g-4 mb-4">
+                    <Col lg={12}>
+                      <div
+                        className="profile-image-section formGroup"
+                        style={{ "--i": 0 }}
+                      >
+                        <div className="profile-image-container">
+                          <div className="current-image">
+                            <img
+                              src={formData.photoURL || "/profile_user.jpg"}
+                              alt="Profile"
+                              className="profile-image"
+                            />
+                          </div>
+                          <div className="upload-controls">
+                            <label className="upload-button">
+                              <i className="fas fa-camera"></i> Choose Image
+                              <input
+                                type="file"
+                                accept="image/jpeg, image/png, image/jpg"
+                                onChange={handleImageUpload}
+                                style={{ display: "none" }}
+                              />
+                            </label>
+                            {formData.photoURL && (
+                              <button
+                                type="button"
+                                className="remove-image-btn"
+                                onClick={removeProfileImage}
+                              >
+                                <i className="fas fa-trash-alt"></i> Remove
+                              </button>
+                            )}
+                          </div>
+                          {imageUploading && (
+                            <div className="upload-progress">
+                              <Spinner animation="border" size="sm" />
+                              <span>Uploading image...</span>
+                            </div>
+                          )}
+                        </div>
+                        <span className="helperText">
+                          Upload a square image (JPG, PNG) for best results.
+                          Maximum file size: 400KB
+                        </span>
+                      </div>
+                    </Col>
+                  </Row>
+
                   <h3 className="section-title">Personal Information</h3>
 
                   <Row className="g-4">
                     <Col lg={6}>
                       <Form.Group className="formGroup" style={{ "--i": 1 }}>
                         <Form.Label>
-                          <i className="fas fa-user"></i> Full Name
+                          <i className="fas fa-user"></i>Full Name
                         </Form.Label>
                         <Form.Control
                           type="text"
                           name="displayName"
                           value={formData.displayName}
                           onChange={handleChange}
-                          disabled={true}
                           required
                         />
                         <span className="helperText">
@@ -918,3 +1034,4 @@ export default function EditProfile() {
     </>
   );
 }
+

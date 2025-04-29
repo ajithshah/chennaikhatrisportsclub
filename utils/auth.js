@@ -17,8 +17,6 @@ export const signInWithGoogle = async (onSuccess, onError, setIsLoading) => {
       const userData = {
         uid: user.uid,
         email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
         providerId: user.providerData[0].providerId,
         lastLogin: new Date().toISOString(),
       };
@@ -30,15 +28,17 @@ export const signInWithGoogle = async (onSuccess, onError, setIsLoading) => {
       if (!userSnap.exists()) {
         userData.isAdmin = false;
         userData.createdAt = new Date().toISOString();
+        userData.displayName = userSnap.displayName || "";
+        userData.photoURL = userSnap.photoURL || "";
         await setDoc(userRef, userData, { merge: true });
       }
 
       // Call the success callback if provided
       if (onSuccess && typeof onSuccess === "function") {
-        onSuccess(user);
+        onSuccess({ user, userData });
       }
 
-      return user;
+      return { user, userData };
     }
     return null;
   } catch (error) {

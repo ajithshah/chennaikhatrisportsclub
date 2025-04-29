@@ -955,7 +955,7 @@ export default function Profile() {
                       <div className="detail-value">
                         {userData?.dateOfBirth || "Not provided"}
                         {userData?.dateOfBirth && (
-                          <Badge bg="secondary" className="ms-2">
+                          <Badge bg="secondary" className="ms-2 text-light">
                             {calculateAge(userData.dateOfBirth)}
                           </Badge>
                         )}

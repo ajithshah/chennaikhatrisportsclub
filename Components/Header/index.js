@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import logo from "../../public/logo.png";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
+import { doc, getDoc } from "firebase/firestore";
 import {
   signInWithGoogle,
   handleSignOut as signOutUser,
@@ -12,14 +13,25 @@ import {
 
 const Header = () => {
   const [user, setUser] = useState(null);
+  const [dbUserData, setDbUserData] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
+    const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
+      if (authUser) {
+        // Get the Firebase auth user
+        setUser(authUser);
+
+        // Fetch the user data from Firestore
+        const userRef = doc(db, "users", authUser.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          setDbUserData(userSnap.data());
+        }
       } else {
         setUser(null);
+        setDbUserData(null);
       }
     });
     return () => unsubscribe();
@@ -28,8 +40,9 @@ const Header = () => {
   const handleGoogleSignIn = () => {
     signInWithGoogle(
       // Success callback
-      (user) => {
-        // No need to set user here as onAuthStateChanged will handle it
+      (result) => {
+        // Auth state listener will handle setting the user
+        // We'll get the userData from Firestore in the useEffect
       },
       // Error callback
       (error) => {
@@ -43,6 +56,7 @@ const Header = () => {
       // Success callback
       () => {
         setUser(null);
+        setDbUserData(null);
       },
       // Error callback
       (error) => {
@@ -54,7 +68,10 @@ const Header = () => {
   // Check current path
   const currentPath = router.pathname;
   const isHomePage = currentPath === "/";
-  // const isContactPage = currentPath === "/contact";
+
+  // Get display name from the database if available
+  const displayName = dbUserData?.displayName || user?.displayName || "User";
+  const photoURL = dbUserData?.photoURL || user?.photoURL;
 
   return (
     <Navbar
@@ -115,9 +132,9 @@ const Header = () => {
                   title={
                     <div className="d-flex align-items-center justify-content-between gap-3">
                       <div className="d-flex align-items-center gap-2">
-                        {user.photoURL && (
+                        {photoURL && (
                           <Image
-                            src={user.photoURL}
+                            src={photoURL}
                             alt="Profile"
                             width={40}
                             height={40}
@@ -126,8 +143,8 @@ const Header = () => {
                             priority
                           />
                         )}
-                        <span className="text-dark fw-semibold">
-                          {user.displayName}
+                        <span className="text-dark fw-semibold ml-2">
+                          {displayName}
                         </span>
                       </div>
                     </div>
