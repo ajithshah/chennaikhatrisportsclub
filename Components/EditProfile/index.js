@@ -50,19 +50,19 @@ export default function EditProfile() {
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
+    // Check file size - 400 KB = 400 * 1024 bytes
+    if (file && file.size > 400 * 1024) {
+      alert("File size exceeds 400 KB. Please select a smaller image.");
+      e.target.value = null;
+      return;
+    }
+
     if (!file) return;
 
     // Validate file type
     const fileType = file.type;
     if (!["image/jpeg", "image/png", "image/jpg"].includes(fileType)) {
       alert("Only JPG, JPEG and PNG images are allowed");
-      return;
-    }
-
-    // Validate file size (4.5MB)
-    const maxSize = 4.5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      alert("File size exceeds 4.5MB limit");
       return;
     }
 
