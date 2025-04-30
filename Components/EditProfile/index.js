@@ -761,18 +761,26 @@ export default function EditProfile() {
                   <Row className="g-4 mb-4">
                     <Col lg={12}>
                       <div
-                        className="profile-image-section formGroup"
+                        className="profile-image-section formGroup d-flex flex-column align-items-center"
                         style={{ "--i": 0 }}
                       >
-                        <div className="profile-image-container">
-                          <div className="current-image">
-                            <img
-                              src={formData.photoURL || "/profile_user.jpg"}
-                              alt="Profile"
-                              className="profile-image"
-                            />
+                        <div className="profile-image-container text-center">
+                          <div className="current-image mx-auto">
+                            {formData.photoURL ? (
+                              <img
+                                src={formData.photoURL}
+                                alt="Profile"
+                                className="profile-image"
+                              />
+                            ) : (
+                              <div className="profile-image profile-image-placeholder d-flex align-items-center justify-content-center">
+                                {formData.displayName
+                                  ?.charAt(0)
+                                  .toUpperCase() || "U"}
+                              </div>
+                            )}
                           </div>
-                          <div className="upload-controls">
+                          <div className="upload-controls mt-3">
                             <label className="upload-button">
                               <i className="fas fa-camera"></i> Choose Image
                               <input
@@ -799,7 +807,7 @@ export default function EditProfile() {
                             </div>
                           )}
                         </div>
-                        <span className="helperText">
+                        <span className="helperText text-center">
                           Upload a square image (JPG, PNG) for best results.
                           Maximum file size: 400KB
                         </span>
@@ -822,9 +830,6 @@ export default function EditProfile() {
                           onChange={handleChange}
                           required
                         />
-                        <span className="helperText">
-                          Name cannot be changed
-                        </span>
                       </Form.Group>
                     </Col>
 
@@ -1034,4 +1039,3 @@ export default function EditProfile() {
     </>
   );
 }
-
