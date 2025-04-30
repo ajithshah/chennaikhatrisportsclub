@@ -19,7 +19,7 @@ export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(10);
+  const [usersPerPage] = useState(20);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
