@@ -453,27 +453,36 @@ export default function ManageUsers() {
                       <td>
                         <div className="d-flex align-items-center gap-2">
                           {user.photoURL && (
-                            <Image
-                              src={user.photoURL}
-                              alt={user.displayName}
-                              width={40}
-                              height={40}
-                              className="rounded-circle profile-image"
-                            />
+                            <div className="profile-container">
+                              <Image
+                                src={user.photoURL}
+                                alt={user.displayName}
+                                width={40}
+                                height={40}
+                                className="rounded-circle profile-image"
+                                style={{
+                                  width: "clamp(30px, 4vw, 40px)",
+                                  height: "clamp(30px, 4vw, 40px)",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            </div>
                           )}
                           {!user.photoURL && (
-                            <div
-                              className="rounded-circle d-flex align-items-center justify-content-center profile-image"
-                              style={{
-                                width: "40px",
-                                height: "40px",
-                                backgroundColor: "#e9ecef",
-                                color: "#495057",
-                                fontSize: "16px",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {user.displayName?.charAt(0).toUpperCase() || "U"}
+                            <div className="profile-container">
+                              <div
+                                className="rounded-circle d-flex align-items-center justify-content-center profile-image"
+                                style={{
+                                  width: "clamp(30px, 4vw, 40px)",
+                                  height: "clamp(30px, 4vw, 40px)",
+                                  backgroundColor: "#e9ecef",
+                                  color: "#495057",
+                                  fontSize: "clamp(12px, 1.5vw, 16px)",
+                                }}
+                              >
+                                {user.displayName?.charAt(0).toUpperCase() ||
+                                  "U"}
+                              </div>
                             </div>
                           )}
                         </div>
@@ -553,4 +562,3 @@ export default function ManageUsers() {
     </>
   );
 }
-
