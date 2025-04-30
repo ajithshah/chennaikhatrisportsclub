@@ -353,45 +353,39 @@ export default function UserDetails({ userId }) {
             </div>
             <div className="loading-text">Loading user details...</div>
           </div>
-        ) : (
+        ) : user ? (
           <>
             <Card className="border-0 shadow user-card">
               <Card.Body className="p-4 p-md-5">
                 <h2 className="section-title mb-4">User Profile Detail</h2>
 
-                <div className="text-center mb-5 profile-image-container">
-                  {user.photoURL ? (
+                <div className="text-center mb-5 profile-image-container d-flex justify-content-center">
+                  {user && user.photoURL ? (
                     <div className="position-relative d-inline-block">
                       <Image
                         src={user.photoURL}
                         alt={user.displayName || "User profile"}
                         width={180}
                         height={180}
-                        className="rounded-circle border shadow profile-image"
+                        className="border shadow profile-image"
                         style={{ objectFit: "cover" }}
                       />
-                      <Badge
-                        bg={user.isAdmin ? "danger" : "success"}
-                        className="position-absolute bottom-0 end-0 px-3 py-2 rounded-pill text-light"
-                      >
-                        {user.isAdmin ? "Admin" : "Member"}
-                      </Badge>
                     </div>
                   ) : (
                     <div
-                      className="d-flex justify-content-center align-items-center bg-light rounded-circle mx-auto position-relative profile-placeholder"
+                      className="d-flex justify-content-center align-items-center bg-light mx-auto position-relative profile-placeholder"
                       style={{ width: 180, height: 180 }}
                     >
                       <span className="display-4 text-muted">
-                        {user.displayName
+                        {user && user.displayName
                           ? user.displayName[0].toUpperCase()
                           : "?"}
                       </span>
                       <Badge
-                        bg={user.isAdmin ? "danger" : "success"}
-                        className="position-absolute bottom-0 end-0 px-3 py-2 rounded-pill text-light"
+                        bg={user && user.isAdmin ? "danger" : "success"}
+                        className="position-absolute bottom-0 end-0 px-3 py-2 text-light"
                       >
-                        {user.isAdmin ? "Admin" : "Member"}
+                        {user && user.isAdmin ? "Admin" : "Member"}
                       </Badge>
                     </div>
                   )}
@@ -494,8 +488,24 @@ export default function UserDetails({ userId }) {
               </Card.Body>
             </Card>
           </>
+        ) : (
+          <div className="text-center py-5">
+            <h3>User not found</h3>
+            <p className="text-muted">
+              The requested user could not be found or you don't have permission
+              to view this profile.
+            </p>
+            <Button
+              variant="primary"
+              className="mt-3"
+              onClick={() => router.push("/adminpanel/users")}
+            >
+              Return to Users List
+            </Button>
+          </div>
         )}
       </Container>
     </>
   );
 }
+

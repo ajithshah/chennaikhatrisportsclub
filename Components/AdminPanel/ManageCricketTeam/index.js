@@ -45,7 +45,7 @@ export default function ManageCricketTeam() {
     viceCaptain: "",
     captainPhoneNumber: "",
     viceCaptainPhoneNumber: "",
-    status: "active",
+    status: "freeze",
     email: "",
     players: [],
     teamLogoUrl: "",
@@ -308,7 +308,7 @@ export default function ManageCricketTeam() {
       viceCaptain: team.viceCaptain || "",
       captainPhoneNumber: team.captainPhoneNumber || "",
       viceCaptainPhoneNumber: team.viceCaptainPhoneNumber || "",
-      status: team.status || "active",
+      status: team.status || "freeze",
       email: team.email || "",
       players: team.players || [],
       teamLogoUrl: team.teamLogoUrl,
@@ -540,7 +540,7 @@ export default function ManageCricketTeam() {
       viceCaptain: "",
       captainPhoneNumber: "",
       viceCaptainPhoneNumber: "",
-      status: "active",
+      status: "freeze",
       email: "",
       players: [],
       teamLogoUrl: "",
@@ -1721,7 +1721,7 @@ export default function ManageCricketTeam() {
                         <span className="text-center">
                           {file
                             ? file.name
-                            : "Drag & Drop or click to select team Logo"}
+                            : "Drag & Drop or Click to Select Team Logo"}
                         </span>
                         <small className="text-muted mt-1">
                           JPEG, PNG, or JPG (Max 400 KB)

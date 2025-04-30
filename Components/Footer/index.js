@@ -5,9 +5,15 @@ const Footer = () => {
   return (
     <footer className="footer position-relative">
       <Container>
-        <Row className="align-items-center justify-content-between flex-wrap">
+        <Row className="justify-content-between gy-4">
           {/* Left */}
-          <Col xs="auto" className="d-flex flex-column align-items-start">
+          <Col
+            xs={12}
+            sm={6}
+            md={4}
+            lg="auto"
+            className="d-flex flex-column align-items-center align-items-sm-start mb-3 mb-sm-0"
+          >
             <p className="follow-us mb-2">Follow Us</p>
             <div className="social-links d-flex gap-3 social-container">
               <a
@@ -30,7 +36,12 @@ const Footer = () => {
           </Col>
 
           {/* Center */}
-          <Col className="text-center">
+          <Col
+            xs={12}
+            sm={12}
+            md={4}
+            className="text-center mb-3 mb-md-0 order-3 order-md-2"
+          >
             <p className="copyright mb-1">
               © {new Date().getFullYear()} Chennai Khatri Sports Club. All
               rights reserved.
@@ -47,8 +58,11 @@ const Footer = () => {
 
           {/* Right side */}
           <Col
-            xs="auto"
-            className="d-flex flex-column align-items-end text-end"
+            xs={12}
+            sm={6}
+            md={4}
+            lg="auto"
+            className="d-flex flex-column align-items-center align-items-sm-end text-center text-sm-end order-2 order-md-3"
           >
             <p className="contact-us mb-1">Contact Us</p>
             <a className="contact-link text-decoration-none">
@@ -107,7 +121,7 @@ const Footer = () => {
 
         .contact-link {
           color: rgba(255, 255, 255, 0.8);
-          font-size: 1rem;
+          font-size: 0.9rem;
           font-weight: 500;
           transition: color 0.3s ease;
         }
@@ -121,10 +135,35 @@ const Footer = () => {
           color: rgba(255, 255, 255, 0.8);
           margin-top: 0;
         }
+
+        .developer-credit {
+          font-size: 0.85rem;
+          color: rgba(255, 255, 255, 0.7);
+        }
+
+        .developer-name {
+          font-weight: 600;
+        }
+
+        @media (max-width: 767px) {
+          .contact-link {
+            margin-bottom: 0.25rem;
+          }
+
+          .footer {
+            padding-bottom: 1.5rem;
+          }
+        }
+
+        @media (max-width: 575px) {
+          .social-container,
+          .follow-us {
+            margin-left: 0;
+          }
+        }
       `}</style>
     </footer>
   );
 };
 
 export default Footer;
-
