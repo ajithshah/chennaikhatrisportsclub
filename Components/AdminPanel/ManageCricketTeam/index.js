@@ -512,11 +512,7 @@ export default function ManageCricketTeam() {
         const membersData = teamData.players.map((player, index) => ({
           id: index.toString(),
           name: player.name,
-          role: player.isCaptain
-            ? "Captain"
-            : player.isViceCaptain
-            ? "Vice Captain"
-            : player.role || "Player",
+          role: player.role || "",
           jerseyNumber: player.jerseyNumber || "",
           jerseyName: player.jerseyName || "",
           jerseySize: player.jerseySize || "",
@@ -548,6 +544,325 @@ export default function ManageCricketTeam() {
     setFile(null);
     setPreview(null);
   };
+
+  // ---------------- printTeamDetails ----------------
+  const printTeamDetails = () => {
+    if (!viewTeamDetails) return;
+
+    const printWindow = window.open("", "_blank");
+
+    // Safe access for properties
+    const teamName = viewTeamDetails.name || "Team";
+    const teamLogo = viewTeamDetails.teamLogoUrl || "";
+    const teamStatus = viewTeamDetails.status || "unknown";
+    const createdDate = viewTeamDetails.createdAt
+      ? new Date(viewTeamDetails.createdAt).toLocaleDateString()
+      : "Unknown";
+    const captain = viewTeamDetails.captain || "Not assigned";
+    const viceCaptain = viewTeamDetails.viceCaptain || "Not assigned";
+    const captainPhone = viewTeamDetails.captainPhoneNumber || "-";
+    const viceCaptainPhone = viewTeamDetails.viceCaptainPhoneNumber || "-";
+
+    // Ensure players is an array
+    const players = Array.isArray(viewTeamDetails.players)
+      ? viewTeamDetails.players
+      : [];
+
+    // Ensure teamMembers is an array
+    const members = Array.isArray(teamMembers) ? teamMembers : [];
+
+    // Ensure availableCaptains is an array
+    const captains = Array.isArray(availableCaptains) ? availableCaptains : [];
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>${teamName} - Team Details</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            color: #333;
+          }
+          .print-container {
+            max-width: 800px;
+            margin: 0 auto;
+          }
+          .team-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #0d6efd;
+          }
+          .team-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 15px;
+            display: block;
+            border: 3px solid #0d6efd;
+          }
+          .team-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #0d6efd;
+          }
+          .team-date {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+          }
+          .team-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: ${
+              teamStatus === "active" ? "#198754" : "#6c757d"
+            };
+          }
+          .leadership-section {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+          }
+          .leader-card {
+            width: 45%;
+            min-width: 200px;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+          }
+          .leader-title {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+            background-color: #0d6efd;
+            margin-bottom: 10px;
+          }
+          .leader-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+          }
+          .leader-phone {
+            color: #666;
+          }
+          .members-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 30px 0 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #ddd;
+            color: #333;
+          }
+          .members-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+          }
+          .members-table th,
+          .members-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+          }
+          .members-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+          }
+          .empty-message {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #664d03;
+            border-radius: 5px;
+          }
+          .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+          }
+          .profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #0d6efd;
+            display: inline-block;
+          }
+          .profile-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #6c757d;
+            border: 2px solid #dee2e6;
+          }
+          @media print {
+            body {
+              print-color-adjust: exact;
+              -webkit-print-color-adjust: exact;
+              color-adjust: exact;
+            }
+            .no-print {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="print-container">
+          <div class="team-header">
+            ${
+              teamLogo
+                ? `<img src="${teamLogo}" class="team-logo" alt="${teamName} Logo">`
+                : ""
+            }
+            <h1 class="team-name">${teamName}</h1>
+            <div class="team-date">Created: ${createdDate}</div>
+          </div>
+          
+          <div class="leadership-section">
+            <div class="leader-card">
+              <div class="leader-title" style="background-color: #0d6efd;">Captain</div>
+              <div class="leader-name">${captain}</div>
+              <div class="leader-phone">${captainPhone}</div>
+            </div>
+            
+            <div class="leader-card">
+              <div class="leader-title" style="background-color: #0dcaf0;">Vice Captain</div>
+              <div class="leader-name">${viceCaptain}</div>
+              <div class="leader-phone">${viceCaptainPhone}</div>
+            </div>
+          </div>
+          
+          <h2 class="members-title">Team Members</h2>
+          
+          ${
+            members.length > 0
+              ? `
+            <table class="members-table">
+              <thead>
+                <tr>
+                  <th>Profile</th>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Phone</th>
+                  <th>Jersey Name</th>
+                  <th>Jersey No</th>
+                  <th>Jersey Size</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${members
+                  .map((member) => {
+                    if (!member) return "";
+
+                    const memberName = member.name || "";
+                    const memberRole = member.role || "-";
+                    const memberPhone = member.phoneNumber || "-";
+                    const jerseyName = member.jerseyName || "-";
+                    const jerseyNumber = member.jerseyNumber || "-";
+                    const jerseySize = member.jerseySize || "";
+
+                    let memberPhotoURL = "";
+
+                    // Find player in team players
+                    const player = players.find(
+                      (p) => p && p.name === memberName
+                    );
+
+                    // Find photo URL from available captains
+                    if (player && player.userId) {
+                      const captain = captains.find(
+                        (c) => c && c.id === player.userId
+                      );
+                      if (captain && captain.photoURL) {
+                        memberPhotoURL = captain.photoURL;
+                      }
+                    }
+
+                    return `
+                  <tr>
+                    <td>
+                      ${
+                        memberPhotoURL
+                          ? `<img src="${memberPhotoURL}" class="profile-image" alt="${memberName}">`
+                          : `<div class="profile-placeholder">${memberName
+                              .charAt(0)
+                              .toUpperCase()}</div>`
+                      }
+                    </td>
+                    <td>${memberName}</td>
+                    <td>${memberRole}</td>
+                    <td>${memberPhone}</td>
+                    <td>${jerseyName}</td>
+                    <td>${jerseyNumber}</td>
+                    <td>${jerseySize ? jerseySize.toUpperCase() : "-"}</td>
+                    <td></td>
+                  </tr>
+                `;
+                  })
+                  .join("")}
+              </tbody>
+            </table>
+          `
+              : `
+            <div class="empty-message">
+              No team members added yet.
+            </div>
+          `
+          }
+          
+          <div class="footer">
+            <p>Printed from Chennai Khatri Sports Club Admin Panel</p>
+            <p>Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
+          </div>
+          
+          <div class="no-print" style="text-align: center; margin-top: 30px;">
+            <button onclick="window.print()" style="padding: 10px 20px; background: #0d6efd; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+              Print This Page
+            </button>
+          </div>
+        </div>
+        <script>
+          // Automatically open print dialog when the page loads
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+            }, 500);
+          }
+        </script>
+      </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+  };
+  // ---------------- printTeamDetails ----------------
 
   return (
     <>
@@ -2005,7 +2320,8 @@ export default function ManageCricketTeam() {
                               )}
                             </td>
                             <td className="fw-semibold">{member.name}</td>
-                            <td>
+                            <td>{member.role || "-"}</td>
+                            {/* <td>
                               <Badge
                                 bg={
                                   member.role === "Captain"
@@ -2018,7 +2334,7 @@ export default function ManageCricketTeam() {
                               >
                                 {member.role}
                               </Badge>
-                            </td>
+                            </td> */}
                             <td>{member.phoneNumber}</td>
                             <td>{member.jerseyName || "-"}</td>
                             <td>{member.jerseyNumber || "-"}</td>
@@ -2047,8 +2363,16 @@ export default function ManageCricketTeam() {
                 className="action-button"
                 onClick={() => setViewShowModal(false)}
               >
-                <i className="fas fa-times me-1"></i>
+                <i className="fas fa-times me-1 mr-1"></i>
                 Close
+              </Button>
+              <Button
+                variant="primary"
+                className="action-button"
+                onClick={printTeamDetails}
+              >
+                <i className="fas fa-print me-1 mr-1"></i>
+                Print
               </Button>
             </Modal.Footer>
           </Modal>
