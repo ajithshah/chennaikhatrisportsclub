@@ -3,9 +3,9 @@ import { Container, Row, Col } from "react-bootstrap";
 
 const Footer = () => {
   return (
-    <footer className="footer position-relative">
-      <Container>
-        <Row className="justify-content-between gy-4">
+    <footer className="footer position-relative container-fluid">
+      <Container className="footer-container">
+        <Row className="justify-content-between align-items-center">
           {/* Left */}
           <Col
             xs={12}
@@ -43,11 +43,11 @@ const Footer = () => {
             className="text-center mb-3 mb-md-0 order-3 order-md-2"
           >
             <p className="copyright mb-1">
-              © {new Date().getFullYear()} Chennai Khatri Sports Club. All
+              © 2025 Chennai Khatri Sports Club. All
               rights reserved.
             </p>
             {
-              <p className="developer-credit">
+              <p className="developer-credit text-light">
                 Developed by{" "}
                 <span className="developer-name">
                   Shanthosh sha , Ajith sha
@@ -84,6 +84,10 @@ const Footer = () => {
           color: white;
           padding-top: 2rem;
           padding-bottom: 1rem;
+        }
+
+        .footer-container {
+          max-width: 1000px; /* Reduced width from the default Bootstrap container */
         }
 
         .follow-us {

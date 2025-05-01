@@ -76,6 +76,7 @@ export default function ManageTeam() {
           name: doc.data().displayName || doc.data().name,
           email: doc.data().email,
           phoneNumber: doc.data().phoneNumber,
+          photoURL: doc.data().photoURL,
         }))
         .filter((player) => player.phoneNumber); // Only include players with phone numbers
 
@@ -117,6 +118,7 @@ export default function ManageTeam() {
         jerseyNumber: newPlayer.jerseyNumber,
         jerseyName: newPlayer.jerseyName,
         jerseySize: newPlayer.jerseySize,
+        photoURL: newPlayer.photoURL,
       };
 
       // Update team data
@@ -141,6 +143,7 @@ export default function ManageTeam() {
         jerseyNumber: "",
         jerseyName: "",
         jerseySize: "",
+        photoURL: "",
       });
 
       setTimeout(() => {
@@ -230,6 +233,7 @@ export default function ManageTeam() {
       jerseyName: player.jerseyName || "",
       // Ensure jersey size is lowercase for consistent comparison with dropdown values
       jerseySize: player.jerseySize ? player.jerseySize.toLowerCase() : "",
+      photoURL: player.photoURL || "",
     });
     setEditingPlayerIndex(index);
     setShowEditModal(true);
@@ -309,7 +313,7 @@ export default function ManageTeam() {
 
   return (
     <>
-      <Meta title={teamData?.name || "Manage Team"}/>
+      <Meta title={teamData?.name || "Manage Team"} />
       <style jsx global>{`
         /* Animation for card */
         .team-card {
@@ -710,6 +714,7 @@ export default function ManageTeam() {
               <Table responsive hover className="align-middle team-table">
                 <thead>
                   <tr>
+                    <th>Profile</th>
                     <th>Name</th>
                     <th>Contact</th>
                     <th>Role</th>
@@ -722,6 +727,46 @@ export default function ManageTeam() {
                 <tbody>
                   {teamData?.players?.map((player, index) => (
                     <tr key={index}>
+                      <td>
+                        <div className="d-flex align-items-center gap-2">
+                          {availablePlayers.find((p) => p.id === player.userId)
+                            ?.photoURL ? (
+                            <img
+                              src={
+                                availablePlayers.find(
+                                  (p) => p.id === player.userId
+                                )?.photoURL
+                              }
+                              alt={player.name}
+                              style={{
+                                width: "40px",
+                                height: "40px",
+                                borderRadius: "50%",
+                                objectFit: "cover",
+                                border: "2px solid #0d6efd",
+                              }}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                width: "40px",
+                                height: "40px",
+                                borderRadius: "50%",
+                                backgroundColor: "#e9ecef",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "16px",
+                                fontWeight: "bold",
+                                color: "#6c757d",
+                                border: "2px solid #dee2e6",
+                              }}
+                            >
+                              {player.name.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+                      </td>
                       <td>
                         <div className="d-flex align-items-center gap-2">
                           {player.name}
@@ -823,6 +868,7 @@ export default function ManageTeam() {
                         role: selected?.role || "",
                         isCaptain: selected?.isCaptain || false,
                         isViceCaptain: selected?.isViceCaptain || false,
+                        photoURL: selected?.photoURL || "",
                       })
                     }
                     options={availablePlayers.map((player) => ({
@@ -832,6 +878,7 @@ export default function ManageTeam() {
                       }`,
                       name: player.name,
                       phoneNumber: player.phoneNumber,
+                      photoURL: player.photoURL,
                     }))}
                     placeholder="Search and select player..."
                     isSearchable

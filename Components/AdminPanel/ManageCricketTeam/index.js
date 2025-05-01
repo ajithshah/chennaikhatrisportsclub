@@ -98,6 +98,7 @@ export default function ManageCricketTeam() {
           name: doc.data().name || doc.data().displayName,
           phoneNumber: doc.data().phoneNumber,
           email: doc.data().email,
+          photoURL: doc.data().photoURL || doc.data().profilePic || "",
         }))
         .filter((captain) => captain.phoneNumber);
 
@@ -520,6 +521,7 @@ export default function ManageCricketTeam() {
           jerseyName: player.jerseyName || "",
           jerseySize: player.jerseySize || "",
           phoneNumber: player.phoneNumber || "",
+          userId: player.userId || "", // Include userId for profile photo lookup
         }));
 
         setTeamMembers(membersData);
@@ -1943,6 +1945,7 @@ export default function ManageCricketTeam() {
                     <Table responsive striped className="team-members-table">
                       <thead>
                         <tr>
+                          <th>Profile</th>
                           <th>Name</th>
                           <th>Role</th>
                           <th>Contact</th>
@@ -1954,6 +1957,53 @@ export default function ManageCricketTeam() {
                       <tbody>
                         {teamMembers.map((member) => (
                           <tr key={member.id}>
+                            <td>
+                              {availableCaptains.find(
+                                (c) =>
+                                  c.id ===
+                                  viewTeamDetails.players.find(
+                                    (p) => p.name === member.name
+                                  )?.userId
+                              )?.photoURL ? (
+                                <img
+                                  src={
+                                    availableCaptains.find(
+                                      (c) =>
+                                        c.id ===
+                                        viewTeamDetails.players.find(
+                                          (p) => p.name === member.name
+                                        )?.userId
+                                    )?.photoURL
+                                  }
+                                  alt={member.name}
+                                  style={{
+                                    width: "40px",
+                                    height: "40px",
+                                    borderRadius: "50%",
+                                    objectFit: "cover",
+                                    border: "2px solid #0d6efd",
+                                  }}
+                                />
+                              ) : (
+                                <div
+                                  style={{
+                                    width: "40px",
+                                    height: "40px",
+                                    borderRadius: "50%",
+                                    backgroundColor: "#e9ecef",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontSize: "16px",
+                                    fontWeight: "bold",
+                                    color: "#6c757d",
+                                    border: "2px solid #dee2e6",
+                                  }}
+                                >
+                                  {member.name.charAt(0).toUpperCase()}
+                                </div>
+                              )}
+                            </td>
                             <td className="fw-semibold">{member.name}</td>
                             <td>
                               <Badge
