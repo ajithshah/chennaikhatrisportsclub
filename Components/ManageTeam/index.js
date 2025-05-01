@@ -311,6 +311,294 @@ export default function ManageTeam() {
     }
   };
 
+  // Print team player details function
+  const printPlayersList = () => {
+    if (!teamData) return;
+
+    const printWindow = window.open("", "_blank");
+
+    // Safe access for properties
+    const teamName = teamData.name || "Team";
+    const teamStatus = teamData.status || "unknown";
+    const captain = teamData.captain || "Not assigned";
+    const viceCaptain = teamData.viceCaptain || "Not assigned";
+    const viceCaptainPhoneNumber = teamData.viceCaptainPhoneNumber || "-";
+    const captainPhone = teamData.captainPhoneNumber || "-";
+    const teamLogo = teamData.teamLogoUrl || "";
+
+    // Ensure players is an array
+    const players = Array.isArray(teamData.players) ? teamData.players : [];
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>${teamName} - Players List</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            color: #333;
+          }
+          .print-container {
+            max-width: 800px;
+            margin: 0 auto;
+          }
+          .team-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0d6efd;
+          }
+          .team-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 15px;
+            display: block;
+            border: 3px solid #0d6efd;
+          }
+          .team-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #0d6efd;
+          }
+          .team-info {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+          }
+          .info-item {
+            margin-bottom: 10px;
+          }
+          .info-label {
+            font-weight: bold;
+            color: #6c757d;
+          }
+          .info-value {
+            font-weight: normal;
+          }
+          .team-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: ${
+              teamStatus === "active" ? "#198754" : "#6c757d"
+            };
+          }
+          .players-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+          }
+          .players-table th,
+          .players-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+          }
+          .players-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+          }
+          .empty-message {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #664d03;
+            border-radius: 5px;
+          }
+          .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+          }
+          .profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #0d6efd;
+            display: inline-block;
+          }
+          .profile-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #6c757d;
+            border: 2px solid #dee2e6;
+          }
+          .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            background-color: #0d6efd;
+            margin-left: 5px;
+          }
+          @media print {
+            body {
+              print-color-adjust: exact;
+              -webkit-print-color-adjust: exact;
+              color-adjust: exact;
+            }
+            .no-print {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="print-container">
+          <div class="team-header">
+            ${
+              teamLogo
+                ? `<img src="${teamLogo}" class="team-logo" alt="${teamName} Logo">`
+                : ""
+            }
+            <h1 class="team-name">${teamName}</h1>
+          </div>
+          
+          <div class="team-info">
+            <div class="info-item">
+              <span class="info-label">Captain:</span>
+              <span class="info-value">${captain}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Contact:</span>
+              <span class="info-value">${captainPhone}</span>
+            </div>
+          </div>
+          <div class="team-info">
+            <div class="info-item">
+              <span class="info-label">Vice-Captain:</span>
+              <span class="info-value">${viceCaptain}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Contact:</span>
+              <span class="info-value">${viceCaptainPhoneNumber}</span>
+            </div>
+          </div>
+          
+          <h2>Team Players</h2>
+          
+          ${
+            players.length > 0
+              ? `
+            <table class="players-table">
+              <thead>
+                <tr>
+                  <th>Profile</th>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Role</th>
+                  <th>Jersey Name</th>
+                  <th>Jersey No</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${players
+                  .map((player) => {
+                    if (!player) return "";
+
+                    const playerName = player.name || "-";
+                    const playerRole = player.role || "-";
+
+                    // Find player data
+                    const playerData = availablePlayers.find(
+                      (p) => p.id === player.userId
+                    );
+                    const playerPhone = playerData?.phoneNumber || "-";
+                    const playerPhotoURL = playerData?.photoURL || "";
+
+                    const jerseyName = player.jerseyName || "-";
+                    const jerseyNumber = player.jerseyNumber || "-";
+
+                    return `
+                  <tr>
+                    <td>
+                      ${
+                        playerPhotoURL
+                          ? `<img src="${playerPhotoURL}" class="profile-image" alt="${playerName}">`
+                          : `<div class="profile-placeholder">${playerName
+                              .charAt(0)
+                              .toUpperCase()}</div>`
+                      }
+                    </td>
+                    <td>
+                      ${playerName}
+                      ${player.isCaptain ? '<span class="badge">C</span>' : ""}
+                      ${
+                        player.isViceCaptain
+                          ? '<span class="badge">VC</span>'
+                          : ""
+                      }
+                    </td>
+                    <td>${playerPhone}</td>
+                    <td>${playerRole}</td>
+                    <td>${jerseyName}</td>
+                    <td>${jerseyNumber}</td>
+                    <td></td>
+                  </tr>
+                `;
+                  })
+                  .join("")}
+              </tbody>
+            </table>
+          `
+              : `
+            <div class="empty-message">
+              No players added yet.
+            </div>
+          `
+          }
+          
+          <div class="footer">
+            <p>Printed from Chennai Khatri Sports Club</p>
+            <p>Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
+          </div>
+          
+          <div class="no-print" style="text-align: center; margin-top: 30px;">
+            <button onclick="window.print()" style="padding: 10px 20px; background: #0d6efd; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+              Print This Page
+            </button>
+          </div>
+        </div>
+        <script>
+          // Automatically open print dialog when the page loads
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+            }, 500);
+          }
+        </script>
+      </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+  };
+
   return (
     <>
       <Meta title={teamData?.name || "Manage Team"} />
@@ -655,18 +943,28 @@ export default function ManageTeam() {
               {/* Team Header */}
               <div className="d-flex justify-content-between align-items-center mb-4 team-header">
                 <h2 className="fw-bold mb-0">Team : {teamData?.name}</h2>
-                <Badge
-                  bg={
-                    teamData?.status === "active"
-                      ? "success"
-                      : teamData?.status === "inactive"
-                      ? "danger"
-                      : "warning"
-                  }
-                  className="px-5 py-2 rounded-pill text-light"
-                >
-                  {teamData?.status}
-                </Badge>
+                <div>
+                  <Button
+                    variant="outline-primary mr-2"
+                    className="me-2 rounded-pill"
+                    onClick={printPlayersList}
+                  >
+                    <i className="fas fa-print me-2 mr-2"></i>
+                    Print Team
+                  </Button>
+                  <Badge
+                    bg={
+                      teamData?.status === "active"
+                        ? "success"
+                        : teamData?.status === "inactive"
+                        ? "danger"
+                        : "warning"
+                    }
+                    className="px-5 py-2 rounded-pill text-light"
+                  >
+                    {teamData?.status}
+                  </Badge>
+                </div>
               </div>
 
               {/* Team Info */}
@@ -704,7 +1002,7 @@ export default function ManageTeam() {
                     className="rounded-pill"
                     onClick={() => setShowModal(true)}
                   >
-                    <i className="fas fa-plus me-2"></i>
+                    <i className="fas fa-plus me-2 mr-2"></i>
                     Add Player
                   </Button>
                 </div>
