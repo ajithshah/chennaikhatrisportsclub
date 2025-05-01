@@ -700,11 +700,11 @@ export default function ManageCricketTeam() {
             border-top: 1px solid #ddd;
           }
           .profile-image {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            border-radius: 10%;
             object-fit: cover;
-            border: 2px solid #0d6efd;
+            border: 1px solid #0d6efd;
             display: inline-block;
           }
           .profile-placeholder {
@@ -810,7 +810,7 @@ export default function ManageCricketTeam() {
                     <td>
                       ${
                         memberPhotoURL
-                          ? `<img src="${memberPhotoURL}" class="profile-image" alt="${memberName}">`
+                          ? `<img src="${memberPhotoURL}" class="profile-image" alt="${memberName}" width="80" height="80">`
                           : `<div class="profile-placeholder">${memberName
                               .charAt(0)
                               .toUpperCase()}</div>`
@@ -2292,8 +2292,8 @@ export default function ManageCricketTeam() {
                                   }
                                   alt={member.name}
                                   style={{
-                                    width: "40px",
-                                    height: "40px",
+                                    width: "60px",
+                                    height: "60px",
                                     borderRadius: "50%",
                                     objectFit: "cover",
                                     border: "2px solid #0d6efd",
