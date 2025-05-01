@@ -555,9 +555,6 @@ export default function ManageCricketTeam() {
     const teamName = viewTeamDetails.name || "Team";
     const teamLogo = viewTeamDetails.teamLogoUrl || "";
     const teamStatus = viewTeamDetails.status || "unknown";
-    const createdDate = viewTeamDetails.createdAt
-      ? new Date(viewTeamDetails.createdAt).toLocaleDateString()
-      : "Unknown";
     const captain = viewTeamDetails.captain || "Not assigned";
     const viceCaptain = viewTeamDetails.viceCaptain || "Not assigned";
     const captainPhone = viewTeamDetails.captainPhoneNumber || "-";
@@ -741,7 +738,6 @@ export default function ManageCricketTeam() {
                 : ""
             }
             <h1 class="team-name">${teamName}</h1>
-            <div class="team-date">Created: ${createdDate}</div>
           </div>
           
           <div class="leadership-section">
