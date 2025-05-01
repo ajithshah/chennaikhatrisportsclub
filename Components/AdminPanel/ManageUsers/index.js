@@ -75,7 +75,42 @@ export default function ManageUsers() {
     const pageNumbers = [];
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-    for (let i = 1; i <= totalPages; i++) {
+    // For mobile screens, show fewer page numbers
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    const maxVisiblePages = isMobile ? 3 : 5;
+
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    // Adjust start page if we're near the end
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    // Add ellipsis for first page if needed
+    if (startPage > 1) {
+      pageNumbers.push(
+        <Pagination.Item
+          key={1}
+          onClick={() => paginate(1)}
+          className="pagination-item d-none d-sm-block"
+        >
+          1
+        </Pagination.Item>
+      );
+      if (startPage > 2) {
+        pageNumbers.push(
+          <Pagination.Ellipsis
+            key="ellipsis1"
+            className="d-none d-sm-block"
+            disabled
+          />
+        );
+      }
+    }
+
+    // Add page numbers
+    for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(
         <Pagination.Item
           key={i}
@@ -88,13 +123,35 @@ export default function ManageUsers() {
       );
     }
 
+    // Add ellipsis for last page if needed
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pageNumbers.push(
+          <Pagination.Ellipsis
+            key="ellipsis2"
+            className="d-none d-sm-block"
+            disabled
+          />
+        );
+      }
+      pageNumbers.push(
+        <Pagination.Item
+          key={totalPages}
+          onClick={() => paginate(totalPages)}
+          className="pagination-item d-none d-sm-block"
+        >
+          {totalPages}
+        </Pagination.Item>
+      );
+    }
+
     return totalPages > 1 ? (
       <div className="d-flex justify-content-center mt-4 pagination-container">
-        <Pagination>
+        <Pagination className="flex-wrap">
           <Pagination.First
             onClick={() => paginate(1)}
             disabled={currentPage === 1}
-            className="pagination-control"
+            className="pagination-control d-none d-sm-block"
           />
           <Pagination.Prev
             onClick={() => paginate(currentPage - 1)}
@@ -110,7 +167,7 @@ export default function ManageUsers() {
           <Pagination.Last
             onClick={() => paginate(totalPages)}
             disabled={currentPage === totalPages}
-            className="pagination-control"
+            className="pagination-control d-none d-sm-block"
           />
         </Pagination>
       </div>
@@ -394,6 +451,49 @@ export default function ManageUsers() {
         .profile-image:hover {
           transform: scale(1.1);
           box-shadow: 0 0 12px rgba(13, 110, 253, 0.3);
+        }
+
+        /* Pagination responsive styles */
+        @media (max-width: 767px) {
+          .pagination {
+            gap: 5px;
+          }
+          
+          .pagination .page-item .page-link {
+            padding: 0.4rem 0.7rem;
+            font-size: 0.9rem;
+          }
+          
+          .pagination-container {
+            overflow-x: auto;
+            padding-bottom: 15px;
+            justify-content: center;
+          }
+          
+          .pagination-control .page-link {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.85rem;
+          }
+        }
+        
+        /* Enhanced pagination styling */
+        .pagination .page-item.active .page-link {
+          background-color: #0d6efd;
+          border-color: #0d6efd;
+          transform: scale(1.1);
+          box-shadow: 0 2px 5px rgba(13, 110, 253, 0.3);
+          z-index: 3;
+        }
+        
+        .pagination .page-link {
+          border-radius: 5px;
+          margin: 0 2px;
+          transition: all 0.3s ease;
+        }
+        
+        .pagination .page-link:hover {
+          background-color: #e9ecef;
+          transform: translateY(-2px;
         }
       `}</style>
       <Header />

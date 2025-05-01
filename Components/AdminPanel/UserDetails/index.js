@@ -481,7 +481,7 @@ export default function UserDetails({ userId }) {
                     className="rounded-pill px-4 py-2 back-button"
                     onClick={() => router.push("/adminpanel/users")}
                   >
-                    <i className="fas fa-arrow-left me-2"></i>
+                    <i className="fas fa-arrow-left me-2 mr-2"></i>
                     Back to Users List
                   </Button>
                 </div>
