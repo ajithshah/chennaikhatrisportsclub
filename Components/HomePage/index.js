@@ -532,14 +532,17 @@ const HomePage = () => {
               <>
                 <div className="text-center mb-8">
                   <div className="logo-container">
-                    <Image
-                      src="/logo.png"
-                      alt="Chennai Khatri Sports Club"
-                      width={isMobile ? 180 : 280}
-                      height={isMobile ? 180 : 280}
-                      className="object-contain rotating-glow"
-                      priority
-                    />
+                    <div className="responsive-logo-wrapper">
+                      <Image
+                        src="/logo.png"
+                        alt="Chennai Khatri Sports Club"
+                        width={280}
+                        height={280}
+                        className="object-contain rotating-glow"
+                        sizes="(max-width: 640px) 180px, 280px"
+                        priority
+                      />
+                    </div>
                   </div>
                   <h1
                     className={`${
@@ -556,6 +559,19 @@ const HomePage = () => {
                     Join our community of sports enthusiasts and stay updated
                     with latest events
                   </p>
+                </div>
+                <div className="button-bounce">
+                  <button
+                    onClick={signInWithGoogle}
+                    disabled={isLoading}
+                    className="login-btn"
+                    style={{ width: isMobile ? "100%" : "90%" }}
+                  >
+                    <div className="btn-content">
+                      <span className="btn-text">Sign In with Google</span>
+                      <span className="btn-icon">→</span>
+                    </div>
+                  </button>
                   <div className="mt-8 text-center fade-in-delayed-more">
                     <p
                       className={`${
@@ -578,19 +594,6 @@ const HomePage = () => {
                       </a>
                     </p>
                   </div>
-                </div>
-                <div className="text-center button-bounce">
-                  <button
-                    onClick={signInWithGoogle}
-                    disabled={isLoading}
-                    className="login-btn"
-                    style={{ width: isMobile ? "100%" : "90%" }}
-                  >
-                    <div className="btn-content">
-                      <span className="btn-text">Sign In with Google</span>
-                      <span className="btn-icon">→</span>
-                    </div>
-                  </button>
                 </div>
               </>
             )}
@@ -714,9 +717,6 @@ const HomePage = () => {
               rgba(0, 123, 255, 0.4),
               rgba(0, 83, 175, 0.2)
             );
-          }
-          100% {
-            transform: translateY(20px) translateX(60px) rotate(10deg)
               scale(0.95);
             opacity: 0.5;
           }

@@ -98,6 +98,7 @@ export default function ManageCricketTeam() {
           name: doc.data().name || doc.data().displayName,
           phoneNumber: doc.data().phoneNumber,
           email: doc.data().email,
+          photoURL: doc.data().photoURL || doc.data().profilePic || "",
         }))
         .filter((captain) => captain.phoneNumber);
 
@@ -224,8 +225,6 @@ export default function ManageCricketTeam() {
 
     try {
       if (file) {
-        console.log("File selected:", file);
-
         const formData = new FormData();
         formData.append("file", file);
 
@@ -522,6 +521,7 @@ export default function ManageCricketTeam() {
           jerseyName: player.jerseyName || "",
           jerseySize: player.jerseySize || "",
           phoneNumber: player.phoneNumber || "",
+          userId: player.userId || "", // Include userId for profile photo lookup
         }));
 
         setTeamMembers(membersData);
@@ -1616,7 +1616,7 @@ export default function ManageCricketTeam() {
                 </Form.Group>
 
                 <Form.Group className="formGroup">
-                  <Form.Label>Captain</Form.Label>
+                  <Form.Label>Captain*</Form.Label>
                   <Select
                     required
                     value={availableCaptains.find(
@@ -1643,27 +1643,43 @@ export default function ManageCricketTeam() {
                     isSearchable
                     className="basic-single"
                     classNamePrefix="select"
+                    styles={{
+                      valueContainer: (base) => ({
+                        ...base,
+                        backgroundColor: teamForm.captain
+                          ? "#e9ecef"
+                          : base.backgroundColor,
+                      }),
+                      singleValue: (base) => ({
+                        ...base,
+                        color: "#212529",
+                        fontWeight: teamForm.captain ? "500" : base.fontWeight,
+                      }),
+                    }}
                   />
-                  <Form.Text className="text-muted">
-                    <i className="fas fa-info-circle me-1"></i>
-                    Search and select from registered users
-                  </Form.Text>
+                  {teamForm.captain ? (
+                    <div className="mt-2">
+                      <div className="d-flex align-items-center mb-2">
+                        <Badge bg="primary mr-1" className="me-2 px-2 py-1">
+                          C
+                        </Badge>
+                        <span className="fw-medium">{teamForm.captain}</span>
+                        <span className="ms-2 text-muted">
+                          {" "}
+                          - {teamForm.captainPhoneNumber}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <Form.Text className="text-muted">
+                      <i className="fas fa-info-circle me-1"></i>
+                      Search and select from registered users
+                    </Form.Text>
+                  )}
                 </Form.Group>
 
-                {teamForm.captain && (
-                  <Form.Group className="formGroup">
-                    <Form.Label>Selected Captain</Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={teamForm.captain}
-                      readOnly
-                      className="bg-light"
-                    />
-                  </Form.Group>
-                )}
-
                 <Form.Group className="formGroup">
-                  <Form.Label>Vice-Captain</Form.Label>
+                  <Form.Label>Vice-Captain*</Form.Label>
                   <Select
                     required
                     value={availableCaptains.find(
@@ -1680,7 +1696,9 @@ export default function ManageCricketTeam() {
                     }
                     options={availableCaptains.map((captain) => ({
                       value: captain.id,
-                      label: `${captain.name} (${captain.phoneNumber})`,
+                      label: `${captain.name} (${
+                        captain.phoneNumber || "No phone"
+                      })`,
                       name: captain.name,
                       phoneNumber: captain.phoneNumber,
                       email: captain.email,
@@ -1690,24 +1708,45 @@ export default function ManageCricketTeam() {
                     isSearchable
                     className="basic-single"
                     classNamePrefix="select"
+                    styles={{
+                      valueContainer: (base) => ({
+                        ...base,
+                        backgroundColor: teamForm.viceCaptain
+                          ? "#e9ecef"
+                          : base.backgroundColor,
+                      }),
+                      singleValue: (base) => ({
+                        ...base,
+                        color: "#212529",
+                        fontWeight: teamForm.viceCaptain
+                          ? "500"
+                          : base.fontWeight,
+                      }),
+                    }}
                   />
-                  <Form.Text className="text-muted">
-                    <i className="fas fa-info-circle me-1"></i>
-                    Search and select from registered users
-                  </Form.Text>
+                  {teamForm.viceCaptain ? (
+                    <div className="mt-2">
+                      <div className="d-flex align-items-center mb-2">
+                        <Badge bg="info mr-1" className="me-2 px-2 py-1">
+                          VC
+                        </Badge>
+                        <span className="fw-medium">
+                          {teamForm.viceCaptain}
+                        </span>
+                        <span className="ms-2 text-muted">
+                          {" "}
+                          - {teamForm.viceCaptainPhoneNumber}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <Form.Text className="text-muted">
+                      <i className="fas fa-info-circle me-1"></i>
+                      Search and select from registered users (cannot be the
+                      same as captain)
+                    </Form.Text>
+                  )}
                 </Form.Group>
-
-                {teamForm.viceCaptain && (
-                  <Form.Group className="formGroup">
-                    <Form.Label>Selected Vice-Captain</Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={teamForm.viceCaptain}
-                      readOnly
-                      className="bg-light"
-                    />
-                  </Form.Group>
-                )}
 
                 <Form.Group className="formGroup">
                   <Form.Label>Team Logo</Form.Label>
@@ -1906,6 +1945,7 @@ export default function ManageCricketTeam() {
                     <Table responsive striped className="team-members-table">
                       <thead>
                         <tr>
+                          <th>Profile</th>
                           <th>Name</th>
                           <th>Role</th>
                           <th>Contact</th>
@@ -1917,6 +1957,53 @@ export default function ManageCricketTeam() {
                       <tbody>
                         {teamMembers.map((member) => (
                           <tr key={member.id}>
+                            <td>
+                              {availableCaptains.find(
+                                (c) =>
+                                  c.id ===
+                                  viewTeamDetails.players.find(
+                                    (p) => p.name === member.name
+                                  )?.userId
+                              )?.photoURL ? (
+                                <img
+                                  src={
+                                    availableCaptains.find(
+                                      (c) =>
+                                        c.id ===
+                                        viewTeamDetails.players.find(
+                                          (p) => p.name === member.name
+                                        )?.userId
+                                    )?.photoURL
+                                  }
+                                  alt={member.name}
+                                  style={{
+                                    width: "40px",
+                                    height: "40px",
+                                    borderRadius: "50%",
+                                    objectFit: "cover",
+                                    border: "2px solid #0d6efd",
+                                  }}
+                                />
+                              ) : (
+                                <div
+                                  style={{
+                                    width: "40px",
+                                    height: "40px",
+                                    borderRadius: "50%",
+                                    backgroundColor: "#e9ecef",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontSize: "16px",
+                                    fontWeight: "bold",
+                                    color: "#6c757d",
+                                    border: "2px solid #dee2e6",
+                                  }}
+                                >
+                                  {member.name.charAt(0).toUpperCase()}
+                                </div>
+                              )}
+                            </td>
                             <td className="fw-semibold">{member.name}</td>
                             <td>
                               <Badge

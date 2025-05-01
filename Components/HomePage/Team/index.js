@@ -88,13 +88,13 @@ const Team = () => {
                       </Badge>
                     </div> */}
 
-                  {/* <div className="mt-auto pt-3">
+                  <div className="mt-auto pt-3">
                       <Link href={`/team/${team.id}`} passHref legacyBehavior>
                         <a className="btn btn-outline-primary rounded-pill px-4">
                           <i className="fas fa-users me-2"></i>View Team
                         </a>
                       </Link>
-                    </div> */}
+                    </div>
                 </Card.Body>
               </Card>
             </Col>
