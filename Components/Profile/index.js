@@ -625,15 +625,15 @@ export default function Profile() {
 
         .profile-action-btn {
           padding: 0.9rem 2rem;
-          border-radius: 50px;
+          border-radius: 20px;
           font-weight: 600;
-          font-size: 1.05rem;
+          font-size: 0.8rem;
           display: flex;
           align-items: center;
           justify-content: center;
           transition: all 0.3s ease;
           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-          min-width: 180px;
+          min-width: 80px;
           position: relative;
           overflow: hidden;
         }
@@ -881,6 +881,7 @@ export default function Profile() {
 
               <div className="profile-name-section">
                 <h2 className="profile-name">{userData?.displayName}</h2>
+                <br></br>
 
                 {teamData && (
                   <>
@@ -897,15 +898,14 @@ export default function Profile() {
                     {(teamData.isViceCaptain ||
                       teamData.role === "Vice Captain") && (
                       <div className="role-badge vice-captain-badge ml-1">
-                        <i className="fas fa-chess-knight me-1"></i> Vice
-                        Captain
+                        <i className="fas fa-chess-knight "></i> Vice Captain
                       </div>
                     )}
                   </>
                 )}
 
                 {userData?.isAdmin && (
-                  <div className="admin-badge mt-2 ml-1">
+                  <div className="admin-badge ml-1">
                     <i className="fas fa-user-shield me-1"></i>Administrator
                   </div>
                 )}
@@ -1044,7 +1044,6 @@ export default function Profile() {
                         teamData.viceCaptainPhoneNumber) && (
                       <Button
                         variant="outline-success"
-                        // disabled={true}
                         onClick={() =>
                           router.push(`/team/manage/${teamData.id}`)
                         }
