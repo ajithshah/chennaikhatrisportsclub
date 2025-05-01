@@ -962,6 +962,17 @@ export default function Profile() {
                       </div>
                     </div>
 
+                    <div className="detail-group" style={{ "--i": 3 }}>
+                      <div className="detail-label">
+                        <i className="fas fa-clock"></i> Last Login
+                      </div>
+                      <div className="detail-value">
+                        {userData?.lastLogin
+                          ? new Date(userData.lastLogin).toLocaleString()
+                          : "Not available"}
+                      </div>
+                    </div>
+
                     <div className="detail-group" style={{ "--i": 2 }}>
                       <div className="detail-label">
                         <i className="fas fa-map-marker-alt"></i> Address
@@ -990,16 +1001,6 @@ export default function Profile() {
                       </div>
                     </div>
 
-                    <div className="detail-group" style={{ "--i": 3 }}>
-                      <div className="detail-label">
-                        <i className="fas fa-clock"></i> Last Login
-                      </div>
-                      <div className="detail-value">
-                        {userData?.lastLogin
-                          ? new Date(userData.lastLogin).toLocaleString()
-                          : "Not available"}
-                      </div>
-                    </div>
                   </Col>
                 </Row>
 
