@@ -1070,6 +1070,11 @@ const HomePage = () => {
 
         .button-bounce {
           opacity: 0;
+          transform: translateY(20px);
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          flex-direction: column;
           animation: bounceIn 0.6s ease-out 1s forwards;
         }
 
@@ -1095,6 +1100,7 @@ const HomePage = () => {
           background: linear-gradient(to right, #0053af, #007bff);
           color: white;
           border: none;
+          text-align: center;
           border-radius: 50px;
           padding: 0;
           font-weight: 600;

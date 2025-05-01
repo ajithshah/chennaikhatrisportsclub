@@ -29,7 +29,7 @@ const AboutUs = () => {
 
   return (
     <>
-      <Meta title="About Us | Chennai Khatri Sports Club" />
+      <Meta title="Chennai Khatri Sports Club" />
       <div className="about-container">
         <div className="about-hero">
           <Container>
