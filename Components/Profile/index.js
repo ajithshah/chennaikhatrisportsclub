@@ -884,17 +884,19 @@ export default function Profile() {
 
                 {teamData && (
                   <>
-                    <div className="profile-team-badge">{teamData.name}</div>
+                    <div className="profile-team-badge ml-1">
+                      {teamData.name}
+                    </div>
 
                     {(teamData.isCaptain || teamData.role === "Captain") && (
-                      <div className="role-badge captain-badge">
+                      <div className="role-badge captain-badge ml-1">
                         <i className="fas fa-crown me-1"></i> Team Captain
                       </div>
                     )}
 
                     {(teamData.isViceCaptain ||
                       teamData.role === "Vice Captain") && (
-                      <div className="role-badge vice-captain-badge">
+                      <div className="role-badge vice-captain-badge ml-1">
                         <i className="fas fa-chess-knight me-1"></i> Vice
                         Captain
                       </div>
@@ -903,8 +905,8 @@ export default function Profile() {
                 )}
 
                 {userData?.isAdmin && (
-                  <div className="admin-badge mt-2">
-                    <i className="fas fa-user-shield me-1"></i> Administrator
+                  <div className="admin-badge mt-2 ml-1">
+                    <i className="fas fa-user-shield me-1"></i>Administrator
                   </div>
                 )}
               </div>
@@ -1000,7 +1002,6 @@ export default function Profile() {
                         )}
                       </div>
                     </div>
-
                   </Col>
                 </Row>
 
