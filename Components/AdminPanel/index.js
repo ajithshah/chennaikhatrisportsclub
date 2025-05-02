@@ -2,32 +2,100 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Container, Row, Col, Card, Button, Badge } from "react-bootstrap";
 import { auth, db } from "../../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import Header from "../Header";
 import Meta from "../Meta";
 
 export default function AdminPanel() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [categoryStats, setCategoryStats] = useState({
+    cricket: 0,
+    users: 0,
+    tournaments: 0,
+    senior_citizen_cricket: 0,
+    events: 0,
+  });
 
   const sportsCategories = [
     {
-      id: "cricket",
-      title: "Manage Cricket Teams",
-      icon: "🏏",
-      description: "Manage cricket teams and players",
-      color: "#4CAF50",
-      link: "/adminpanel/cricket",
-    },
-    {
       id: "users",
-      title: "Users",
+      title: "User Management",
       icon: "👥",
-      description: "Manage User",
+      description: "Manage user accounts, roles and permissions",
       color: "#F44336",
       link: "/adminpanel/users",
+      statKey: "users",
+      isActive: true,
+      statLabel: "Users",
+    },
+    {
+      id: "cricket",
+      title: "KPL Cricket Teams",
+      icon: "🏏",
+      description: "Manage cricket teams, players and match schedules",
+      color: "#4CAF50",
+      link: "/adminpanel/cricket",
+      isActive: true,
+      statKey: "cricket",
+      statLabel: "Cricket Teams",
+    },
+    {
+      id: "cricket",
+      title: "Senior Citizen Cricket Teams",
+      icon: "🏏",
+      description:
+        "Manage Senior Citizen Cricket Teams, players and match schedules",
+      color: "#4CAF50",
+      link: "/adminpanel/senior_cricket",
+      statKey: "senior_citizen_cricket",
+      isActive: false,
+      statLabel: "Senior Citizen Cricket Teams",
+    },
+    {
+      id: "tournaments",
+      title: "Tournaments",
+      icon: "🏆",
+      description: "Manage cricket tournaments and matches",
+      color: "#2196F3",
+      link: "/adminpanel/tournaments",
+      statKey: "tournaments",
+      isActive: false,
+      statLabel: "Tournaments",
+    },
+    {
+      id: "events",
+      title: "Events",
+      icon: "📅",
+      description: "Manage upcoming club events and activities",
+      color: "#FF9800",
+      link: "/adminpanel/events",
+      statKey: "events",
+      isActive: false,
+      statLabel: "Upcoming Events",
     },
   ];
+
+  // Fetch counts from Firestore
+  const fetchCounts = async () => {
+    try {
+      // Get team count
+      const teamsCollection = collection(db, "cricket_teams");
+      const teamsSnapshot = await getDocs(teamsCollection);
+
+      // Get user count
+      const usersCollection = collection(db, "users");
+      const usersSnapshot = await getDocs(usersCollection);
+
+      setCategoryStats((prev) => ({
+        ...prev,
+        cricket: teamsSnapshot.size,
+        users: usersSnapshot.size,
+      }));
+    } catch (error) {
+      console.error("Error fetching counts:", error);
+    }
+  };
 
   useEffect(() => {
     const checkAdmin = async (currentUser) => {
@@ -38,6 +106,9 @@ export default function AdminPanel() {
         router.push("/");
         return;
       }
+
+      // Fetch counts after admin check
+      await fetchCounts();
       setLoading(false);
     };
 
@@ -54,69 +125,330 @@ export default function AdminPanel() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-auto text-center">
-        <h2 className="text-xl md:text-2xl font-semibold">
-          Getting AdminPanel Details
-        </h2>
-        <p className="text-gray-500">
-          Please wait while we load your admin panel details...
-        </p>
-      </div>
+      <>
+        <Meta />
+        <Header />
+        <Container
+          className="d-flex justify-content-center align-items-center"
+          style={{ minHeight: "60vh" }}
+        >
+          <div className="loading-animation">
+            <div className="spinner-container">
+              <div className="spinner"></div>
+            </div>
+            <h2 className="loading-text">Getting Admin Panel</h2>
+            <p className="loading-subtext">
+              Please wait while we load admin panel...
+            </p>
+          </div>
+        </Container>
+      </>
     );
   }
 
   return (
     <>
-      <Meta title="Admin Panel" />
+      <Meta title="Admin Panel | Chennai Khatri Sports Club" />
       <Header />
-      <Container className="py-5">
-        <Row className="g-4">
-          {sportsCategories.map((sport) => (
-            <Col key={sport.id} xs={12} md={6} xl={4}>
-              <Card
-                className="border-0 shadow-sm hover-card h-100"
-                style={{
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                }}
-              >
+      <style jsx global>{`
+        body {
+          background: #090c10;
+        }
+
+        .admin-dashboard {
+          padding: 2rem 0;
+          background: #090c10;
+        }
+
+        .dashboard-header {
+          margin-bottom: 3rem;
+          position: relative;
+          padding-bottom: 1rem;
+        }
+
+        .dashboard-header::after {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 1px;
+          background: linear-gradient(90deg, #58a6ff, transparent);
+        }
+
+        .dashboard-title {
+          font-weight: 700;
+          font-size: 2.5rem;
+          margin-bottom: 0.5rem;
+          color: #f0f6fc;
+          letter-spacing: -0.5px;
+        }
+
+        .dashboard-subtitle {
+          color: #8b949e;
+          font-size: 1.1rem;
+        }
+
+        .dashboard-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 2rem;
+        }
+
+        .dashboard-card {
+          background: #161b22;
+          border-radius: 0.5rem;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          border: 1px solid #30363d;
+          position: relative;
+        }
+
+        .dashboard-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+          border-color: #58a6ff;
+        }
+
+        .dashboard-card-accent {
+          height: 4px;
+          width: 100%;
+        }
+
+        .dashboard-card-header {
+          padding: 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          border-bottom: 1px solid #30363d;
+        }
+
+        .dashboard-card-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #f0f6fc;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .dashboard-card-icon {
+          font-size: 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .dashboard-card-body {
+          padding: 1.5rem;
+        }
+
+        .dashboard-card-description {
+          color: #8b949e;
+          font-size: 0.9rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .dashboard-card-actions {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .dashboard-button {
+          background: #0d1117;
+          color: #f0f6fc;
+          border: 1px solid #30363d;
+          border-radius: 6px;
+          padding: 0.5rem 1rem;
+          font-size: 0.9rem;
+          font-weight: 500;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .dashboard-button:hover {
+          background: #1f6feb;
+          color: white;
+          border-color: #1f6feb;
+        }
+
+        .dashboard-button-icon {
+          font-size: 1rem;
+        }
+
+        .dashboard-meta {
+          display: flex;
+          gap: 1rem;
+        }
+
+        .dashboard-badge {
+          background: #0d1117;
+          color: #8b949e;
+          border: 1px solid #30363d;
+          border-radius: 2rem;
+          padding: 0.35rem 0.75rem;
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+
+        .loading-screen {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: #0d1117;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+
+        .loading-content {
+          text-align: center;
+        }
+
+        .loader {
+          width: 48px;
+          height: 48px;
+          border: 5px solid #30363d;
+          border-bottom-color: #58a6ff;
+          border-radius: 50%;
+          display: inline-block;
+          box-sizing: border-box;
+          animation: rotation 1s linear infinite;
+          margin-bottom: 1rem;
+        }
+
+        @keyframes rotation {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
+        .admin-stats-row {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 1.5rem;
+          margin-bottom: 3rem;
+        }
+
+        .admin-stat-card {
+          background: #0d1117;
+          border: 1px solid #30363d;
+          border-radius: 0.5rem;
+          padding: 1.5rem;
+          transition: all 0.2s ease;
+        }
+
+        .admin-stat-card:hover {
+          border-color: #58a6ff;
+          transform: translateY(-3px);
+        }
+
+        .admin-stat-value {
+          font-weight: 700;
+          font-size: 2rem;
+          color: #f0f6fc;
+          margin-bottom: 0.2rem;
+        }
+
+        .admin-stat-label {
+          color: #8b949e;
+          font-size: 0.9rem;
+        }
+      `}</style>
+
+      <div className="admin-dashboard">
+        <Container>
+          <div className="dashboard-header">
+            <h1 className="dashboard-title">Admin Dashboard</h1>
+            <p className="dashboard-subtitle">
+              Chennai Khatri Sports Club Management Console
+            </p>
+          </div>
+
+          <div className="admin-stats-row">
+            {sportsCategories.map((category) => (
+              <div className="admin-stat-card" key={category.id}>
+                <div className="admin-stat-value">
+                  {categoryStats[category.statKey]}
+                </div>
+                <div className="admin-stat-label">{category.statLabel}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="dashboard-grid">
+            {sportsCategories.map((category) => (
+              <div className="dashboard-card" key={category.id}>
                 <div
-                  className="py-3 px-4"
-                  style={{
-                    background: `${sport.color}15`,
-                    borderBottom: `2px dashed ${sport.color}30`,
-                  }}
-                >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <span className="fs-1">{sport.icon}</span>
-                    <Badge
-                      bg="light"
-                      text="dark"
-                      className="rounded-pill px-3 py-2"
-                    >
-                      {sport.stats}
-                    </Badge>
+                  className="dashboard-card-accent"
+                  style={{ background: category.color }}
+                ></div>
+
+                <div className="dashboard-card-header">
+                  <div className="dashboard-card-title">
+                    <span className="dashboard-card-icon">{category.icon}</span>
+                    {category.title}
+                  </div>
+                  <div className="dashboard-badge">
+                    {categoryStats[category.statKey]}{" "}
+                    {category.id === "cricket"
+                      ? "teams"
+                      : category.id === "users"
+                      ? "users"
+                      : category.id === "tournaments"
+                      ? "total"
+                      : "upcoming"}
                   </div>
                 </div>
-                <Card.Body className="p-4">
-                  <h3 className="fs-4 fw-bold mb-2">{sport.title}</h3>
-                  <p className="text-muted mb-4">{sport.description}</p>
-                  <div className="d-flex gap-2">
-                    <Button
-                      variant="primary"
-                      className="rounded-pill px-4 w-100"
-                      onClick={() => router.push(sport.link)}
+
+                <div className="dashboard-card-body">
+                  <p className="dashboard-card-description">
+                    {category.description}
+                  </p>
+
+                  <div className="dashboard-card-actions">
+                    <button
+                      className={`dashboard-button ${
+                        !category.isActive ? "disabled-button" : ""
+                      }`}
+                      onClick={() =>
+                        category.isActive && router.push(category.link)
+                      }
+                      disabled={!category.isActive}
                     >
-                      {/* <i className="fas fa-tasks me-2"></i> */}
-                      Manage
-                    </Button>
+                      {category.isActive ? "Manage" : "Coming Soon"}
+                      {category.isActive && (
+                        <span className="dashboard-button-icon">→</span>
+                      )}
+                    </button>
+
+                    <div className="dashboard-meta">
+                      <span className="dashboard-badge">
+                        {category.id === "cricket"
+                          ? "Teams"
+                          : category.id === "users"
+                          ? "Accounts"
+                          : category.id === "tournaments"
+                          ? "Matches"
+                          : "Schedule"}
+                      </span>
+                    </div>
                   </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Container>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </div>
     </>
   );
 }
