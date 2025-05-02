@@ -4,21 +4,17 @@ const ImageSlider = () => {
   // Media items for the collage
   const mediaItems = [
     { type: "image", src: "/slide1.jpeg", caption: "Cricket Match" },
-    { type: "image", src: "/slide2.jpeg", caption: "Founder" },
-    { type: "image", src: "/slide3.jpeg", caption: "Founder" },
+    { type: "image", src: "/slide2.jpeg", caption: "Cricket Match" },
+    { type: "video", src: "/slide_vdo1.mp4", caption: "Cricket Match" },
+    { type: "image", src: "/slide3.jpeg", caption: "Cricket Match" },
     { type: "image", src: "/slide4.jpeg", caption: "Cricket Match" },
+    { type: "video", src: "/slide_vdo2.mp4", caption: "Cricket Match" },
     { type: "image", src: "/slide5.jpeg", caption: "Cricket Match" },
     { type: "image", src: "/slide6.jpeg", caption: "Cricket Match" },
+    { type: "video", src: "/slide_vdo3.mp4", caption: "Cricket Match" },
     { type: "image", src: "/slide7.jpeg", caption: "Cricket Match" },
     { type: "image", src: "/slide8.jpeg", caption: "Cricket Match" },
-    { type: "image", src: "/slide1.jpeg", caption: "Cricket Match" },
-    { type: "image", src: "/slide2.jpeg", caption: "Founder" },
-    { type: "image", src: "/slide3.jpeg", caption: "Founder" },
-    { type: "image", src: "/slide4.jpeg", caption: "Cricket Match" },
-    { type: "image", src: "/slide5.jpeg", caption: "Cricket Match" },
-    { type: "image", src: "/slide6.jpeg", caption: "Cricket Match" },
-    { type: "image", src: "/slide7.jpeg", caption: "Cricket Match" },
-    { type: "image", src: "/slide8.jpeg", caption: "Cricket Match" },
+    { type: "video", src: "/slide_vdo4.mp4", caption: "Cricket Match" },
   ];
 
   const [windowSize, setWindowSize] = useState({
@@ -27,7 +23,6 @@ const ImageSlider = () => {
   });
 
   const [visibleItems, setVisibleItems] = useState([]);
-  const [isLooping, setIsLooping] = useState(true);
   const loopTimerRef = useRef(null);
   const reshuffleTimerRef = useRef(null);
 
@@ -75,50 +70,49 @@ const ImageSlider = () => {
     setVisibleItems(prepareItems());
 
     // Set up the looping functionality
-    if (isLooping) {
-      // Reshuffle items periodically for visual interest
-      reshuffleTimerRef.current = setInterval(() => {
-        setVisibleItems((items) => {
-          return items.map((item) => ({
-            ...item,
-            size: generateTileSize(),
-            order: Math.random(),
-          }));
-        });
-      }, 10000); // Reshuffle every 10 seconds
 
-      // Every 3 seconds, swap out an item to create looping effect
-      loopTimerRef.current = setInterval(() => {
-        setVisibleItems((items) => {
-          // Make a copy of items
-          const newItems = [...items];
+    // Reshuffle items periodically for visual interest
+    reshuffleTimerRef.current = setInterval(() => {
+      setVisibleItems((items) => {
+        return items.map((item) => ({
+          ...item,
+          size: generateTileSize(),
+          order: Math.random(),
+        }));
+      });
+    }, 10000); // Reshuffle every 10 seconds
 
-          // Randomly select an item to replace
-          const randomIndex = Math.floor(Math.random() * newItems.length);
+    // Every 3 seconds, swap out an item to create looping effect
+    loopTimerRef.current = setInterval(() => {
+      setVisibleItems((items) => {
+        // Make a copy of items
+        const newItems = [...items];
 
-          // Replace with a random item from mediaItems
-          const randomMediaItem =
-            mediaItems[Math.floor(Math.random() * mediaItems.length)];
+        // Randomly select an item to replace
+        const randomIndex = Math.floor(Math.random() * newItems.length);
 
-          // Create new item with fresh random properties
-          newItems[randomIndex] = {
-            ...randomMediaItem,
-            id: newItems[randomIndex].id, // Keep same ID for React key stability
-            size: generateTileSize(),
-            order: Math.random(),
-          };
+        // Replace with a random item from mediaItems
+        const randomMediaItem =
+          mediaItems[Math.floor(Math.random() * mediaItems.length)];
 
-          return newItems;
-        });
-      }, 3000); // Swap an item every 3 seconds
-    }
+        // Create new item with fresh random properties
+        newItems[randomIndex] = {
+          ...randomMediaItem,
+          id: newItems[randomIndex].id, // Keep same ID for React key stability
+          size: generateTileSize(),
+          order: Math.random(),
+        };
+
+        return newItems;
+      });
+    }, 3000); // Swap an item every 3 seconds
 
     // Cleanup on unmount
     return () => {
       if (loopTimerRef.current) clearInterval(loopTimerRef.current);
       if (reshuffleTimerRef.current) clearInterval(reshuffleTimerRef.current);
     };
-  }, [isLooping]);
+  }, []);
 
   // Get column count based on screen width
   const getColumnCount = () => {
@@ -129,21 +123,9 @@ const ImageSlider = () => {
     return 5; // Larger screens
   };
 
-  // Toggle looping functionality
-  const toggleLooping = () => {
-    setIsLooping(!isLooping);
-  };
-
   return (
     <div className="tiles-wrapper">
-      <div className="tiles-controls">
-        <button
-          className={`loop-toggle ${isLooping ? "active" : ""}`}
-          onClick={toggleLooping}
-        >
-          {isLooping ? "Pause Loop" : "Start Loop"}
-        </button>
-      </div>
+      <div className="tiles-controls"></div>
 
       <div className="tiles-grid">
         {visibleItems
