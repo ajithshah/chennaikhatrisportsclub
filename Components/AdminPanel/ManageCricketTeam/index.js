@@ -1003,7 +1003,8 @@ export default function ManageCricketTeam() {
         <div class="print-container">
           <div class="header">
             <h1 class="title">Cricket Teams List</h1>
-            <p class="subtitle">Chennai Khatri Sports Club Season 3</p>
+            <p class="subtitle">Chennai Khatri Sports Club</p>
+            <p class="subtitle">KPL Season 3</p>
             <div class="teams-count">Total Teams: ${teams.length}</div>
           </div>
           
@@ -1061,7 +1062,7 @@ export default function ManageCricketTeam() {
           </table>
           
           <div class="footer">
-            <p>Printed from Chennai Khatri Sports Club Admin Panel</p>
+            <p>***Chennai Khatri Sports Club***</p>
             <p>Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
           </div>
           
