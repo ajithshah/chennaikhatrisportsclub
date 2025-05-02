@@ -860,6 +860,232 @@ export default function ManageCricketTeam() {
   };
   // ---------------- printTeamDetails ----------------
 
+  // Print teams table function
+  const printTeamsTable = () => {
+    const printWindow = window.open("", "_blank");
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Cricket Teams List - Chennai Khatri Sports Club</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            color: #333;
+          }
+          .print-container {
+            max-width: 1000px;
+            margin: 0 auto;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #0d6efd;
+          }
+          .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #0d6efd;
+          }
+          .subtitle {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+          }
+          .teams-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+          }
+          .teams-table th, 
+          .teams-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+          }
+          .teams-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #333;
+            border-top: 1px solid #ddd;
+            border-bottom: 2px solid #0d6efd;
+          }
+          .teams-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+          }
+          .teams-table tr:hover {
+            background-color: #f0f7ff;
+          }
+          .teams-count {
+            background-color: #198754;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+          }
+          .team-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #0d6efd;
+          }
+          .team-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+          }
+          .captain-badge, .vicecaptain-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            color: white;
+            font-size: 12px;
+            margin-right: 5px;
+          }
+          .captain-badge {
+            background-color: #0d6efd;
+          }
+          .vicecaptain-badge {
+            background-color: #0dcaf0;
+          }
+          .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+          }
+          .print-button {
+            text-align: center;
+            margin-top: 20px;
+          }
+          .print-btn {
+            padding: 10px 20px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+          }
+          @media print {
+            body {
+              print-color-adjust: exact;
+              -webkit-print-color-adjust: exact;
+              color-adjust: exact;
+            }
+            .print-button {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="print-container">
+          <div class="header">
+            <h1 class="title">Cricket Teams List</h1>
+            <p class="subtitle">Chennai Khatri Sports Club Season 3</p>
+            <div class="teams-count">Total Teams: ${teams.length}</div>
+          </div>
+          
+          <table class="teams-table">
+            <thead>
+              <tr>
+                <th>Logo</th>
+                <th>Team Name</th>
+                <th>Captain/Vice-Captain</th>
+                <th>Contact</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${teams
+                .map(
+                  (team) => `
+                <tr>
+                  <td>
+                    ${
+                      team.teamLogoUrl
+                        ? `<img src="${team.teamLogoUrl}" class="team-logo" alt="${team.name}'s logo">`
+                        : `<div class="team-placeholder">${team.name.charAt(
+                            0
+                          )}</div>`
+                    }
+                  </td>
+                  <td><strong>${team.name}</strong></td>
+                  <td>
+                    <div style="margin-bottom: 8px;">
+                      <span class="captain-badge">C</span>
+                      ${team.captain}
+                    </div>
+                    <div>
+                      <span class="vicecaptain-badge">VC</span>
+                      ${team.viceCaptain}
+                    </div>
+                  </td>
+                  <td>
+                    <div style="margin-bottom: 8px;">
+                      <small style="color: #6c757d;">Captain:</small><br>
+                      ${team.captainPhoneNumber}
+                    </div>
+                    <div>
+                      <small style="color: #6c757d;">Vice-Captain:</small><br>
+                      ${team.viceCaptainPhoneNumber}
+                    </div>
+                  </td>
+                  <td></td>
+                </tr>
+              `
+                )
+                .join("")}
+            </tbody>
+          </table>
+          
+          <div class="footer">
+            <p>Printed from Chennai Khatri Sports Club Admin Panel</p>
+            <p>Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
+          </div>
+          
+          <div class="print-button">
+            <button class="print-btn" onclick="window.print()">
+              Print This Page
+            </button>
+          </div>
+        </div>
+        <script>
+          // Automatically open print dialog when the page loads
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+            }, 500);
+          }
+        </script>
+      </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+  };
+
   return (
     <>
       <Meta title="Manage Cricket Teams | Admin Panel" />
@@ -1722,47 +1948,33 @@ export default function ManageCricketTeam() {
                       Total Teams: {teams.length}
                     </Badge>
                     <Button
-                      variant="primary"
-                      className="add-button d-none d-md-flex"
-                      onClick={() => setShowModal(true)}
-                      aria-label="Add new team"
+                      variant="outline-info"
+                      className="ms-2 d-inline-flex align-items-center"
+                      onClick={printTeamsTable}
                       style={{
-                        zIndex: 1050,
-                        position: "relative",
-                        // borderRadius: "50%",
-                        justifyContent: "center",
-                        boxShadow: "0 6px 15px rgba(13, 110, 253, 0.4)",
-                        border: "2px solid white",
+                        borderRadius: "50px",
+                        marginLeft: "0.5rem",
+                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                        fontWeight: "600",
+                      }}
+                    >
+                      <i className="fas fa-print me-1 mr-1"></i>Print
+                    </Button>
+                    <Button
+                      variant="primary"
+                      className="ms-2 d-inline-flex align-items-center"
+                      onClick={() => setShowModal(true)}
+                      style={{
+                        borderRadius: "50px",
+                        marginLeft: "0.5rem",
+                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                        fontWeight: "600",
                       }}
                     >
                       <i className="fas fa-plus"></i>
                     </Button>
                   </div>
                 </div>
-
-                {/* Mobile floating action button */}
-                <Button
-                  variant="primary"
-                  className="d-md-none mobile-add-button"
-                  onClick={() => setShowModal(true)}
-                  aria-label="Add new team"
-                  style={{
-                    position: "fixed",
-                    bottom: "2rem",
-                    right: "2rem",
-                    zIndex: 9999,
-                    width: "55px",
-                    height: "55px",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    boxShadow: "0 6px 15px rgba(13, 110, 253, 0.4)",
-                    border: "2px solid white",
-                  }}
-                >
-                  <i className="fas fa-plus" style={{ fontSize: "1.8rem" }}></i>
-                </Button>
 
                 {teams.length === 0 ? (
                   <div className="empty-state">
@@ -1857,7 +2069,7 @@ export default function ManageCricketTeam() {
                                 className="action-button"
                                 onClick={() => handleViewTeam(team.id)}
                               >
-                                <i className="fas fa-eye me-1"></i> View
+                                <i className="fas fa-eye me-1"></i>
                               </Button>
                               <Button
                                 size="sm"
@@ -1865,7 +2077,7 @@ export default function ManageCricketTeam() {
                                 className="action-button ml-1"
                                 onClick={() => handleEditTeam(team)}
                               >
-                                <i className="fas fa-edit me-1"></i> Edit
+                                <i className="fas fa-edit me-1"></i>
                               </Button>
                               <Button
                                 size="sm"
@@ -1873,7 +2085,7 @@ export default function ManageCricketTeam() {
                                 className="action-button ml-1"
                                 onClick={() => handleDeleteTeam(team.id)}
                               >
-                                <i className="fas fa-trash-alt me-1"></i> Delete
+                                <i className="fas fa-trash-alt me-1"></i>
                               </Button>
                             </div>
                           </td>
