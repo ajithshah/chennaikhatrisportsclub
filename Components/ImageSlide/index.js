@@ -125,7 +125,9 @@ const ImageSlider = () => {
 
   return (
     <div className="tiles-wrapper">
-      <div className="tiles-controls"></div>
+      <div className="tiles-controls">
+        <p className="event-title">Kids Event</p>
+      </div>
 
       <div className="tiles-grid">
         {visibleItems
@@ -166,6 +168,67 @@ const ImageSlider = () => {
       </div>
 
       <style jsx>{`
+        .event-title {
+          font-size: 1.8rem;
+          font-weight: 800;
+          color: #fff;
+          margin: 0;
+          padding: 0.6rem 2rem;
+          background: linear-gradient(45deg, #ff9d6c, #ff6b98, #6054ff);
+          border-radius: 12px;
+          box-shadow: 0 6px 20px rgba(255, 107, 152, 0.3);
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          position: relative;
+          display: inline-block;
+          transition: all 0.3s ease;
+          overflow: hidden;
+        }
+
+        .event-title:before {
+          content: "";
+          position: absolute;
+          top: -5px;
+          left: -5px;
+          right: -5px;
+          bottom: -5px;
+          background: linear-gradient(45deg, #ff9d6c, #ff6b98, #6054ff);
+          z-index: -1;
+          border-radius: 16px;
+          filter: blur(8px);
+          opacity: 0.7;
+          animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+          0% {
+            transform: scale(0.98);
+            opacity: 0.7;
+          }
+          50% {
+            transform: scale(1.02);
+            opacity: 0.9;
+          }
+          100% {
+            transform: scale(0.98);
+            opacity: 0.7;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .event-title {
+            font-size: 1.5rem;
+            padding: 0.5rem 1.5rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .event-title {
+            font-size: 1.2rem;
+            padding: 0.4rem 1.2rem;
+          }
+        }
+
         .tiles-wrapper {
           position: relative;
           width: 100%;
