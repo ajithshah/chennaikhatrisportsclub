@@ -6,7 +6,6 @@ import Link from "next/link";
 import PrivacyModel from "../Model/PrivacyModel";
 import TermsModal from "../Model/TermsModal";
 import Team from "@/Components/HomePage/Team";
-import AboutUs from "../About";
 import Banner from "../Banner";
 import { onAuthStateChanged } from "firebase/auth";
 import { signInWithGoogle as authSignInWithGoogle } from "../../utils/auth";
@@ -491,7 +490,6 @@ const HomePage = () => {
           </section>
         </main>
         <Banner />
-        <AboutUs />
         <Team />
       </div>
     );

@@ -68,6 +68,7 @@ const Header = () => {
   // Check current path
   const currentPath = router.pathname;
   const isHomePage = currentPath === "/";
+  const isAboutPage = currentPath === "/about";
 
   // Get display name from the database if available
   const displayName = dbUserData?.displayName || user?.displayName || "User";
@@ -116,13 +117,13 @@ const Header = () => {
                 <Nav.Link className="px-3 text-dark">Home</Nav.Link>
               </Link>
             )}
-            {/* Only show Contact link if NOT on contact page */}
-            {/* Contactus Page not required for now */}
-            {/*!isContactPage && (
-              <Link href="/contact" passHref legacyBehavior>
-                <Nav.Link className="px-3 text-dark">Contact</Nav.Link>
+
+            {/* About link */}
+            {!isAboutPage && (
+              <Link href="/about" passHref legacyBehavior>
+                <Nav.Link className="px-3 text-dark">About</Nav.Link>
               </Link>
-            )*/}
+            )}
           </Nav>
           <Nav className="d-flex align-items-center justify-content-end gap-3 w-100">
             {user ? (
