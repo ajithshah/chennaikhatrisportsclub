@@ -112,6 +112,7 @@ const AboutUs = () => {
                         muted
                         loop
                         className="img-fluid rounded shadow"
+                        playsInline
                       >
                         <source src="/video.mp4" type="video/mp4" />
                         Your browser does not support the video tag.
