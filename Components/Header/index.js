@@ -80,7 +80,7 @@ const Header = () => {
       style={{ backgroundColor: "#FFF" }}
       variant="light"
       expand="lg"
-      className="py-2 px-3 shadow"
+      className="py-2 px-3 shadow fixed-top"
     >
       <div className="container-fluid">
         <Navbar.Brand className="d-flex align-items-center">

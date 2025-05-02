@@ -2,12 +2,12 @@
 .bannerContainer {
     width: 100%;
     position: relative;
-    height: 300px;
+    height: 350px; /* Increased height */
     overflow: hidden;
     margin-bottom: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+    border-radius: 10px; /* More rounded corners */
+    background: linear-gradient(135deg, #1e3c72, #2a5298, #2a5298); /* More modern gradient */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -16,44 +16,48 @@
   .bannerContent {
     text-align: center;
     color: white;
-    padding: 20px;
+    padding: 30px; /* Increased padding */
     max-width: 80%;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.4); /* Slightly more transparent */
+    backdrop-filter: blur(8px); /* Increased blur effect */
+    border-radius: 8px; /* Rounded corners for content box */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added shadow to content */
   }
   
   .bannerTitle {
-    font-size: 2.5rem;
+    font-size: 3rem; /* Larger title */
     margin-bottom: 15px;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: 1px; /* Added letter spacing */
   }
   
   .bannerDescription {
     font-size: 1.2rem;
     margin-bottom: 20px;
-    line-height: 1.5;
+    line-height: 1.6; /* Improved line height */
   }
   
   /* Simple Scroll Text Banner */
   .scrollContainer {
     width: 100%;
     overflow: hidden;
-    background: #1a2a6c;
-    padding: 10px 0;
-    margin-bottom: 15px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(90deg, #1e3c72, #2a5298); /* Matching gradient */
+    padding: 12px 0; /* Increased padding */
+    margin-bottom: 20px; /* Increased margin */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
     position: relative;
-    border-radius: 4px;
+    border-radius: 6px; /* More rounded corners */
   }
   
   .scrollText {
     white-space: nowrap;
-    animation: scrollText 25s linear infinite;
+    animation: scrollText 30s linear infinite; /* Slightly slower animation */
     color: white;
-    font-size: 20px;
+    font-size: 18px;
     padding: 0 20px;
+    font-weight: 500; /* Medium weight font */
+    letter-spacing: 0.5px; /* Added letter spacing */
   }
   
   @keyframes scrollText {
@@ -65,3 +69,22 @@
     }
   }
   
+  /* Add responsive adjustments for mobile */
+  @media (max-width: 768px) {
+    .bannerContainer {
+      height: 300px;
+    }
+    
+    .bannerTitle {
+      font-size: 2rem;
+    }
+    
+    .bannerContent {
+      padding: 20px;
+      max-width: 90%;
+    }
+    
+    .scrollText {
+      font-size: 16px;
+    }
+  }

@@ -55,7 +55,7 @@ const Team = () => {
       <Container>
         <h2 className="text-center mb-4 mb-md-5 fw-bold">
           <span className="border-bottom border-primary border-3 pb-2">
-            Our Cricket Teams
+            KPL Season 3 Cricket Teams
           </span>
         </h2>
 
