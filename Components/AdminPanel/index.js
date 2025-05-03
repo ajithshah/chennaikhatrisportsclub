@@ -53,6 +53,18 @@ export default function AdminPanel() {
       statLabel: "Senior Citizen Cricket Teams",
     },
     {
+      id: "match",
+      title: "match",
+      icon: "🏏",
+      description:
+        "match",
+      color: "#4CAF50",
+      link: "/adminpanel/match",
+      statKey: "match",
+      isActive: true,
+      statLabel: "match",
+    },
+    {
       id: "tournaments",
       title: "Tournaments",
       icon: "🏆",
@@ -73,6 +85,18 @@ export default function AdminPanel() {
       statKey: "events",
       isActive: false,
       statLabel: "Upcoming Events",
+    },
+    {
+      id: "matches",
+      title: "Match Schedule",
+      icon: "📅",
+      description:
+        "Manage upcoming matches, schedules, and match details",
+      color: "#FF5722",
+      link: "/adminpanel/matches",
+      statKey: "matches",
+      isActive: true,
+      statLabel: "Scheduled Matches",
     },
   ];
 
