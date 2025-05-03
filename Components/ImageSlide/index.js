@@ -3,18 +3,18 @@ import React, { useState, useEffect, useRef } from "react";
 const ImageSlider = () => {
   // Media items for the collage
   const mediaItems = [
-    { type: "image", src: "/slide1.jpeg", caption: "Cricket Match" },
-    { type: "image", src: "/slide2.jpeg", caption: "Cricket Match" },
-    { type: "video", src: "/slide_vdo1.mp4", caption: "Cricket Match" },
-    { type: "image", src: "/slide3.jpeg", caption: "Cricket Match" },
-    { type: "image", src: "/slide4.jpeg", caption: "Cricket Match" },
-    { type: "video", src: "/slide_vdo2.mp4", caption: "Cricket Match" },
-    { type: "image", src: "/slide5.jpeg", caption: "Cricket Match" },
-    { type: "image", src: "/slide6.jpeg", caption: "Cricket Match" },
-    { type: "video", src: "/slide_vdo3.mp4", caption: "Cricket Match" },
-    { type: "image", src: "/slide7.jpeg", caption: "Cricket Match" },
-    { type: "image", src: "/slide8.jpeg", caption: "Cricket Match" },
-    { type: "video", src: "/slide_vdo4.mp4", caption: "Cricket Match" },
+    { type: "image", src: "/slide1.jpeg", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide2.jpeg", caption: "Kids Cricket Match" },
+    { type: "video", src: "/slide_vdo1.mp4", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide3.jpeg", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide4.jpeg", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide6.jpeg", caption: "Kids Cricket Match" },
+    { type: "video", src: "/slide_vdo2.mp4", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide5.jpeg", caption: "Kids Kids Cricket Match" },
+    { type: "video", src: "/slide_vdo3.mp4", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide7.jpeg", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide8.jpeg", caption: "Kids Cricket Match" },
+    { type: "video", src: "/slide_vdo4.mp4", caption: "Kids Cricket Match" },
   ];
 
   const [windowSize, setWindowSize] = useState({
@@ -91,9 +91,23 @@ const ImageSlider = () => {
         // Randomly select an item to replace
         const randomIndex = Math.floor(Math.random() * newItems.length);
 
-        // Replace with a random item from mediaItems
+        // Get current displayed source paths to avoid duplicates
+        const currentSources = newItems.map((item) => item.src);
+
+        // Filter available media items to avoid duplicates
+        const availableItems = mediaItems.filter(
+          (item) =>
+            !currentSources.includes(item.src) ||
+            item.src === newItems[randomIndex].src
+        );
+
+        // If no unique items left, use the original item being replaced
+        const itemPool =
+          availableItems.length > 0 ? availableItems : [newItems[randomIndex]];
+
+        // Choose a random item from the available pool
         const randomMediaItem =
-          mediaItems[Math.floor(Math.random() * mediaItems.length)];
+          itemPool[Math.floor(Math.random() * itemPool.length)];
 
         // Create new item with fresh random properties
         newItems[randomIndex] = {
@@ -169,20 +183,27 @@ const ImageSlider = () => {
 
       <style jsx>{`
         .event-title {
-          font-size: 1.8rem;
+          font-size: 2rem;
           font-weight: 800;
-          color: #fff;
+          color: var(--text-light);
           margin: 0;
-          padding: 0.6rem 2rem;
-          background: linear-gradient(45deg, #ff9d6c, #ff6b98, #6054ff);
-          border-radius: 12px;
-          box-shadow: 0 6px 20px rgba(255, 107, 152, 0.3);
+          padding: 0.8rem 2.5rem;
+          background: linear-gradient(
+            45deg,
+            var(--primary-dark),
+            var(--primary),
+            var(--primary-light)
+          );
+          border-radius: 15px;
+          box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
           text-transform: uppercase;
-          letter-spacing: 1px;
+          letter-spacing: 2px;
           position: relative;
           display: inline-block;
           transition: all 0.3s ease;
           overflow: hidden;
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
 
         .event-title:before {
@@ -192,40 +213,49 @@ const ImageSlider = () => {
           left: -5px;
           right: -5px;
           bottom: -5px;
-          background: linear-gradient(45deg, #ff9d6c, #ff6b98, #6054ff);
+          background: linear-gradient(
+            45deg,
+            var(--primary-dark),
+            var(--primary),
+            var(--primary-light)
+          );
           z-index: -1;
-          border-radius: 16px;
-          filter: blur(8px);
+          border-radius: 20px;
+          filter: blur(12px);
           opacity: 0.7;
-          animation: pulse 2s infinite;
+          animation: pulse 2.5s infinite alternate;
         }
 
         @keyframes pulse {
           0% {
-            transform: scale(0.98);
-            opacity: 0.7;
+            transform: scale(0.95);
+            opacity: 0.6;
           }
           50% {
-            transform: scale(1.02);
+            transform: scale(1.05);
             opacity: 0.9;
           }
           100% {
-            transform: scale(0.98);
-            opacity: 0.7;
+            transform: scale(0.95);
+            opacity: 0.6;
           }
         }
 
         @media (max-width: 768px) {
           .event-title {
-            font-size: 1.5rem;
-            padding: 0.5rem 1.5rem;
+            font-size: 1.6rem;
+            padding: 0.6rem 1.8rem;
+            border-radius: 12px;
+            letter-spacing: 1.5px;
           }
         }
 
         @media (max-width: 480px) {
           .event-title {
-            font-size: 1.2rem;
-            padding: 0.4rem 1.2rem;
+            font-size: 1.3rem;
+            padding: 0.5rem 1.4rem;
+            border-radius: 10px;
+            letter-spacing: 1px;
           }
         }
 
