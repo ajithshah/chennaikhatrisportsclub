@@ -72,6 +72,7 @@ export default function UserDetails({ userId }) {
         /* Card styling */
         .user-card {
           border-radius: 12px;
+          padding-top: 80px;
           overflow: hidden;
           transition: all 0.3s ease;
         }
@@ -508,4 +509,3 @@ export default function UserDetails({ userId }) {
     </>
   );
 }
-

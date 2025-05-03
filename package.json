@@ -19,6 +19,7 @@
     "next": "^15.2.4",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.7",
+    "react-datepicker": "^8.3.0",
     "react-dom": "^19.0.0",
     "react-select": "^5.10.1",
     "react-spinners": "^0.15.0"

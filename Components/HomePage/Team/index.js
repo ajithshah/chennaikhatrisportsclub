@@ -3,7 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase";
 import Link from "next/link";
 import Image from "next/image";
-import { Container, Spinner, Row, Col, Card, Badge } from "react-bootstrap";
+import { Container, Spinner, Row, Col, Card } from "react-bootstrap";
 
 const Team = () => {
   const [teams, setTeams] = useState([]);
@@ -89,12 +89,12 @@ const Team = () => {
                     </div> */}
 
                   <div className="mt-auto pt-3">
-                      <Link href={`/team/${team.id}`} passHref legacyBehavior>
-                        <a className="btn btn-outline-primary rounded-pill px-4">
-                          <i className="fas fa-users me-2"></i>View Team
-                        </a>
-                      </Link>
-                    </div>
+                    <Link href={`/team/${team.id}`} passHref legacyBehavior>
+                      <a className="btn btn-outline-primary rounded-pill px-4">
+                        <i className="fas fa-users me-2"></i>View Team
+                      </a>
+                    </Link>
+                  </div>
                 </Card.Body>
               </Card>
             </Col>
@@ -153,15 +153,15 @@ const Team = () => {
           transform-origin: top right;
           white-space: nowrap;
         }
-        
+
         .card-title {
           position: relative;
           display: inline-block;
           padding-bottom: 8px;
         }
-        
+
         .card-title:after {
-          content: '';
+          content: "";
           position: absolute;
           width: 40%;
           height: 2px;
@@ -170,19 +170,20 @@ const Team = () => {
           left: 30%;
           transition: width 0.3s ease, left 0.3s ease;
         }
-        
+
         .stylish-card:hover .card-title:after {
           width: 70%;
           left: 15%;
         }
-        
+
         section {
           position: relative;
           overflow: hidden;
         }
-        
-        section:before, section:after {
-          content: '';
+
+        section:before,
+        section:after {
+          content: "";
           position: absolute;
           width: 200px;
           height: 200px;
@@ -190,12 +191,12 @@ const Team = () => {
           background-color: rgba(13, 110, 253, 0.05);
           z-index: 0;
         }
-        
+
         section:before {
           top: -100px;
           left: -100px;
         }
-        
+
         section:after {
           bottom: -100px;
           right: -100px;

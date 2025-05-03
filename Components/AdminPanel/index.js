@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { Container, Row, Col, Card, Button, Badge } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { auth, db } from "../../firebase";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import Header from "../Header";
@@ -158,6 +158,7 @@ export default function AdminPanel() {
         .admin-dashboard {
           padding: 2rem 0;
           background: #090c10;
+          padding-top: 100px;
         }
 
         .dashboard-header {

@@ -10,7 +10,6 @@ import {
   Alert,
   Modal,
   Form,
-  Spinner,
 } from "react-bootstrap";
 import { auth, db } from "../../../firebase";
 import {
@@ -1227,6 +1226,7 @@ export default function ManageCricketTeam() {
           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
           min-height: calc(100vh - 56px);
           opacity: 0;
+          padding-top: 100px;
           animation: fadeIn 0.5s ease forwards;
         }
 
