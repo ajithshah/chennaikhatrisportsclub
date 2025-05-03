@@ -1026,14 +1026,16 @@ export default function Profile() {
                     Edit Profile
                   </Button>
 
-                  <Button
-                    variant="outline-info"
-                    onClick={() => router.push("/schedule")}
-                    className="profile-action-btn btn-schedule"
-                  >
-                    <i className="fas fa-calendar-alt"></i>
-                    Schedule
-                  </Button>
+                  {teamData && (
+                    <Button
+                      variant="outline-success"
+                      onClick={() => router.push("/schedule")}
+                      className="profile-action-btn btn-schedule"
+                    >
+                      <i className="fas fa-users"></i>
+                      Schedule
+                    </Button>
+                  )}
 
                   {teamData && (
                     <Button
