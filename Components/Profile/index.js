@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { Container, Card, Row, Col, Button, Badge } from "react-bootstrap";
+import { Card, Row, Col, Button, Badge } from "react-bootstrap";
 import { auth, db } from "../../firebase";
 import {
   doc,
@@ -1025,6 +1025,17 @@ export default function Profile() {
                     <i className="fas fa-edit"></i>
                     Edit Profile
                   </Button>
+
+                  {/* {teamData && (
+                    <Button
+                      variant="outline-success"
+                      onClick={() => router.push("/schedule")}
+                      className="profile-action-btn btn-schedule"
+                    >
+                      <i className="fas fa-users"></i>
+                      Schedule
+                    </Button>
+                  )} */}
 
                   {teamData && (
                     <Button

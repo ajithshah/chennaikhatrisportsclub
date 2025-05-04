@@ -205,6 +205,7 @@ export default function ManageUsers() {
         .admin-card {
           transform: translateY(20px);
           opacity: 0;
+          padding-top: 60px;
           animation: slideUpFade 0.6s ease forwards;
         }
 

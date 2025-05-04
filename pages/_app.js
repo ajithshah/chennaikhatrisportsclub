@@ -7,7 +7,7 @@ export default function App({ Component, pageProps }) {
   return (
     <>
       {/* <Maintenance /> */}
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
     </>
   );
 }

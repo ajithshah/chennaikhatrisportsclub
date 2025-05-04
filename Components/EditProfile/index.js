@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import {
-  Container,
   Card,
   Row,
   Col,
@@ -341,8 +340,8 @@ export default function EditProfile() {
         /* Main edit profile styles */
         .edit-profile-container {
           min-height: calc(100vh - 56px);
+          padding-top: 100px;
           background: linear-gradient(165deg, #f8f9fa 0%, #e9ecef 100%);
-          padding: 3rem 1rem;
         }
 
         .edit-profile-wrapper {

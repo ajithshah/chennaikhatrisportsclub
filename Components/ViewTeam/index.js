@@ -71,7 +71,7 @@ const ViewTeam = () => {
   }
 
   return (
-    <div className="team-page-wrapper py-5">
+    <div className="team-page-wrapper">
       <Container>
         <Card className="team-header-card mb-5 border-0 shadow-sm">
           <Card.Body className="p-0">
@@ -202,6 +202,7 @@ const ViewTeam = () => {
         .team-page-wrapper {
           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
           min-height: 100vh;
+          padding-top: 120px; !important;
         }
 
         .team-header-card {

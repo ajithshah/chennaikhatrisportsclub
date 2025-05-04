@@ -35,6 +35,7 @@ export default function ManageTeam() {
   const [editingPlayerIndex, setEditingPlayerIndex] = useState(null);
   const [isBrowser, setIsBrowser] = useState(false);
   const [isModalAnimating, setIsModalAnimating] = useState(false);
+  const [unauthorizedAccess, setUnauthorizedAccess] = useState(false);
   const [newPlayer, setNewPlayer] = useState({
     name: "",
     role: "",
@@ -245,7 +246,15 @@ export default function ManageTeam() {
       if (!id) return;
       setLoading(true);
       try {
-        await Promise.all([fetchTeamData(), fetchAvailablePlayers()]);
+        // Get current user
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+          router.push("/profile");
+          return;
+        }
+
+        await fetchTeamData();
+        await fetchAvailablePlayers();
       } catch (error) {
         console.error("Error:", error);
       } finally {
@@ -255,6 +264,32 @@ export default function ManageTeam() {
 
     fetchData();
   }, [id]);
+
+  // Check user permissions when teamData changes
+  useEffect(() => {
+    const checkUserPermission = async () => {
+      if (!teamData || !auth.currentUser) return;
+      
+      const currentUser = auth.currentUser;
+      const captainUser = teamData.players?.find(
+        (player) => player.isCaptain
+      )?.userId;
+      const viceCaptainUser = teamData.players?.find(
+        (player) => player.isViceCaptain
+      )?.userId;
+
+      const isUserCaptain = currentUser.uid === captainUser;
+      const isUserViceCaptain = currentUser.uid === viceCaptainUser;
+
+      if (!isUserCaptain && !isUserViceCaptain) {
+        setUnauthorizedAccess(true);
+        alert("Only team captain or vice-captain can access this page");
+        router.push("/profile");
+      }
+    };
+
+    checkUserPermission();
+  }, [teamData, router]);
 
   useEffect(() => {
     setIsBrowser(true);

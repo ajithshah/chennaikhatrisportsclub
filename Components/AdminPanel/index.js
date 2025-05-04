@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { Container, Row, Col, Card, Button, Badge } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { auth, db } from "../../firebase";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import Header from "../Header";
@@ -15,6 +15,7 @@ export default function AdminPanel() {
     tournaments: 0,
     senior_citizen_cricket: 0,
     events: 0,
+    matches: 0,
   });
 
   const sportsCategories = [
@@ -39,6 +40,17 @@ export default function AdminPanel() {
       isActive: true,
       statKey: "cricket",
       statLabel: "Cricket Teams",
+    },
+    {
+      id: "matches",
+      title: "Match Schedule",
+      icon: "📅",
+      description: "Manage upcoming matches, schedules, and match details",
+      color: "#FF5722",
+      link: "/adminpanel/matches",
+      statKey: "matches",
+      isActive: true,
+      statLabel: "Scheduled Matches",
     },
     {
       id: "cricket",
@@ -158,6 +170,7 @@ export default function AdminPanel() {
         .admin-dashboard {
           padding: 2rem 0;
           background: #090c10;
+          padding-top: 100px;
         }
 
         .dashboard-header {
@@ -374,7 +387,7 @@ export default function AdminPanel() {
             </p>
           </div>
 
-          <div className="admin-stats-row">
+          {/* <div className="admin-stats-row">
             {sportsCategories.map((category) => (
               <div className="admin-stat-card" key={category.id}>
                 <div className="admin-stat-value">
@@ -383,7 +396,7 @@ export default function AdminPanel() {
                 <div className="admin-stat-label">{category.statLabel}</div>
               </div>
             ))}
-          </div>
+          </div> */}
 
           <div className="dashboard-grid">
             {sportsCategories.map((category) => (
