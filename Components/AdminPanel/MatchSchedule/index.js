@@ -117,6 +117,13 @@ export default function MatchSchedule() {
 
   const handleAddMatch = async (e) => {
     e.preventDefault();
+
+    // Check if home and away teams are the same
+    if (formData.homeTeam === formData.awayTeam) {
+      alert("Home Team and Away Team cannot be the same");
+      return;
+    }
+
     try {
       // Find the selected teams' logo URLs
       const homeTeamData = teams.find(
@@ -211,7 +218,7 @@ export default function MatchSchedule() {
       matchTime: "",
       venue: "",
       matchType: "League Match",
-      status: "Upcoming",
+      status: "Scheduled",
       homeTeamScore: "",
       awayTeamScore: "",
       winnerTeam: "",
@@ -221,6 +228,8 @@ export default function MatchSchedule() {
 
   const getStatusBadge = (status) => {
     switch (status) {
+      case "Scheduled":
+        return <Badge bg="info text-light">Scheduled</Badge>;
       case "Upcoming":
         return <Badge bg="primary text-light">Upcoming</Badge>;
       case "Live":
@@ -230,9 +239,7 @@ export default function MatchSchedule() {
       case "Postponed":
         return <Badge bg="warning text-light">Postponed</Badge>;
       case "Cancelled":
-        return <Badge bg="dark text-light">Cancelled</Badge>;
-      default:
-        return <Badge bg="secondary text-light">{status}</Badge>;
+        return <Badge bg="black text-light">Cancelled</Badge>;
     }
   };
 
@@ -246,6 +253,336 @@ export default function MatchSchedule() {
     });
   };
 
+  // Sort matches by date and time
+  const sortedMatches = [...matches].sort((a, b) => {
+    // Parse dates
+    const dateA = new Date(a.matchDate + "T" + a.matchTime);
+    const dateB = new Date(b.matchDate + "T" + b.matchTime);
+
+    // Compare dates for chronological sorting
+    return dateA - dateB;
+  });
+
+  const printMatchSchedule = () => {
+    // Create a new window for printing
+    const printWindow = window.open("", "_blank");
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Match Schedule - Chennai Khatri Sports Club</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            color: #333;
+          }
+          .print-container {
+            max-width: 1000px;
+            margin: 0 auto;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #0d6efd;
+          }
+          .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #0d6efd;
+          }
+          .subtitle {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+          }
+          .match-count {
+            background-color: #198754;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+          }
+          .matches-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+          }
+          .matches-table th, 
+          .matches-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+          }
+          .matches-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #333;
+            border-top: 1px solid #ddd;
+            border-bottom: 2px solid #0d6efd;
+          }
+          .matches-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+          }
+          .matches-table tr:hover {
+            background-color: #f0f7ff;
+          }
+          .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+          }
+          .status-upcoming {
+            border: 1px solid #0d6efd;
+            color: #0d6efd;
+            background-color: #f0f7ff;
+          }
+          .status-live {
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            background-color: #fff5f6;
+          }
+          .status-completed {
+            border: 1px solid #198754;
+            color: #198754;
+            background-color: #f0fff4;
+          }
+          .status-postponed {
+            border: 1px solid #ffc107;
+            color: #ffc107;
+            background-color: #fffcf0;
+          }
+          .status-cancelled {
+            border: 1px solid #6c757d;
+            color: #6c757d;
+            background-color: #f8f9fa;
+          }
+          .team-container {
+            display: flex;
+            align-items: center;
+          }
+          .team-logo-placeholder {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-weight: bold;
+            color: #666;
+            border: 1px solid #ddd;
+          }
+          .team-logo {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 8px;
+            object-fit: cover;
+            border: 1px solid #0d6efd;
+          }
+          .score {
+            font-weight: bold;
+            text-align: center;
+            font-size: 16px;
+          }
+          .vs-text {
+            font-weight: bold;
+            text-align: center;
+            color: #6c757d;
+          }
+          .winner-badge {
+            display: inline-block;
+            padding: 2px 5px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #ffc107;
+            border: 1px solid #ffc107;
+            margin-left: 5px;
+            background-color: #fffcf0;
+          }
+          .draw-badge {
+            display: inline-block;
+            padding: 2px 5px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #0dcaf0;
+            border: 1px solid #0dcaf0;
+            margin-top: 5px;
+            background-color: #f0fcff;
+          }
+          .date-time-container {
+            display: flex;
+            flex-direction: column;
+          }
+          .date {
+            font-weight: bold;
+            margin-bottom: 3px;
+          }
+          .time {
+            color: #6c757d;
+            font-size: 12px;
+          }
+          .venue {
+            font-size: 13px;
+          }
+          .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+          }
+          .print-button {
+            text-align: center;
+            margin-top: 20px;
+          }
+          .print-btn {
+            padding: 10px 20px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+          }
+          /
+          @media print {
+            body {
+              print-color-adjust: exact;
+              -webkit-print-color-adjust: exact;
+              color-adjust: exact;
+            }
+            .print-button {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="print-container">
+          <div class="header">
+            <h1 class="title">Match Schedule</h1>
+            <p class="subtitle">Chennai Khatri Sports Club</p>
+            <p class="subtitle">KPL Season 3</p>
+            <div class="match-count">Total Matches: ${
+              sortedMatches.length
+            }</div>
+          </div>
+          
+          <table class="matches-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Home Team</th>
+                <th></th>
+                <th>Away Team</th>
+                <th>Date & Time</th>
+                <th>Venue</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sortedMatches
+
+                .map(
+                  (match) => `
+                <tr>
+                  <td>${match.matchType}</td>
+                  <td>
+                    <div class="team-container">
+                      ${
+                        match.homeTeamLogoUrl
+                          ? `<img src="${match.homeTeamLogoUrl}" class="team-logo" alt="${match.homeTeam} logo">`
+                          : `<div class="team-logo-placeholder">${match.homeTeam.charAt(
+                              0
+                            )}</div>`
+                      }
+                      <span>${match.homeTeam}</span>
+                      ${
+                        match.winnerTeam === match.homeTeam
+                          ? '<span class="winner-badge">Winner</span>'
+                          : ""
+                      }
+                    </div>
+                  </td>
+                  <td style="text-align: center">
+                    VS
+                  </td>
+                  <td>
+                    <div class="team-container">
+                      ${
+                        match.awayTeamLogoUrl
+                          ? `<img src="${match.awayTeamLogoUrl}" class="team-logo" alt="${match.awayTeam} logo">`
+                          : `<div class="team-logo-placeholder">${match.awayTeam.charAt(
+                              0
+                            )}</div>`
+                      }
+                      <span>${match.awayTeam}</span>
+                      ${
+                        match.winnerTeam === match.awayTeam
+                          ? '<span class="winner-badge">Winner</span>'
+                          : ""
+                      }
+                    </div>
+                  </td>
+                  <td>
+                    <div class="date-time-container">
+                      <span class="date">${formatMatchDate(
+                        match.matchDate
+                      )}</span>
+                      <span class="time">${match.matchTime}</span>
+                    </div>
+                  </td>
+                  <td class="venue">${match.venue}</td>
+                  <td></td>
+                </tr>
+              `
+                )
+                .join("")}
+            </tbody>
+          </table>
+          
+          <div class="footer">
+            <p>***Chennai Khatri Sports Club***</p>
+            <p>Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
+          </div>
+          
+          <div class="print-button">
+            <button class="print-btn" onclick="window.print()">
+              Print This Page
+            </button>
+          </div>
+        </div>
+        <script>
+          // Automatically open print dialog when the page loads
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+            }, 500);
+          }
+        </script>
+      </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+  };
+
   return (
     <Container className="my-4">
       <Row className="mb-4">
@@ -255,13 +592,20 @@ export default function MatchSchedule() {
             Create and manage cricket match schedules
           </p>
         </Col>
-        <Col xs="auto">
+        <Col xs="auto" className="d-flex align-items-center gap-2">
           <Button
             variant="primary"
             onClick={() => setShowAddModal(true)}
-            className="add-match-btn"
+            className="add-match-btn mr-1"
           >
             <i className="bi bi-plus-circle me-2"></i>Add New Match
+          </Button>
+          <Button
+            variant="outline-secondary"
+            onClick={printMatchSchedule}
+            className="print-btn d-print-none"
+          >
+            <i className="bi bi-printer me-2"></i>Print
           </Button>
         </Col>
       </Row>
@@ -285,541 +629,141 @@ export default function MatchSchedule() {
               </Button>
             </div>
           ) : (
-            <Tabs defaultActiveKey="upcoming" className="mb-4 mt-4">
-              <Tab
-                eventKey="live"
-                title={
-                  <span>
-                    <i className="bi bi-broadcast-pin me-2"></i>Live Matches
-                  </span>
-                }
-              >
-                {matches.filter((match) => match.status === "Live").length ===
-                0 ? (
-                  <div className="text-center my-5">
-                    <p>No live matches at the moment.</p>
-                  </div>
-                ) : (
-                  <div className="table-responsive">
-                    <Table hover className="match-admin-table">
-                      <thead>
-                        <tr>
-                          <th className="text-center">Status</th>
-                          <th className="text-center">Match Type</th>
-                          <th>Home Team</th>
-                          <th className="text-center">Score</th>
-                          <th>Away Team</th>
-                          <th>Date & Time</th>
-                          <th>Venue</th>
-                          <th className="text-center">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {matches
-                          .filter((match) => match.status === "Live")
-                          .map((match) => (
-                            <tr key={match.id} className="match-row">
-                              <td className="text-center align-middle">
-                                {getStatusBadge(match.status)}
-                              </td>
-                              <td className="text-center align-middle">
-                                {match.matchType}
-                              </td>
-                              <td className="team-cell align-middle">
-                                <div className="team-info">
-                                  {match.homeTeamLogoUrl ? (
-                                    <div className="team-logo-container-sm">
-                                      <Image
-                                        src={match.homeTeamLogoUrl}
-                                        alt={`${match.homeTeam} logo`}
-                                        width={40}
-                                        height={40}
-                                        className="team-logo-sm"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="team-logo-placeholder-sm">
-                                      {match.homeTeam.charAt(0)}
-                                    </div>
-                                  )}
-                                  <span className="team-name">
-                                    {match.homeTeam}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="score-cell text-center align-middle">
-                                <div className="score">
-                                  <span className="home-score">
-                                    {match.homeTeamScore}
-                                  </span>
-                                  <span className="score-separator">-</span>
-                                  <span className="away-score">
-                                    {match.awayTeamScore}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="team-cell align-middle">
-                                <div className="team-info">
-                                  {match.awayTeamLogoUrl ? (
-                                    <div className="team-logo-container-sm">
-                                      <Image
-                                        src={match.awayTeamLogoUrl}
-                                        alt={`${match.awayTeam} logo`}
-                                        width={40}
-                                        height={40}
-                                        className="team-logo-sm"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="team-logo-placeholder-sm">
-                                      {match.awayTeam.charAt(0)}
-                                    </div>
-                                  )}
-                                  <span className="team-name">
-                                    {match.awayTeam}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="align-middle">
-                                <div className="match-date">
-                                  {formatMatchDate(match.matchDate)}
-                                </div>
-                                <div className="match-time">
-                                  <i className="bi bi-clock me-1"></i>
-                                  {match.matchTime}
-                                </div>
-                              </td>
-                              <td className="align-middle">{match.venue}</td>
-                              <td className="text-center align-middle">
-                                <div className="d-flex justify-content-center gap-2">
-                                  <Button
-                                    variant="outline-primary"
-                                    onClick={() => openEditModal(match)}
-                                    className="edit-btn mr-1"
-                                  >
-                                    Edit
-                                  </Button>
-                                  <Button
-                                    variant="outline-danger"
-                                    onClick={() => handleDeleteMatch(match.id)}
-                                  >
-                                    Delete
-                                  </Button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </Table>
-                  </div>
-                )}
-              </Tab>
-
-              <Tab
-                eventKey="upcoming"
-                title={
-                  <span>
-                    <i className="bi bi-calendar-event me-2"></i>Upcoming
-                    Matches
-                  </span>
-                }
-              >
-                {matches.filter((match) => match.status === "Upcoming")
-                  .length === 0 ? (
-                  <div className="text-center my-5">
-                    <p>No upcoming matches scheduled.</p>
-                  </div>
-                ) : (
-                  <div className="table-responsive">
-                    <Table hover className="match-admin-table">
-                      <thead>
-                        <tr>
-                          <th className="text-center">Status</th>
-                          <th className="text-center">Match Type</th>
-                          <th>Home Team</th>
-                          <th className="text-center">Match</th>
-                          <th>Away Team</th>
-                          <th>Date & Time</th>
-                          <th>Venue</th>
-                          <th className="text-center">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {matches
-                          .filter((match) => match.status === "Upcoming")
-                          .map((match) => (
-                            <tr key={match.id} className="match-row">
-                              <td className="text-center align-middle">
-                                {getStatusBadge(match.status)}
-                              </td>
-                              <td className="text-center align-middle">
-                                {match.matchType}
-                              </td>
-                              <td className="team-cell align-middle">
-                                <div className="team-info">
-                                  {match.homeTeamLogoUrl ? (
-                                    <div className="team-logo-container-sm">
-                                      <Image
-                                        src={match.homeTeamLogoUrl}
-                                        alt={`${match.homeTeam} logo`}
-                                        width={40}
-                                        height={40}
-                                        className="team-logo-sm"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="team-logo-placeholder-sm">
-                                      {match.homeTeam.charAt(0)}
-                                    </div>
-                                  )}
-                                  <span className="team-name">
-                                    {match.homeTeam}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="score-cell text-center align-middle">
-                                <span className="vs-text">VS</span>
-                              </td>
-                              <td className="team-cell align-middle">
-                                <div className="team-info">
-                                  {match.awayTeamLogoUrl ? (
-                                    <div className="team-logo-container-sm">
-                                      <Image
-                                        src={match.awayTeamLogoUrl}
-                                        alt={`${match.awayTeam} logo`}
-                                        width={40}
-                                        height={40}
-                                        className="team-logo-sm"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="team-logo-placeholder-sm">
-                                      {match.awayTeam.charAt(0)}
-                                    </div>
-                                  )}
-                                  <span className="team-name">
-                                    {match.awayTeam}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="align-middle">
-                                <div className="match-date">
-                                  {formatMatchDate(match.matchDate)}
-                                </div>
-                                <div className="match-time">
-                                  <i className="bi bi-clock me-1"></i>
-                                  {match.matchTime}
-                                </div>
-                              </td>
-                              <td className="align-middle">{match.venue}</td>
-                              <td className="text-center align-middle">
-                                <div className="d-flex justify-content-center gap-2">
-                                  <Button
-                                    variant="outline-primary"
-                                    onClick={() => openEditModal(match)}
-                                    className="edit-btn mr-1"
-                                  >
-                                    Edit
-                                  </Button>
-                                  <Button
-                                    variant="outline-danger"
-                                    onClick={() => handleDeleteMatch(match.id)}
-                                  >
-                                    Delete
-                                  </Button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </Table>
-                  </div>
-                )}
-              </Tab>
-
-              <Tab
-                eventKey="completed"
-                title={
-                  <span>
-                    <i className="bi bi-check-circle me-2"></i>Completed Matches
-                  </span>
-                }
-              >
-                {matches.filter((match) => match.status === "Completed")
-                  .length === 0 ? (
-                  <div className="text-center my-5">
-                    <p>No completed matches available.</p>
-                  </div>
-                ) : (
-                  <div className="table-responsive">
-                    <Table hover className="match-admin-table">
-                      <thead>
-                        <tr>
-                          <th className="text-center">Status</th>
-                          <th className="text-center">Match Type</th>
-                          <th>Home Team</th>
-                          <th className="text-center">Score</th>
-                          <th>Away Team</th>
-                          <th>Date & Time</th>
-                          <th>Venue</th>
-                          <th className="text-center">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {matches
-                          .filter((match) => match.status === "Completed")
-                          .map((match) => (
-                            <tr key={match.id} className="match-row">
-                              <td className="text-center align-middle">
-                                {getStatusBadge(match.status)}
-                              </td>
-                              <td className="text-center align-middle">
-                                {match.matchType}
-                              </td>
-                              <td className="team-cell align-middle">
-                                <div className="team-info">
-                                  {match.homeTeamLogoUrl ? (
-                                    <div className="team-logo-container-sm">
-                                      <Image
-                                        src={match.homeTeamLogoUrl}
-                                        alt={`${match.homeTeam} logo`}
-                                        width={40}
-                                        height={40}
-                                        className="team-logo-sm"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="team-logo-placeholder-sm">
-                                      {match.homeTeam.charAt(0)}
-                                    </div>
-                                  )}
-                                  <span className="team-name">
-                                    {match.homeTeam}
-                                  </span>
-                                  {match.winnerTeam === match.homeTeam && (
-                                    <Badge
-                                      bg="warning"
-                                      className="winner-badge-sm ms-1"
-                                    >
-                                      Winner
-                                    </Badge>
-                                  )}
-                                </div>
-                              </td>
-                              <td className="score-cell text-center align-middle">
-                                <div className="score">
-                                  <span className="home-score">
-                                    {match.homeTeamScore}
-                                  </span>
-                                  <span className="score-separator">-</span>
-                                  <span className="away-score">
-                                    {match.awayTeamScore}
-                                  </span>
-                                </div>
-                                {match.winnerTeam === "Draw" && (
-                                  <Badge
-                                    bg="info"
-                                    className="mt-1 d-block mx-auto"
-                                  >
-                                    Draw
-                                  </Badge>
-                                )}
-                              </td>
-                              <td className="team-cell align-middle">
-                                <div className="team-info">
-                                  {match.awayTeamLogoUrl ? (
-                                    <div className="team-logo-container-sm">
-                                      <Image
-                                        src={match.awayTeamLogoUrl}
-                                        alt={`${match.awayTeam} logo`}
-                                        width={40}
-                                        height={40}
-                                        className="team-logo-sm"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="team-logo-placeholder-sm">
-                                      {match.awayTeam.charAt(0)}
-                                    </div>
-                                  )}
-                                  <span className="team-name">
-                                    {match.awayTeam}
-                                  </span>
-                                  {match.winnerTeam === match.awayTeam && (
-                                    <Badge
-                                      bg="warning"
-                                      className="winner-badge-sm ms-1"
-                                    >
-                                      Winner
-                                    </Badge>
-                                  )}
-                                </div>
-                              </td>
-                              <td className="align-middle">
-                                <div className="match-date">
-                                  {formatMatchDate(match.matchDate)}
-                                </div>
-                                <div className="match-time">
-                                  <i className="bi bi-clock me-1"></i>
-                                  {match.matchTime}
-                                </div>
-                              </td>
-                              <td className="align-middle">{match.venue}</td>
-                              <td className="text-center align-middle">
-                                <div className="d-flex justify-content-center gap-2">
-                                  <Button
-                                    variant="outline-primary"
-                                    onClick={() => openEditModal(match)}
-                                    className="edit-btn mr-1"
-                                  >
-                                    Edit
-                                  </Button>
-                                  <Button
-                                    variant="outline-danger"
-                                    onClick={() => handleDeleteMatch(match.id)}
-                                  >
-                                    Delete
-                                  </Button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </Table>
-                  </div>
-                )}
-              </Tab>
-
-              <Tab
-                eventKey="other"
-                title={
-                  <span>
-                    <i className="bi bi-exclamation-triangle me-2"></i>Other
-                  </span>
-                }
-              >
-                {matches.filter(
-                  (match) =>
-                    match.status !== "Live" &&
-                    match.status !== "Upcoming" &&
-                    match.status !== "Completed"
-                ).length === 0 ? (
-                  <div className="text-center my-5">
-                    <p>No postponed or canceled matches.</p>
-                  </div>
-                ) : (
-                  <div className="table-responsive">
-                    <Table hover className="match-admin-table">
-                      <thead>
-                        <tr>
-                          <th className="text-center">Status</th>
-                          <th className="text-center">Match Type</th>
-                          <th>Home Team</th>
-                          <th className="text-center">Match</th>
-                          <th>Away Team</th>
-                          <th>Date & Time</th>
-                          <th>Venue</th>
-                          <th className="text-center">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {matches
-                          .filter(
-                            (match) =>
-                              match.status !== "Live" &&
-                              match.status !== "Upcoming" &&
-                              match.status !== "Completed"
-                          )
-                          .map((match) => (
-                            <tr key={match.id} className="match-row">
-                              <td className="text-center align-middle">
-                                {getStatusBadge(match.status)}
-                              </td>
-                              <td className="text-center align-middle">
-                                {match.matchType}
-                              </td>
-                              <td className="team-cell align-middle">
-                                <div className="team-info">
-                                  {match.homeTeamLogoUrl ? (
-                                    <div className="team-logo-container-sm">
-                                      <Image
-                                        src={match.homeTeamLogoUrl}
-                                        alt={`${match.homeTeam} logo`}
-                                        width={40}
-                                        height={40}
-                                        className="team-logo-sm"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="team-logo-placeholder-sm">
-                                      {match.homeTeam.charAt(0)}
-                                    </div>
-                                  )}
-                                  <span className="team-name">
-                                    {match.homeTeam}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="score-cell text-center align-middle">
-                                <span className="vs-text">VS</span>
-                              </td>
-                              <td className="team-cell align-middle">
-                                <div className="team-info">
-                                  {match.awayTeamLogoUrl ? (
-                                    <div className="team-logo-container-sm">
-                                      <Image
-                                        src={match.awayTeamLogoUrl}
-                                        alt={`${match.awayTeam} logo`}
-                                        width={40}
-                                        height={40}
-                                        className="team-logo-sm"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="team-logo-placeholder-sm">
-                                      {match.awayTeam.charAt(0)}
-                                    </div>
-                                  )}
-                                  <span className="team-name">
-                                    {match.awayTeam}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="align-middle">
-                                <div className="match-date">
-                                  {formatMatchDate(match.matchDate)}
-                                </div>
-                                <div className="match-time">
-                                  <i className="bi bi-clock me-1"></i>
-                                  {match.matchTime}
-                                </div>
-                              </td>
-                              <td className="align-middle">{match.venue}</td>
-                              <td className="text-center align-middle">
-                                <div className="d-flex justify-content-center gap-2">
-                                  <Button
-                                    variant="outline-primary"
-                                    onClick={() => openEditModal(match)}
-                                    className="edit-btn mr-1"
-                                  >
-                                    Edit
-                                  </Button>
-                                  <Button
-                                    variant="outline-danger"
-                                    onClick={() => handleDeleteMatch(match.id)}
-                                  >
-                                    Delete
-                                  </Button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </Table>
-                  </div>
-                )}
-              </Tab>
-            </Tabs>
+            <div className="table-responsive">
+              <Table hover className="match-admin-table">
+                <thead>
+                  <tr>
+                    <th className="text-center">Status</th>
+                    <th className="text-center">Type</th>
+                    <th>Home Team</th>
+                    <th className="text-center">Score/Match</th>
+                    <th>Away Team</th>
+                    <th>Date & Time</th>
+                    <th>Venue</th>
+                    <th className="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedMatches.map((match) => (
+                    <tr
+                      key={match.id}
+                      className={`match-row ${match.status.toLowerCase()}-match`}
+                    >
+                      <td className="text-center align-middle">
+                        {getStatusBadge(match.status)}
+                      </td>
+                      <td className="text-center align-middle">
+                        {match.matchType}
+                      </td>
+                      <td className="team-cell align-middle">
+                        <div className="team-info">
+                          {match.homeTeamLogoUrl ? (
+                            <div className="team-logo-container-sm">
+                              <Image
+                                src={match.homeTeamLogoUrl}
+                                alt={`${match.homeTeam} logo`}
+                                width={40}
+                                height={40}
+                                className="team-logo-sm"
+                              />
+                            </div>
+                          ) : (
+                            <div className="team-logo-placeholder-sm">
+                              {match.homeTeam.charAt(0)}
+                            </div>
+                          )}
+                          <span className="team-name">{match.homeTeam}</span>
+                          {match.winnerTeam === match.homeTeam && (
+                            <Badge
+                              bg="warning"
+                              className="winner-badge-sm ms-1"
+                            >
+                              Winner
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
+                      <td className="score-cell text-center align-middle">
+                        {match.status === "Live" ||
+                        match.status === "Completed" ? (
+                          <div className="score">
+                            <span className="home-score">
+                              {match.homeTeamScore}
+                            </span>
+                            <span className="score-separator">-</span>
+                            <span className="away-score">
+                              {match.awayTeamScore}
+                            </span>
+                            {match.winnerTeam === "Draw" && (
+                              <Badge bg="info" className="mt-1 d-block mx-auto">
+                                Draw
+                              </Badge>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="vs-text">VS</span>
+                        )}
+                      </td>
+                      <td className="team-cell align-middle">
+                        <div className="team-info">
+                          {match.awayTeamLogoUrl ? (
+                            <div className="team-logo-container-sm">
+                              <Image
+                                src={match.awayTeamLogoUrl}
+                                alt={`${match.awayTeam} logo`}
+                                width={40}
+                                height={40}
+                                className="team-logo-sm"
+                              />
+                            </div>
+                          ) : (
+                            <div className="team-logo-placeholder-sm">
+                              {match.awayTeam.charAt(0)}
+                            </div>
+                          )}
+                          <span className="team-name">{match.awayTeam}</span>
+                          {match.winnerTeam === match.awayTeam && (
+                            <Badge
+                              bg="warning"
+                              className="winner-badge-sm ms-1"
+                            >
+                              Winner
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
+                      <td className="align-middle">
+                        <div className="match-date">
+                          {formatMatchDate(match.matchDate)}
+                        </div>
+                        <div className="match-time">
+                          <i className="bi bi-clock me-1"></i>
+                          {match.matchTime}
+                        </div>
+                      </td>
+                      <td className="align-middle">{match.venue}</td>
+                      <td className="text-center align-middle">
+                        <div className="d-flex justify-content-center gap-2">
+                          <Button
+                            variant="outline-primary"
+                            onClick={() => openEditModal(match)}
+                            className="edit-btn mr-1"
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            onClick={() => handleDeleteMatch(match.id)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
           )}
         </>
       )}
@@ -827,12 +771,25 @@ export default function MatchSchedule() {
       {/* Add Match Modal */}
       <Modal
         show={showAddModal}
-        onHide={() => setShowAddModal(false)}
+        onHide={() => {
+          setShowAddModal(false);
+          resetForm();
+        }}
         centered
         className="match-modal"
       >
         <Modal.Header className="modal-header">
           <Modal.Title>Add New Match</Modal.Title>
+          <Button
+            variant="link"
+            className="modal-close-btn"
+            onClick={() => {
+              setShowAddModal(false);
+              resetForm();
+            }}
+          >
+            Close
+          </Button>
         </Modal.Header>
         <Modal.Body className="modal-body">
           <Form onSubmit={handleAddMatch}>
@@ -848,32 +805,18 @@ export default function MatchSchedule() {
                 >
                   <option value="">Select Home Team</option>
                   {teams.map((team) => (
-                    <option key={team.id} value={team.name}>
-                      {team.name}
+                    <option
+                      key={team.id}
+                      value={team.name}
+                      disabled={team.name === formData.awayTeam}
+                    >
+                      {team.name}{" "}
+                      {team.name === formData.awayTeam
+                        ? "(Already selected as Away Team)"
+                        : ""}
                     </option>
                   ))}
                 </Form.Select>
-                {formData.homeTeam && (
-                  <div className="selected-team-logo">
-                    {teams.find((team) => team.name === formData.homeTeam)
-                      ?.teamLogoUrl ? (
-                      <Image
-                        src={
-                          teams.find((team) => team.name === formData.homeTeam)
-                            ?.teamLogoUrl
-                        }
-                        alt={`${formData.homeTeam} logo`}
-                        width={40}
-                        height={40}
-                        className="team-logo-small"
-                      />
-                    ) : (
-                      <div className="team-logo-placeholder-small">
-                        {formData.homeTeam.charAt(0)}
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             </Form.Group>
 
@@ -889,32 +832,18 @@ export default function MatchSchedule() {
                 >
                   <option value="">Select Away Team</option>
                   {teams.map((team) => (
-                    <option key={team.id} value={team.name}>
-                      {team.name}
+                    <option
+                      key={team.id}
+                      value={team.name}
+                      disabled={team.name === formData.homeTeam}
+                    >
+                      {team.name}{" "}
+                      {team.name === formData.homeTeam
+                        ? "(Already selected as Home Team)"
+                        : ""}
                     </option>
                   ))}
                 </Form.Select>
-                {formData.awayTeam && (
-                  <div className="selected-team-logo">
-                    {teams.find((team) => team.name === formData.awayTeam)
-                      ?.teamLogoUrl ? (
-                      <Image
-                        src={
-                          teams.find((team) => team.name === formData.awayTeam)
-                            ?.teamLogoUrl
-                        }
-                        alt={`${formData.awayTeam} logo`}
-                        width={40}
-                        height={40}
-                        className="team-logo-small"
-                      />
-                    ) : (
-                      <div className="team-logo-placeholder-small">
-                        {formData.awayTeam.charAt(0)}
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             </Form.Group>
 
@@ -960,7 +889,7 @@ export default function MatchSchedule() {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Match Type</Form.Label>
+              <Form.Label>Type</Form.Label>
               <Form.Select
                 name="matchType"
                 value={formData.matchType}
@@ -986,6 +915,7 @@ export default function MatchSchedule() {
                 required
                 className="form-select-custom"
               >
+                <option value="Scheduled">Scheduled</option>
                 <option value="Upcoming">Upcoming</option>
                 <option value="Live">Live</option>
                 <option value="Completed">Completed</option>
@@ -1064,12 +994,25 @@ export default function MatchSchedule() {
       {/* Edit Match Modal */}
       <Modal
         show={showEditModal}
-        onHide={() => setShowEditModal(false)}
+        onHide={() => {
+          setShowEditModal(false);
+          resetForm();
+        }}
         centered
         className="match-modal"
       >
         <Modal.Header className="modal-header">
           <Modal.Title>Edit Match</Modal.Title>
+          <Button
+            variant="link"
+            className="modal-close-btn"
+            onClick={() => {
+              setShowEditModal(false);
+              resetForm();
+            }}
+          >
+            <i className="bi bi-x-lg"></i>
+          </Button>
         </Modal.Header>
         <Modal.Body className="modal-body">
           <Form onSubmit={handleEditMatch}>
@@ -1081,36 +1024,23 @@ export default function MatchSchedule() {
                   value={formData.homeTeam}
                   onChange={handleInputChange}
                   required
+                  disabled={currentMatch?.homeTeam}
                   className="form-select-custom"
                 >
                   <option value="">Select Home Team</option>
                   {teams.map((team) => (
-                    <option key={team.id} value={team.name}>
-                      {team.name}
+                    <option
+                      key={team.id}
+                      value={team.name}
+                      disabled={team.name === formData.awayTeam}
+                    >
+                      {team.name}{" "}
+                      {team.name === formData.awayTeam
+                        ? "(Already selected as Away Team)"
+                        : ""}
                     </option>
                   ))}
                 </Form.Select>
-                {formData.homeTeam && (
-                  <div className="selected-team-logo">
-                    {teams.find((team) => team.name === formData.homeTeam)
-                      ?.teamLogoUrl ? (
-                      <Image
-                        src={
-                          teams.find((team) => team.name === formData.homeTeam)
-                            ?.teamLogoUrl
-                        }
-                        alt={`${formData.homeTeam} logo`}
-                        width={40}
-                        height={40}
-                        className="team-logo-small"
-                      />
-                    ) : (
-                      <div className="team-logo-placeholder-small">
-                        {formData.homeTeam.charAt(0)}
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             </Form.Group>
 
@@ -1122,36 +1052,23 @@ export default function MatchSchedule() {
                   value={formData.awayTeam}
                   onChange={handleInputChange}
                   required
+                  disabled={currentMatch?.awayTeam}
                   className="form-select-custom"
                 >
                   <option value="">Select Away Team</option>
                   {teams.map((team) => (
-                    <option key={team.id} value={team.name}>
-                      {team.name}
+                    <option
+                      key={team.id}
+                      value={team.name}
+                      disabled={team.name === formData.homeTeam}
+                    >
+                      {team.name}{" "}
+                      {team.name === formData.homeTeam
+                        ? "(Already selected as Home Team)"
+                        : ""}
                     </option>
                   ))}
                 </Form.Select>
-                {formData.awayTeam && (
-                  <div className="selected-team-logo">
-                    {teams.find((team) => team.name === formData.awayTeam)
-                      ?.teamLogoUrl ? (
-                      <Image
-                        src={
-                          teams.find((team) => team.name === formData.awayTeam)
-                            ?.teamLogoUrl
-                        }
-                        alt={`${formData.awayTeam} logo`}
-                        width={40}
-                        height={40}
-                        className="team-logo-small"
-                      />
-                    ) : (
-                      <div className="team-logo-placeholder-small">
-                        {formData.awayTeam.charAt(0)}
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             </Form.Group>
 
@@ -1198,7 +1115,7 @@ export default function MatchSchedule() {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Match Type</Form.Label>
+              <Form.Label>Type</Form.Label>
               <Form.Select
                 name="matchType"
                 value={formData.matchType}
@@ -1224,6 +1141,7 @@ export default function MatchSchedule() {
                 required
                 className="form-select-custom"
               >
+                <option value="Scheduled">Scheduled</option>
                 <option value="Upcoming">Upcoming</option>
                 <option value="Live">Live</option>
                 <option value="Completed">Completed</option>
@@ -1299,299 +1217,216 @@ export default function MatchSchedule() {
         </Modal.Body>
       </Modal>
 
-      <style jsx global>{`
-        .match-card {
-          border-radius: 8px;
-          overflow: hidden;
-          transition: all 0.3s ease;
-          border: 1px solid rgba(0, 0, 0, 0.125);
-        }
-
-        .match-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .match-teams {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          text-align: center;
-        }
-
-        .match-team {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .team-score {
-          font-size: 1.5rem;
-          font-weight: bold;
-          margin-top: 5px;
-        }
-
-        .match-vs {
-          padding: 0 10px;
-          font-weight: bold;
-          color: #6c757d;
-        }
-
-        .match-details {
-          margin-top: 15px;
-          border-top: 1px solid #eee;
-          padding-top: 15px;
-        }
-
-        .match-details p {
-          margin-bottom: 8px;
-          display: flex;
-          align-items: center;
-        }
-
-        .match-details i {
-          margin-right: 8px;
-          color: #6c757d;
-        }
-
-        .page-title {
-          font-weight: bold;
-          color: #333;
-          border-bottom: 3px solid #f8f9fa;
-          padding-bottom: 10px;
-          margin-bottom: 10px;
-        }
-
-        .add-match-btn {
-          border-radius: 50px;
-          padding: 8px 20px;
-        }
-
-        .match-modal .modal-header {
-          background-color: #f8f9fa;
-          border-bottom: 1px solid #dee2e6;
-        }
-
-        .match-modal .modal-body {
-          padding: 20px;
-        }
-
-        .form-select-custom {
-          border-radius: 50px;
-          padding: 10px 15px;
-        }
-
-        .form-control-custom {
-          border-radius: 50px;
-          padding: 10px 15px;
-        }
-
-        .score-section {
-          margin-top: 20px;
-        }
-
-        .score-input {
-          border-radius: 50px;
-          padding: 10px 15px;
-        }
-
-        .winner-section {
-          margin-top: 20px;
-        }
-
-        .winner-select {
-          border-radius: 50px;
-          padding: 10px 15px;
-        }
-
-        .submit-btn {
-          border-radius: 50px;
-          padding: 10px 15px;
-        }
-
-        .team-select-container {
-          display: flex;
-          align-items: center;
-        }
-
-        .selected-team-logo {
-          margin-left: 10px;
-        }
-
-        .team-logo-small {
-          border-radius: 50%;
-          object-fit: cover;
-          border: 2px solid #eee;
-        }
-
-        .team-logo-placeholder-small {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          background-color: #ddd;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.2rem;
-          font-weight: bold;
-          color: #666;
-        }
-
-        .team-logo-container {
-          height: 70px;
-          width: 70px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto;
-        }
-
-        .team-logo {
-          border-radius: 50%;
-          object-fit: cover;
-          border: 3px solid #eee;
-          transition: transform 0.3s ease;
-        }
-
-        .match-card:hover .team-logo {
-          transform: scale(1.05);
-        }
-
-        .team-logo-placeholder {
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-          background-color: #eee;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.5rem;
-          font-weight: bold;
-          color: #666;
-          border: 3px solid #ddd;
-        }
-
-        .match-admin-table {
-          border-collapse: separate;
-          border-spacing: 0;
-          margin-bottom: 30px;
-          background-color: #fff;
-          box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-          border-radius: 8px;
-          overflow: hidden;
-        }
-
-        .match-admin-table thead th {
-          background-color: #f8f9fa;
-          border-bottom: 2px solid #eaeaea;
-          padding: 12px;
-          font-weight: 600;
-          color: #495057;
-        }
-
-        .match-admin-table tbody tr {
-          transition: all 0.2s ease;
-        }
-
-        .match-admin-table tbody tr:hover {
-          background-color: rgba(13, 110, 253, 0.05);
-        }
-
-        .match-admin-table tbody tr td {
-          padding: 12px;
-          border-bottom: 1px solid #eee;
-          vertical-align: middle;
-        }
-
-        .team-cell {
-          min-width: 150px;
-        }
-
-        .team-info {
-          display: flex;
-          align-items: center;
-          flex-wrap: nowrap;
-        }
-
-        .team-logo-container-sm {
-          width: 40px;
-          height: 40px;
-          margin-right: 10px;
-          flex-shrink: 0;
-        }
-
-        .team-logo-sm {
-          border-radius: 50%;
-          border: 2px solid #eee;
-          object-fit: cover;
-        }
-
-        .team-logo-placeholder-sm {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          background-color: #f0f0f0;
-          color: #666;
-          font-weight: bold;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-right: 10px;
-          flex-shrink: 0;
-        }
-
-        .score-cell {
-          min-width: 80px;
-        }
-
-        .score {
-          font-weight: bold;
-          font-size: 1.1rem;
-          color: #212529;
-        }
-
-        .score-separator {
-          margin: 0 5px;
-          color: #6c757d;
-        }
-
-        .vs-text {
-          font-weight: bold;
-          color: #6c757d;
-        }
-
-        .match-date {
-          font-weight: 500;
-          margin-bottom: 4px;
-        }
-
-        .match-time {
-          color: #6c757d;
-          font-size: 0.9rem;
-        }
-
-        .winner-badge-sm {
-          font-size: 0.7rem;
-          padding: 0.25em 0.6em;
-        }
-
-        .action-btn {
-          width: 32px;
-          height: 32px;
-          padding: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 4px;
-        }
-
-        @media (max-width: 992px) {
-          .match-admin-table {
-            min-width: 900px;
+      <style jsx global>
+        {`
+          /* Core Match Card Styles */
+          .match-card {
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.125);
           }
-        }
-      `}</style>
+
+          .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+          }
+
+          /* Team Display */
+          .team-cell {
+            min-width: 150px;
+          }
+          .team-info {
+            display: flex;
+            align-items: center;
+          }
+
+          /* Score Display */
+          .score-cell {
+            min-width: 80px;
+          }
+          .score {
+            font-weight: bold;
+            font-size: 1.1rem;
+          }
+          .vs-text {
+            font-weight: bold;
+            color: #6c757d;
+          }
+
+          /* Match Status */
+          .match-date {
+            font-weight: 500;
+            margin-bottom: 4px;
+          }
+          .match-time {
+            color: #6c757d;
+            font-size: 0.9rem;
+          }
+
+          /* Enhanced Modal Styling */
+          .match-modal .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+          }
+
+          .match-modal .modal-header {
+            background: linear-gradient(135deg, #1e90ff, #4169e1);
+            color: white;
+            padding: 20px 25px;
+            border-bottom: none;
+          }
+
+          .match-modal .modal-body {
+            padding: 25px;
+            background-color: #f9fafc;
+          }
+
+          .match-modal .team-select-container {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding-right: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+          }
+
+          .match-modal .team-select-container:focus-within {
+            border-color: #4169e1;
+            box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.15);
+          }
+
+          .match-modal .form-select-custom {
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
+            flex: 1;
+            padding: 12px 15px;
+            cursor: pointer;
+          }
+
+          .match-modal .form-select-custom:focus {
+            outline: none;
+            box-shadow: none;
+          }
+
+          .match-modal .form-select-custom option {
+            padding: 10px;
+            background-color: white;
+            color: #333;
+          }
+
+          .match-modal .form-select-custom option:disabled {
+            color: #999;
+            font-style: italic;
+            background-color: #f5f5f5;
+          }
+
+          .match-modal .selected-team-logo {
+            margin-left: 5px;
+            display: flex;
+            align-items: center;
+          }
+
+          .match-modal .modal-close-btn {
+            color: white;
+            padding: 0;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.2rem;
+          }
+
+          .match-modal .modal-close-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+          }
+
+          /* Print-specific styles */
+          @media print {
+            body {
+              background-color: white !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            .container {
+              width: 100% !important;
+              max-width: 100% !important;
+              padding: 0 !important;
+              margin: 0 !important;
+            }
+
+            .d-print-none,
+            .modal,
+            .btn-primary,
+            .btn-outline-danger {
+              display: none !important;
+            }
+
+            .page-title {
+              text-align: center;
+              font-size: 18pt;
+              margin-bottom: 20px;
+            }
+
+            .match-admin-table {
+              width: 100%;
+              border-collapse: collapse;
+              border: 1px solid #ddd;
+            }
+
+            .match-admin-table th {
+              background-color: #f0f0f0 !important;
+              color: black !important;
+              font-weight: bold;
+              padding: 8px;
+              border: 1px solid #ddd;
+            }
+
+            .match-admin-table td {
+              padding: 8px;
+              border: 1px solid #ddd;
+            }
+
+            .badge {
+              border: 1px solid #333 !important;
+              padding: 2px 5px !important;
+              font-size: 8pt !important;
+              font-weight: normal !important;
+              color: black !important;
+              background-color: white !important;
+            }
+
+            .team-logo-container-sm,
+            .team-logo-placeholder-sm {
+              width: 20px !important;
+              height: 20px !important;
+              margin-right: 5px !important;
+            }
+
+            .winner-badge-sm {
+              border: 1px solid #333 !important;
+            }
+
+            .vs-text {
+              font-weight: normal !important;
+            }
+
+            .match-date,
+            .match-time {
+              font-size: 8pt !important;
+            }
+          }
+        `}
+      </style>
     </Container>
   );
 }

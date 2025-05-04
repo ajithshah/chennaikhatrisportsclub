@@ -15,6 +15,7 @@ export default function AdminPanel() {
     tournaments: 0,
     senior_citizen_cricket: 0,
     events: 0,
+    matches: 0,
   });
 
   const sportsCategories = [
@@ -41,6 +42,17 @@ export default function AdminPanel() {
       statLabel: "Cricket Teams",
     },
     {
+      id: "matches",
+      title: "Match Schedule",
+      icon: "📅",
+      description: "Manage upcoming matches, schedules, and match details",
+      color: "#FF5722",
+      link: "/adminpanel/matches",
+      statKey: "matches",
+      isActive: true,
+      statLabel: "Scheduled Matches",
+    },
+    {
       id: "cricket",
       title: "Senior Citizen Cricket Teams",
       icon: "🏏",
@@ -51,18 +63,6 @@ export default function AdminPanel() {
       statKey: "senior_citizen_cricket",
       isActive: false,
       statLabel: "Senior Citizen Cricket Teams",
-    },
-    {
-      id: "match",
-      title: "match",
-      icon: "🏏",
-      description:
-        "match",
-      color: "#4CAF50",
-      link: "/adminpanel/match",
-      statKey: "match",
-      isActive: true,
-      statLabel: "match",
     },
     {
       id: "tournaments",
@@ -85,18 +85,6 @@ export default function AdminPanel() {
       statKey: "events",
       isActive: false,
       statLabel: "Upcoming Events",
-    },
-    {
-      id: "matches",
-      title: "Match Schedule",
-      icon: "📅",
-      description:
-        "Manage upcoming matches, schedules, and match details",
-      color: "#FF5722",
-      link: "/adminpanel/matches",
-      statKey: "matches",
-      isActive: true,
-      statLabel: "Scheduled Matches",
     },
   ];
 
@@ -399,7 +387,7 @@ export default function AdminPanel() {
             </p>
           </div>
 
-          <div className="admin-stats-row">
+          {/* <div className="admin-stats-row">
             {sportsCategories.map((category) => (
               <div className="admin-stat-card" key={category.id}>
                 <div className="admin-stat-value">
@@ -408,7 +396,7 @@ export default function AdminPanel() {
                 <div className="admin-stat-label">{category.statLabel}</div>
               </div>
             ))}
-          </div>
+          </div> */}
 
           <div className="dashboard-grid">
             {sportsCategories.map((category) => (

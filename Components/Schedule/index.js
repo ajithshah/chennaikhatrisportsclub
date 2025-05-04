@@ -37,6 +37,8 @@ export function SchedulePage() {
 
   const getStatusBadge = (status) => {
     switch (status) {
+      case "Scheduled":
+        return <Badge bg="primary text-light">Scheduled</Badge>;
       case "Upcoming":
         return <Badge bg="primary text-light">Upcoming</Badge>;
       case "Live":
@@ -62,126 +64,15 @@ export function SchedulePage() {
     });
   };
 
-  const upcomingMatches = matches.filter(
-    (match) => match.status === "Upcoming"
-  );
-  const liveMatches = matches.filter((match) => match.status === "Live");
-  const completedMatches = matches.filter(
-    (match) => match.status === "Completed"
-  );
-
-  const renderMatchTable = (matchesList) => {
-    if (matchesList.length === 0) {
-      return (
-        <div className="text-center my-5">
-          <p>No matches in this category at the moment.</p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="table-responsive">
-        <Table hover className="match-table">
-          <thead>
-            <tr>
-              <th className="text-center">Status</th>
-              <th className="text-center">Match Type</th>
-              <th className="text-center">Home Team</th>
-              <th className="text-center">Score</th>
-              <th className="text-center">Away Team</th>
-              <th>Date & Time</th>
-              <th>Venue</th>
-              <th className="text-center">Result</th>
-            </tr>
-          </thead>
-          <tbody>
-            {matchesList.map((match) => (
-              <tr key={match.id} className="match-row">
-                <td className="text-center align-middle">
-                  {getStatusBadge(match.status)}
-                </td>
-                <td className="text-center align-middle">{match.matchType}</td>
-                <td className="team-cell">
-                  <div className="team-info">
-                    {match.homeTeamLogoUrl ? (
-                      <div className="team-logo-container">
-                        <Image
-                          src={match.homeTeamLogoUrl}
-                          alt={`${match.homeTeam} logo`}
-                          width={40}
-                          height={40}
-                          className="team-logo"
-                        />
-                      </div>
-                    ) : (
-                      <div className="team-logo-placeholder">
-                        {match.homeTeam.charAt(0)}
-                      </div>
-                    )}
-                    <span className="team-name">{match.homeTeam}</span>
-                    {match.winnerTeam === match.homeTeam && (
-                      <Badge bg="warning" className="winner-badge">
-                        Winner
-                      </Badge>
-                    )}
-                  </div>
-                </td>
-                <td className="score-cell text-center align-middle">
-                  {match.status === "Live" || match.status === "Completed" ? (
-                    <div className="score">
-                      <span className="home-score">{match.homeTeamScore}</span>
-                      <span className="score-separator">-</span>
-                      <span className="away-score">{match.awayTeamScore}</span>
-                    </div>
-                  ) : (
-                    <span className="vs-text">VS</span>
-                  )}
-                </td>
-                <td className="team-cell">
-                  <div className="team-info">
-                    {match.awayTeamLogoUrl ? (
-                      <div className="team-logo-container">
-                        <Image
-                          src={match.awayTeamLogoUrl}
-                          alt={`${match.awayTeam} logo`}
-                          width={40}
-                          height={40}
-                          className="team-logo"
-                        />
-                      </div>
-                    ) : (
-                      <div className="team-logo-placeholder">
-                        {match.awayTeam.charAt(0)}
-                      </div>
-                    )}
-                    <span className="team-name">{match.awayTeam}</span>
-                    {match.winnerTeam === match.awayTeam && (
-                      <Badge bg="warning" className="winner-badge">
-                        Winner
-                      </Badge>
-                    )}
-                  </div>
-                </td>
-                <td className="align-middle">
-                  <div className="match-date">
-                    {formatMatchDate(match.matchDate)}
-                  </div>
-                  <div className="match-time">{match.matchTime}</div>
-                </td>
-                <td className="align-middle">{match.venue}</td>
-                <td className="text-center align-middle">
-                  {match.status === "Completed" &&
-                    match.winnerTeam === "Draw" && (
-                      <Badge bg="info">Draw</Badge>
-                    )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
-    );
-  };
+  // Sort matches by date and time
+  const sortedMatches = [...matches].sort((a, b) => {
+    // Parse dates
+    const dateA = new Date(a.matchDate + "T" + a.matchTime);
+    const dateB = new Date(b.matchDate + "T" + b.matchTime);
+    
+    // Compare dates for chronological sorting
+    return dateA - dateB;
+  });
 
   return (
     <>
@@ -207,39 +98,128 @@ export function SchedulePage() {
               </div>
             </div>
           ) : (
-            <Tabs defaultActiveKey="upcoming" className="mb-4 mt-4">
-              <Tab
-                eventKey="live"
-                title={
-                  <span>
-                    <i className="bi bi-broadcast-pin me-2"></i>Live Matches
-                  </span>
-                }
-              >
-                {renderMatchTable(liveMatches)}
-              </Tab>
-              <Tab
-                eventKey="upcoming"
-                title={
-                  <span>
-                    <i className="bi bi-calendar-event me-2"></i>Upcoming
-                    Matches
-                  </span>
-                }
-              >
-                {renderMatchTable(upcomingMatches)}
-              </Tab>
-              <Tab
-                eventKey="completed"
-                title={
-                  <span>
-                    <i className="bi bi-check-circle me-2"></i>Completed Matches
-                  </span>
-                }
-              >
-                {renderMatchTable(completedMatches)}
-              </Tab>
-            </Tabs>
+            <>
+              {sortedMatches.length === 0 ? (
+                <div className="text-center my-5">
+                  <p>No matches scheduled yet.</p>
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <Table hover className="match-table">
+                    <thead>
+                      <tr>
+                        <th className="text-center">Status</th>
+                        <th className="text-center">Match Type</th>
+                        <th className="text-center">Home Team</th>
+                        <th className="text-center">Score</th>
+                        <th className="text-center">Away Team</th>
+                        <th>Date & Time</th>
+                        <th>Venue</th>
+                        <th className="text-center">Result</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sortedMatches.map((match) => (
+                        <tr
+                          key={match.id}
+                          className={`match-row ${match.status.toLowerCase()}-match`}
+                        >
+                          <td className="text-center align-middle">
+                            {getStatusBadge(match.status)}
+                          </td>
+                          <td className="text-center align-middle">
+                            {match.matchType}
+                          </td>
+                          <td className="team-cell">
+                            <div className="team-info">
+                              {match.homeTeamLogoUrl ? (
+                                <div className="team-logo-container">
+                                  <Image
+                                    src={match.homeTeamLogoUrl}
+                                    alt={`${match.homeTeam} logo`}
+                                    width={40}
+                                    height={40}
+                                    className="team-logo"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="team-logo-placeholder">
+                                  {match.homeTeam.charAt(0)}
+                                </div>
+                              )}
+                              <span className="team-name">
+                                {match.homeTeam}
+                              </span>
+                              {match.winnerTeam === match.homeTeam && (
+                                <Badge bg="warning" className="winner-badge">
+                                  Winner
+                                </Badge>
+                              )}
+                            </div>
+                          </td>
+                          <td className="score-cell text-center align-middle">
+                            {match.status === "Live" ||
+                            match.status === "Completed" ? (
+                              <div className="score">
+                                <span className="home-score">
+                                  {match.homeTeamScore}
+                                </span>
+                                <span className="score-separator">-</span>
+                                <span className="away-score">
+                                  {match.awayTeamScore}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="vs-text">VS</span>
+                            )}
+                          </td>
+                          <td className="team-cell">
+                            <div className="team-info">
+                              {match.awayTeamLogoUrl ? (
+                                <div className="team-logo-container">
+                                  <Image
+                                    src={match.awayTeamLogoUrl}
+                                    alt={`${match.awayTeam} logo`}
+                                    width={40}
+                                    height={40}
+                                    className="team-logo"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="team-logo-placeholder">
+                                  {match.awayTeam.charAt(0)}
+                                </div>
+                              )}
+                              <span className="team-name">
+                                {match.awayTeam}
+                              </span>
+                              {match.winnerTeam === match.awayTeam && (
+                                <Badge bg="warning" className="winner-badge">
+                                  Winner
+                                </Badge>
+                              )}
+                            </div>
+                          </td>
+                          <td className="align-middle">
+                            <div className="match-date">
+                              {formatMatchDate(match.matchDate)}
+                            </div>
+                            <div className="match-time">{match.matchTime}</div>
+                          </td>
+                          <td className="align-middle">{match.venue}</td>
+                          <td className="text-center align-middle">
+                            {match.status === "Completed" &&
+                              match.winnerTeam === "Draw" && (
+                                <Badge bg="info">Draw</Badge>
+                              )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              )}
+            </>
           )}
         </Container>
       </div>

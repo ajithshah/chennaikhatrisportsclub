@@ -1026,7 +1026,7 @@ export default function Profile() {
                     Edit Profile
                   </Button>
 
-                  {teamData && (
+                  {/* {teamData && (
                     <Button
                       variant="outline-success"
                       onClick={() => router.push("/schedule")}
@@ -1035,7 +1035,7 @@ export default function Profile() {
                       <i className="fas fa-users"></i>
                       Schedule
                     </Button>
-                  )}
+                  )} */}
 
                   {teamData && (
                     <Button

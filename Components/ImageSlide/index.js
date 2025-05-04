@@ -15,6 +15,11 @@ const ImageSlider = () => {
     { type: "image", src: "/slide7.jpeg", caption: "Kids Cricket Match" },
     { type: "image", src: "/slide8.jpeg", caption: "Kids Cricket Match" },
     { type: "video", src: "/slide_vdo4.mp4", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide9.jpeg", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide10.jpeg", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide11.jpeg", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide12.jpeg", caption: "Kids Cricket Match" },
+    { type: "image", src: "/slide13.jpeg", caption: "Kids Cricket Match" },
   ];
 
   const [windowSize, setWindowSize] = useState({
@@ -292,6 +297,7 @@ const ImageSlider = () => {
         .tiles-grid {
           display: grid;
           grid-template-columns: repeat(${getColumnCount()}, 1fr);
+          height: 1200px;
           gap: 10px;
           grid-auto-flow: dense;
         }
