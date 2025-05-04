@@ -32,6 +32,7 @@ export default function EditProfile() {
     },
   });
   const [imageUploading, setImageUploading] = useState(false);
+  const [userAuthProvider, setUserAuthProvider] = useState("");
   const INDIAN_STATES = [
     "Tamil Nadu",
     "Karnataka",
@@ -120,6 +121,7 @@ export default function EditProfile() {
 
         if (userSnap.exists()) {
           const userData = userSnap.data();
+          setUserAuthProvider(userData.providerId || ""); // Store the auth provider
           setFormData({
             displayName: userData.displayName || user.displayName || "",
             phoneNumber: userData.phoneNumber || "",
@@ -843,11 +845,19 @@ export default function EditProfile() {
                           name="email"
                           value={formData.email}
                           onChange={handleChange}
-                          disabled={true}
+                          disabled={userAuthProvider !== "phone"}
                         />
-                        <span className="helperText">
-                          Email cannot be changed
-                        </span>
+                        {userAuthProvider !== "phone" && (
+                          <span className="helperText">
+                            Email cannot be changed
+                          </span>
+                        )}
+                        {userAuthProvider === "phone" && (
+                          <span className="helperText">
+                            You can update your email address as you logged in
+                            with phone authentication
+                          </span>
+                        )}
                       </Form.Group>
                     </Col>
 
@@ -869,11 +879,17 @@ export default function EditProfile() {
                             !/^[6-9]\d{9}$/.test(formData.phoneNumber)
                           }
                           placeholder="Enter your 10-digit phone number"
+                          disabled={userAuthProvider !== "google.com"}
                         />
                         <Form.Control.Feedback type="invalid">
                           Please enter a valid 10-digit Indian phone number
                           starting with 6-9
                         </Form.Control.Feedback>
+                        {userAuthProvider !== "google.com" && (
+                          <span className="helperText">
+                            Phone number cannot be changed
+                          </span>
+                        )}
                       </Form.Group>
                     </Col>
 
