@@ -9,7 +9,7 @@ body {
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  padding-top: -80px;
+  padding-top: 76px; /* Add padding to prevent content from hiding behind navbar */
 }
 
 main {
@@ -30,8 +30,8 @@ main {
 }
 
 .navbar {
-  position: relative; /* Ensure navbar has the proper stacking context */
-  z-index: 10;  /* Make sure it has a higher z-index if needed */
+  /* Removing position:relative since it conflicts with fixed-top */
+  z-index: 1030;  /* Higher z-index to ensure navbar stays on top */
 }
 
 .profile-dropdown .dropdown-menu {
@@ -81,8 +81,8 @@ main {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   }
   .navbar {
-    position: relative; /* Ensure navbar has the proper stacking context */
-    z-index: 10;  /* Make sure it has a higher z-index if needed */
+    /* Removing position:relative since it conflicts with fixed-top */
+    z-index: 1030;  /* Higher z-index to ensure navbar stays on top */
   }
 
   .profile-dropdown .dropdown-item {
