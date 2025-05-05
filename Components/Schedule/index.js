@@ -1,5 +1,15 @@
-import { useState, useEffect } from "react";
-import { Container, Row, Col, Badge, Tabs, Tab, Table } from "react-bootstrap";
+import { useState, useEffect, useRef } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Badge,
+  Tabs,
+  Tab,
+  Table,
+  Button,
+  Form,
+} from "react-bootstrap";
 import { db } from "@/firebase";
 import { collection, getDocs, query, orderBy, where } from "firebase/firestore";
 import Header from "@/Components/Header";
@@ -9,10 +19,40 @@ import Image from "next/image";
 export function SchedulePage() {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  const refreshInterval = 10000; // Fixed 10 seconds interval
+  const autoRefreshTimerRef = useRef(null);
 
   useEffect(() => {
     fetchMatches();
+
+    // Cleanup function to clear timer when component unmounts
+    return () => {
+      if (autoRefreshTimerRef.current) {
+        clearInterval(autoRefreshTimerRef.current);
+      }
+    };
   }, []);
+
+  // Set up or clear auto-refresh timer when autoRefresh changes
+  useEffect(() => {
+    if (autoRefreshTimerRef.current) {
+      clearInterval(autoRefreshTimerRef.current);
+      autoRefreshTimerRef.current = null;
+    }
+
+    if (autoRefresh) {
+      autoRefreshTimerRef.current = setInterval(() => {
+        fetchMatches();
+      }, refreshInterval);
+    }
+
+    return () => {
+      if (autoRefreshTimerRef.current) {
+        clearInterval(autoRefreshTimerRef.current);
+      }
+    };
+  }, [autoRefresh]);
 
   const fetchMatches = async () => {
     try {
@@ -64,12 +104,30 @@ export function SchedulePage() {
     });
   };
 
-  // Sort matches by date and time
+  // Sort matches by status priority first, then by date and time
   const sortedMatches = [...matches].sort((a, b) => {
-    // Parse dates
+    // Status priority order: Live, Upcoming, Scheduled, Completed, Postponed, Cancelled
+    const statusOrder = {
+      Live: 1,
+      Upcoming: 2,
+      Scheduled: 3,
+      Completed: 4,
+      Postponed: 5,
+      Cancelled: 6,
+    };
+
+    // Compare status priority
+    const statusPriorityDiff = statusOrder[a.status] - statusOrder[b.status];
+
+    // If status is different, sort by status priority
+    if (statusPriorityDiff !== 0) {
+      return statusPriorityDiff;
+    }
+
+    // If status is the same, sort by date and time
     const dateA = new Date(a.matchDate + "T" + a.matchTime);
     const dateB = new Date(b.matchDate + "T" + b.matchTime);
-    
+
     // Compare dates for chronological sorting
     return dateA - dateB;
   });
@@ -85,10 +143,52 @@ export function SchedulePage() {
       <div className="match-schedule-page">
         <Container>
           <div className="page-header">
-            <h1 className="page-title">Match Schedule</h1>
-            <p className="text-muted">
-              Follow all Cricket matches of Chennai Khatri Sports Club
-            </p>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h1 className="page-title">Match Schedule</h1>
+                <p className="text-muted">
+                  Follow all Cricket matches of Chennai Khatri Sports Club
+                </p>
+              </div>
+              <div className="d-flex align-items-center">
+                <div className="auto-refresh-controls me-3">
+                  <Form>
+                    <div className="d-flex align-items-center mr-1">
+                      <Form.Check
+                        type="switch"
+                        id="auto-refresh-switch"
+                        label="Auto"
+                        checked={autoRefresh}
+                        onChange={(e) => setAutoRefresh(e.target.checked)}
+                        className="me-3"
+                      />
+                    </div>
+                  </Form>
+                </div>
+                <Button
+                  variant="outline-primary"
+                  onClick={fetchMatches}
+                  disabled={loading}
+                  className="refresh-button"
+                >
+                  {loading ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      Refreshing...
+                    </>
+                  ) : (
+                    <>
+                      <i className="bi bi-arrow-clockwise me-2"></i>
+                      Refresh
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
           </div>
 
           {loading ? (
@@ -109,20 +209,22 @@ export function SchedulePage() {
                     <thead>
                       <tr>
                         <th className="text-center">Status</th>
-                        <th className="text-center">Match Type</th>
+                        <th className="text-center">Type</th>
                         <th className="text-center">Home Team</th>
                         <th className="text-center">Score</th>
                         <th className="text-center">Away Team</th>
-                        <th>Date & Time</th>
-                        <th>Venue</th>
-                        <th className="text-center">Result</th>
+                        <th>Date, Time & Venue</th>
                       </tr>
                     </thead>
                     <tbody>
                       {sortedMatches.map((match) => (
                         <tr
                           key={match.id}
-                          className={`match-row ${match.status.toLowerCase()}-match`}
+                          className={`match-row ${match.status.toLowerCase()}-match ${
+                            match.status === "Live"
+                              ? "live-match-highlight"
+                              : ""
+                          }`}
                         >
                           <td className="text-center align-middle">
                             {getStatusBadge(match.status)}
@@ -160,7 +262,11 @@ export function SchedulePage() {
                           <td className="score-cell text-center align-middle">
                             {match.status === "Live" ||
                             match.status === "Completed" ? (
-                              <div className="score">
+                              <div
+                                className={`score ${
+                                  match.status === "Live" ? "live-score" : ""
+                                }`}
+                              >
                                 <span className="home-score">
                                   {match.homeTeamScore}
                                 </span>
@@ -204,14 +310,7 @@ export function SchedulePage() {
                             <div className="match-date">
                               {formatMatchDate(match.matchDate)}
                             </div>
-                            <div className="match-time">{match.matchTime}</div>
-                          </td>
-                          <td className="align-middle">{match.venue}</td>
-                          <td className="text-center align-middle">
-                            {match.status === "Completed" &&
-                              match.winnerTeam === "Draw" && (
-                                <Badge bg="info">Draw</Badge>
-                              )}
+                            <div className="match-time">{match.matchTime} - {match.venue}</div>
                           </td>
                         </tr>
                       ))}
@@ -230,65 +329,85 @@ export function SchedulePage() {
           padding-bottom: 50px;
           min-height: 100vh;
           background-color: #f8f9fa;
+          background-image: linear-gradient(to bottom right, #f9f9f9, #f1f1f1);
         }
 
         .page-header {
-          margin-bottom: 2rem;
-          text-align: center;
+          margin-bottom: 2.5rem;
+          text-align: left;
         }
 
         .page-title {
-          font-weight: bold;
-          color: #333;
+          font-weight: 800;
+          color: #111;
           margin-bottom: 10px;
           position: relative;
           display: inline-block;
+          font-size: 2.5rem;
+          letter-spacing: -0.5px;
         }
 
         .page-title:after {
           content: "";
           display: block;
-          width: 50%;
-          height: 3px;
-          background: #ff5722;
-          margin: 10px auto 0;
+          width: 60px;
+          height: 4px;
+          background: linear-gradient(90deg, #ff5722, #ff9800);
+          margin: 10px 0 0;
+          border-radius: 4px;
         }
 
         .match-table {
           border-collapse: separate;
-          border-spacing: 0;
+          border-spacing: 0 10px;
           margin-bottom: 30px;
-          background-color: #fff;
-          box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-          border-radius: 8px;
-          overflow: hidden;
+          background-color: transparent;
+          width: 100%;
         }
 
         .match-table thead th {
-          background-color: #f8f9fa;
-          border-bottom: 2px solid #eaeaea;
-          padding: 12px;
+          background-color: transparent;
+          border: none;
+          padding: 15px;
           font-weight: 600;
-          color: #495057;
+          color: #555;
+          font-size: 0.85rem;
+          text-transform: uppercase;
+          letter-spacing: 1px;
         }
 
         .match-table tbody tr {
-          transition: all 0.2s ease;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          margin-bottom: 15px;
+          border-radius: 16px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+          background-color: #fff;
+          overflow: hidden;
         }
 
         .match-table tbody tr:hover {
-          background-color: rgba(13, 110, 253, 0.05);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          transform: translateY(-5px);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .match-table tbody tr td {
-          padding: 15px 12px;
-          border-bottom: 1px solid #eee;
+          padding: 20px 15px;
+          border: none;
+          position: relative;
+        }
+
+        .match-table tbody tr td:first-child {
+          border-top-left-radius: 16px;
+          border-bottom-left-radius: 16px;
+        }
+
+        .match-table tbody tr td:last-child {
+          border-top-right-radius: 16px;
+          border-bottom-right-radius: 16px;
         }
 
         .team-cell {
-          min-width: 170px;
+          min-width: 180px;
         }
 
         .team-info {
@@ -300,76 +419,165 @@ export function SchedulePage() {
         .team-logo-container {
           width: 40px;
           height: 40px;
-          margin-right: 10px;
-          flex-shrink: 0;
+          min-width: 40px;
+          border-radius: 50%;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 12px;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+          border: 2px solid #eaeaea;
+          background: white;
+          transition: all 0.3s ease;
+        }
+
+        .team-info:hover .team-logo-container {
+          transform: scale(1.1);
+          border-color: #1e90ff;
         }
 
         .team-logo {
-          border-radius: 50%;
-          border: 2px solid #eee;
-          object-fit: cover;
+          object-fit: contain;
+          max-width: 100%;
+          max-height: 100%;
+          border-radius: 0;
+          border: none;
+          box-shadow: none;
         }
 
         .team-logo-placeholder {
           width: 40px;
           height: 40px;
+          min-width: 40px;
           border-radius: 50%;
-          background-color: #f0f0f0;
-          color: #666;
-          font-weight: bold;
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          color: #6c757d;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-right: 10px;
-          flex-shrink: 0;
+          margin-right: 12px;
+          font-weight: bold;
+          font-size: 1.2rem;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+          border: 2px solid #eaeaea;
+          transition: all 0.3s ease;
+        }
+
+        .team-info:hover .team-logo-placeholder {
+          transform: scale(1.1);
+          border-color: #1e90ff;
+          background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
         }
 
         .team-name {
-          font-weight: 500;
+          font-weight: 600;
           flex-grow: 1;
+          font-size: 1.1rem;
+          color: #333;
+          transition: color 0.3s ease;
+        }
+
+        .team-info:hover .team-name {
+          color: #ff5722;
         }
 
         .score-cell {
-          min-width: 80px;
+          min-width: 120px;
+          position: relative;
         }
 
         .score {
           font-weight: bold;
-          font-size: 1.1rem;
-          color: #212529;
+          font-size: 1.2rem;
+          color: #333;
+          padding: 8px 16px;
+          border-radius: 10px;
+          display: inline-block;
+          background-color: #f8f9fa;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
+          transition: all 0.3s ease;
+        }
+        
+        .score:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .live-score {
+          color: #fff !important;
+          font-size: 1.3rem !important;
+          font-weight: 700 !important;
+          background: linear-gradient(90deg, #1e90ff, #4169e1);
+          box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3);
+          padding: 8px 16px;
+          border-radius: 10px;
+          position: relative;
+          overflow: hidden;
         }
 
         .score-separator {
-          margin: 0 5px;
-          color: #6c757d;
+          margin: 0 8px;
+          color: inherit;
+          opacity: 0.8;
         }
 
         .vs-text {
           font-weight: bold;
-          color: #6c757d;
+          font-size: 1.2rem;
+          color: #aaa;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          background: linear-gradient(90deg, #ccc, #999);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
 
         .match-date {
-          font-weight: 500;
+          font-weight: 600;
+          color: #555;
+          margin-bottom: 4px;
         }
 
         .match-time {
-          color: #6c757d;
-          font-size: 0.9rem;
+          color: #888;
+          font-size: 0.95rem;
+          font-weight: 500;
         }
 
         .winner-badge {
           font-size: 0.7rem;
-          padding: 0.25em 0.6em;
-          margin-left: 5px;
+          padding: 0.35em 0.65em;
+          margin-left: 8px;
+          background: linear-gradient(135deg, #ffc107, #ff9800);
+          border: none;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border-radius: 30px;
+          box-shadow: 0 2px 5px rgba(255, 152, 0, 0.3);
+          animation: winnerGlow 2s infinite;
+        }
+        
+        @keyframes winnerGlow {
+          0% {
+            box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+          }
+          50% {
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
+          }
+          100% {
+            box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+          }
         }
 
         .nav-tabs .nav-link {
-          color: #495057;
+          color: #555;
           border: none;
           border-bottom: 3px solid transparent;
-          font-weight: 500;
-          padding: 10px 15px;
+          font-weight: 600;
+          padding: 12px 18px;
+          font-size: 1rem;
+          transition: all 0.3s ease;
         }
 
         .nav-tabs .nav-link.active {
@@ -381,39 +589,132 @@ export function SchedulePage() {
         .nav-tabs .nav-link:hover:not(.active) {
           border-color: transparent;
           color: #ff5722;
+          background-color: rgba(255, 87, 34, 0.05);
         }
 
         @media (max-width: 992px) {
           .team-name {
-            font-size: 0.9rem;
+            font-size: 1rem;
           }
 
           .match-table thead th,
           .match-table tbody td {
-            padding: 10px 8px;
+            padding: 15px 10px;
+          }
+
+          .page-title {
+            font-size: 2rem;
           }
         }
 
         @media (max-width: 768px) {
           .team-logo-container,
           .team-logo-placeholder {
-            width: 30px;
-            height: 30px;
-            margin-right: 5px;
+            width: 40px;
+            height: 40px;
+            margin-right: 8px;
           }
 
           .team-name {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
           }
 
           .score {
-            font-size: 0.9rem;
+            font-size: 1rem;
+            padding: 6px 12px;
+          }
+
+          .live-score {
+            font-size: 1.1rem !important;
+            padding: 6px 12px;
           }
 
           .match-date,
           .match-time {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
           }
+
+          .page-title {
+            font-size: 1.75rem;
+          }
+
+          .match-table {
+            border-spacing: 0 8px;
+          }
+
+          .match-table tbody tr td {
+            padding: 15px 10px;
+          }
+        }
+
+        .live-match-highlight {
+          position: relative;
+          background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 244, 242, 1));
+          box-shadow: 0 5px 15px rgba(255, 87, 34, 0.15);
+          animation: livePulse 2s infinite;
+          border-left: 4px solid #1e90ff;
+          z-index: 1;
+        }
+        
+        @keyframes livePulse {
+          0% {
+            box-shadow: 0 5px 15px rgba(30, 144, 255, 0.2);
+          }
+          50% {
+            box-shadow: 0 5px 25px rgba(30, 144, 255, 0.4);
+          }
+          100% {
+            box-shadow: 0 5px 15px rgba(30, 144, 255, 0.2);
+          }
+        }
+
+        .refresh-button {
+          display: flex;
+          align-items: center;
+          transition: all 0.3s ease;
+          border-radius: 30px;
+          padding: 8px 20px;
+          border: 2px solid #ddd;
+          font-weight: 600;
+          background: white;
+        }
+
+        .refresh-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          border-color:rgb(255, 255, 255);
+          color:rgb(0, 0, 0);
+        }
+
+        .refresh-button:active {
+          transform: scale(0.98);
+        }
+
+        .auto-refresh-controls {
+          background-color: white;
+          border-radius: 30px;
+          padding: 8px 18px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+          border: 2px solid #eee;
+        }
+
+        .auto-refresh-controls .form-check-input:checked {
+          background-color: #ff5722;
+          border-color: #ff5722;
+        }
+
+        .auto-refresh-controls .form-check-label {
+          font-weight: 600;
+          color: #555;
+        }
+
+        .badge {
+          font-weight: 500;
+          padding: 0.35em 0.65em;
+          border-radius: 30px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
       `}</style>
     </>

@@ -11,6 +11,15 @@ import {
   handleSignOut as signOutUser,
 } from "../../utils/auth";
 
+// Add custom styles for responsive behavior
+const styles = {
+  clubName: {
+    "@media (max-width: 768px)": {
+      display: "none",
+    },
+  },
+};
+
 const Header = () => {
   const [user, setUser] = useState(null);
   const [dbUserData, setDbUserData] = useState(null);
@@ -99,7 +108,7 @@ const Header = () => {
           <div>
             <div className="fs-5 mb-0 text-dark font-weight-bold">
               <Link href="/" passHref legacyBehavior>
-                <Nav.Link className="px-3 text-dark club-name">
+                <Nav.Link className="px-3 text-dark club-name d-none d-md-block">
                   Chennai Khatri Sports Club
                 </Nav.Link>
               </Link>

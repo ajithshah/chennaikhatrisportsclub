@@ -253,14 +253,47 @@ export default function MatchSchedule() {
     });
   };
 
-  // Sort matches by date and time
+  // Sort matches by status priority and date
   const sortedMatches = [...matches].sort((a, b) => {
-    // Parse dates
-    const dateA = new Date(a.matchDate + "T" + a.matchTime);
-    const dateB = new Date(b.matchDate + "T" + b.matchTime);
-
-    // Compare dates for chronological sorting
-    return dateA - dateB;
+    // Define status priority order (case-insensitive)
+    const statusPriority = {
+      "live": 1,
+      "upcoming": 2,
+      "scheduled": 3,
+      "completed": 4,
+      "postponed": 5,
+      "cancelled": 6
+    };
+    
+    // Get status in lowercase for case-insensitive comparison
+    const statusA = (a.status || "").toLowerCase();
+    const statusB = (b.status || "").toLowerCase();
+    
+    // First sort by status priority
+    const priorityA = statusPriority[statusA] || 999; // Default high number for unknown status
+    const priorityB = statusPriority[statusB] || 999;
+    
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
+    
+    // If status is the same, sort by date and time
+    let dateA, dateB;
+    try {
+      dateA = new Date(a.matchDate + "T" + (a.matchTime || "00:00"));
+      dateB = new Date(b.matchDate + "T" + (b.matchTime || "00:00"));
+    } catch (e) {
+      // Handle invalid dates
+      return 0;
+    }
+    
+    // For upcoming/scheduled matches, sort chronologically (earlier first)
+    if (["live", "upcoming", "scheduled"].includes(statusA)) {
+      return dateA - dateB;
+    }
+    
+    // For completed/postponed/cancelled matches, sort reverse chronologically (recent first)
+    return dateB - dateA;
   });
 
   const printMatchSchedule = () => {
@@ -584,9 +617,9 @@ export default function MatchSchedule() {
   };
 
   return (
-    <Container className="my-4">
+    <Container className="my-4 match-schedule-page">
       <Row className="mb-4">
-        <Col>
+        <Col className="page-header">
           <h2 className="page-title">Match Schedule Management</h2>
           <p className="text-muted">
             Create and manage cricket match schedules
@@ -603,7 +636,7 @@ export default function MatchSchedule() {
           <Button
             variant="outline-secondary"
             onClick={printMatchSchedule}
-            className="print-btn d-print-none"
+            className="print-btn d-print-none refresh-button"
           >
             <i className="bi bi-printer me-2"></i>Print
           </Button>
@@ -630,7 +663,7 @@ export default function MatchSchedule() {
             </div>
           ) : (
             <div className="table-responsive">
-              <Table hover className="match-admin-table">
+              <Table hover className="match-table">
                 <thead>
                   <tr>
                     <th className="text-center">Status</th>
@@ -638,8 +671,7 @@ export default function MatchSchedule() {
                     <th>Home Team</th>
                     <th className="text-center">Score/Match</th>
                     <th>Away Team</th>
-                    <th>Date & Time</th>
-                    <th>Venue</th>
+                    <th>Date, Time & Venue</th>
                     <th className="text-center">Actions</th>
                   </tr>
                 </thead>
@@ -647,7 +679,7 @@ export default function MatchSchedule() {
                   {sortedMatches.map((match) => (
                     <tr
                       key={match.id}
-                      className={`match-row ${match.status.toLowerCase()}-match`}
+                      className={`match-row ${match.status.toLowerCase()}-match ${match.status.toLowerCase() === 'live' ? 'live-match-highlight' : ''}`}
                     >
                       <td className="text-center align-middle">
                         {getStatusBadge(match.status)}
@@ -658,17 +690,17 @@ export default function MatchSchedule() {
                       <td className="team-cell align-middle">
                         <div className="team-info">
                           {match.homeTeamLogoUrl ? (
-                            <div className="team-logo-container-sm">
+                            <div className="team-logo-container">
                               <Image
                                 src={match.homeTeamLogoUrl}
                                 alt={`${match.homeTeam} logo`}
                                 width={40}
                                 height={40}
-                                className="team-logo-sm"
+                                className="team-logo"
                               />
                             </div>
                           ) : (
-                            <div className="team-logo-placeholder-sm">
+                            <div className="team-logo-placeholder">
                               {match.homeTeam.charAt(0)}
                             </div>
                           )}
@@ -676,7 +708,7 @@ export default function MatchSchedule() {
                           {match.winnerTeam === match.homeTeam && (
                             <Badge
                               bg="warning"
-                              className="winner-badge-sm ms-1"
+                              className="winner-badge ms-1"
                             >
                               Winner
                             </Badge>
@@ -686,7 +718,7 @@ export default function MatchSchedule() {
                       <td className="score-cell text-center align-middle">
                         {match.status === "Live" ||
                         match.status === "Completed" ? (
-                          <div className="score">
+                          <div className={`score ${match.status === "Live" ? "live-score" : ""}`}>
                             <span className="home-score">
                               {match.homeTeamScore}
                             </span>
@@ -695,7 +727,7 @@ export default function MatchSchedule() {
                               {match.awayTeamScore}
                             </span>
                             {match.winnerTeam === "Draw" && (
-                              <Badge bg="info" className="mt-1 d-block mx-auto">
+                              <Badge bg="info" className="draw-badge mx-auto">
                                 Draw
                               </Badge>
                             )}
@@ -707,17 +739,17 @@ export default function MatchSchedule() {
                       <td className="team-cell align-middle">
                         <div className="team-info">
                           {match.awayTeamLogoUrl ? (
-                            <div className="team-logo-container-sm">
+                            <div className="team-logo-container">
                               <Image
                                 src={match.awayTeamLogoUrl}
                                 alt={`${match.awayTeam} logo`}
                                 width={40}
                                 height={40}
-                                className="team-logo-sm"
+                                className="team-logo"
                               />
                             </div>
                           ) : (
-                            <div className="team-logo-placeholder-sm">
+                            <div className="team-logo-placeholder">
                               {match.awayTeam.charAt(0)}
                             </div>
                           )}
@@ -725,7 +757,7 @@ export default function MatchSchedule() {
                           {match.winnerTeam === match.awayTeam && (
                             <Badge
                               bg="warning"
-                              className="winner-badge-sm ms-1"
+                              className="winner-badge ms-1"
                             >
                               Winner
                             </Badge>
@@ -738,10 +770,10 @@ export default function MatchSchedule() {
                         </div>
                         <div className="match-time">
                           <i className="bi bi-clock me-1"></i>
-                          {match.matchTime}
+                          {match.matchTime} - {match.venue}
                         </div>
                       </td>
-                      <td className="align-middle">{match.venue}</td>
+
                       <td className="text-center align-middle">
                         <div className="d-flex justify-content-center gap-2">
                           <Button
@@ -1109,7 +1141,6 @@ export default function MatchSchedule() {
                 value={formData.venue}
                 onChange={handleInputChange}
                 placeholder="Enter match venue"
-                required
                 className="form-control-custom"
               />
             </Form.Group>
@@ -1158,7 +1189,6 @@ export default function MatchSchedule() {
                     <Form.Label>Home Team Score</Form.Label>
                     <Form.Control
                       type="number"
-                      min="0"
                       name="homeTeamScore"
                       value={formData.homeTeamScore}
                       onChange={handleScoreChange}
@@ -1171,7 +1201,6 @@ export default function MatchSchedule() {
                     <Form.Label>Away Team Score</Form.Label>
                     <Form.Control
                       type="number"
-                      min="0"
                       name="awayTeamScore"
                       value={formData.awayTeamScore}
                       onChange={handleScoreChange}
@@ -1220,50 +1249,314 @@ export default function MatchSchedule() {
       <style jsx global>
         {`
           /* Core Match Card Styles */
-          .match-card {
-            border-radius: 8px;
+          .match-schedule-page {
+            padding-top: 20px;
+            padding-bottom: 50px;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            background-image: linear-gradient(to bottom right, #f9f9f9, #f1f1f1);
+          }
+
+          .page-header {
+            margin-bottom: 2rem;
+            text-align: left;
+          }
+
+          .page-title {
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+            font-size: 2.5rem;
+            letter-spacing: -0.5px;
+          }
+
+          .page-title:after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff5722, #ff9800);
+            margin: 10px 0 0;
+            border-radius: 4px;
+          }
+
+          .match-table {
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin-bottom: 30px;
+            background-color: transparent;
+            width: 100%;
+          }
+
+          .match-table thead th {
+            background-color: transparent;
+            border: none;
+            padding: 15px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+
+          .match-table tbody tr {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            margin-bottom: 15px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            background-color: #fff;
             overflow: hidden;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.125);
           }
 
-          .match-teams {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-align: center;
+          .match-table tbody tr:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
           }
 
-          /* Team Display */
+          .match-table tbody tr td {
+            padding: 20px 15px;
+            border: none;
+            position: relative;
+          }
+
+          .match-table tbody tr td:first-child {
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+          }
+
+          .match-table tbody tr td:last-child {
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+          }
+
           .team-cell {
-            min-width: 150px;
+            min-width: 180px;
           }
+
           .team-info {
             display: flex;
             align-items: center;
+            flex-wrap: nowrap;
           }
 
-          /* Score Display */
-          .score-cell {
-            min-width: 80px;
+          .team-logo-container {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #eaeaea;
+            background: white;
+            transition: all 0.3s ease;
           }
+
+          .team-info:hover .team-logo-container {
+            transform: scale(1.1);
+            border-color: #1e90ff;
+          }
+
+          .team-logo {
+            object-fit: contain;
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+          }
+
+          .team-logo-placeholder {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+            border: 2px solid #eaeaea;
+            transition: all 0.3s ease;
+          }
+
+          .team-info:hover .team-logo-placeholder {
+            transform: scale(1.1);
+            border-color: #1e90ff;
+            background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
+          }
+
+          .team-name {
+            font-weight: 600;
+            flex-grow: 1;
+            font-size: 1.1rem;
+            color: #333;
+            transition: color 0.3s ease;
+          }
+
+          .team-info:hover .team-name {
+            color: #ff5722;
+          }
+
+          .score-cell {
+            min-width: 120px;
+            position: relative;
+          }
+
           .score {
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 10px;
+            display: inline-block;
+            background-color: #f8f9fa;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
           }
-          .vs-text {
-            font-weight: bold;
-            color: #6c757d;
+          
+          .score:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+          }
+          
+          .live-score {
+            color: #fff !important;
+            font-size: 1.3rem !important;
+            font-weight: 700 !important;
+            background: linear-gradient(90deg, #1e90ff, #4169e1);
+            box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
           }
 
-          /* Match Status */
+          .score-separator {
+            margin: 0 8px;
+            color: inherit;
+            opacity: 0.8;
+          }
+
+          .vs-text {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #aaa;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ccc, #999);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
+
           .match-date {
-            font-weight: 500;
+            font-weight: 600;
+            color: #555;
             margin-bottom: 4px;
           }
+
           .match-time {
-            color: #6c757d;
-            font-size: 0.9rem;
+            color: #888;
+            font-size: 0.95rem;
+            font-weight: 500;
+          }
+
+          .winner-badge {
+            font-size: 0.7rem;
+            padding: 0.35em 0.65em;
+            margin-left: 8px;
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 30px;
+            box-shadow: 0 2px 5px rgba(255, 152, 0, 0.3);
+            animation: winnerGlow 2s infinite;
+          }
+          
+          @keyframes winnerGlow {
+            0% {
+              box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+            }
+            50% {
+              box-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
+            }
+            100% {
+              box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+            }
+          }
+
+          .live-match-highlight {
+            position: relative;
+            background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 244, 242, 1));
+            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.15);
+            animation: livePulse 2s infinite;
+            border-left: 4px solid #1e90ff;
+            z-index: 1;
+          }
+          
+          @keyframes livePulse {
+            0% {
+              box-shadow: 0 5px 15px rgba(30, 144, 255, 0.2);
+            }
+            50% {
+              box-shadow: 0 5px 25px rgba(30, 144, 255, 0.4);
+            }
+            100% {
+              box-shadow: 0 5px 15px rgba(30, 144, 255, 0.2);
+            }
+          }
+
+          .refresh-button {
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            border-radius: 30px;
+            padding: 8px 20px;
+            border: 2px solid #ddd;
+            font-weight: 600;
+            background: white;
+          }
+
+          .refresh-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-color: #ff5722;
+            color: #ff5722;
+          }
+
+          .refresh-button:active {
+            transform: scale(0.98);
+          }
+
+          .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+
+          .draw-badge {
+            display: inline-block;
+            padding: 2px 5px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #0dcaf0;
+            border: 1px solid #0dcaf0;
+            margin-top: 5px;
+            background-color: #f0fcff;
           }
 
           /* Enhanced Modal Styling */
@@ -1327,12 +1620,6 @@ export default function MatchSchedule() {
             background-color: #f5f5f5;
           }
 
-          .match-modal .selected-team-logo {
-            margin-left: 5px;
-            display: flex;
-            align-items: center;
-          }
-
           .match-modal .modal-close-btn {
             color: white;
             padding: 0;
@@ -1349,6 +1636,142 @@ export default function MatchSchedule() {
             transform: scale(1.1);
           }
 
+          .form-control-custom {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 12px 15px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+          }
+          
+          .form-control-custom:focus {
+            border-color: #4169e1;
+            box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.15);
+            outline: none;
+          }
+          
+          .score-input {
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-align: center;
+          }
+          
+          .score-section {
+            background-color: rgba(248, 249, 250, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 5px;
+            border: 1px dashed rgba(0, 0, 0, 0.1);
+          }
+          
+          .winner-section {
+            background-color: rgba(255, 243, 205, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 5px;
+            border: 1px dashed rgba(255, 193, 7, 0.3);
+          }
+          
+          .submit-btn {
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #1e90ff, #4169e1);
+            border: none;
+            box-shadow: 0 4px 8px rgba(65, 105, 225, 0.2);
+            transition: all 0.3s ease;
+          }
+          
+          .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(65, 105, 225, 0.3);
+            background: linear-gradient(135deg, #4169e1, #1e90ff);
+          }
+          
+          .submit-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(65, 105, 225, 0.2);
+          }
+          
+          /* Match Row Styling */
+          .match-row {
+            transition: all 0.2s ease;
+          }
+          
+          .match-row:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+          }
+          
+          /* Status Badge Styling */
+          .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+
+          /* Media queries for responsive design */
+          @media (max-width: 992px) {
+            .team-name {
+              font-size: 1rem;
+            }
+
+            .match-table thead th,
+            .match-table tbody td {
+              padding: 15px 10px;
+            }
+
+            .page-title {
+              font-size: 2rem;
+            }
+          }
+
+          @media (max-width: 768px) {
+            .team-logo-container,
+            .team-logo-placeholder {
+              width: 40px;
+              height: 40px;
+              margin-right: 8px;
+            }
+
+            .team-name {
+              font-size: 0.9rem;
+            }
+
+            .score {
+              font-size: 1rem;
+              padding: 6px 12px;
+            }
+
+            .live-score {
+              font-size: 1.1rem !important;
+              padding: 6px 12px;
+            }
+
+            .match-date,
+            .match-time {
+              font-size: 0.85rem;
+            }
+
+            .page-title {
+              font-size: 1.75rem;
+            }
+
+            .match-table {
+              border-spacing: 0 8px;
+            }
+
+            .match-table tbody tr td {
+              padding: 15px 10px;
+            }
+          }
+          
           /* Print-specific styles */
           @media print {
             body {
@@ -1377,13 +1800,13 @@ export default function MatchSchedule() {
               margin-bottom: 20px;
             }
 
-            .match-admin-table {
+            .match-table {
               width: 100%;
               border-collapse: collapse;
               border: 1px solid #ddd;
             }
 
-            .match-admin-table th {
+            .match-table th {
               background-color: #f0f0f0 !important;
               color: black !important;
               font-weight: bold;
@@ -1391,7 +1814,7 @@ export default function MatchSchedule() {
               border: 1px solid #ddd;
             }
 
-            .match-admin-table td {
+            .match-table td {
               padding: 8px;
               border: 1px solid #ddd;
             }
@@ -1405,14 +1828,7 @@ export default function MatchSchedule() {
               background-color: white !important;
             }
 
-            .team-logo-container-sm,
-            .team-logo-placeholder-sm {
-              width: 20px !important;
-              height: 20px !important;
-              margin-right: 5px !important;
-            }
-
-            .winner-badge-sm {
+            .winner-badge {
               border: 1px solid #333 !important;
             }
 
