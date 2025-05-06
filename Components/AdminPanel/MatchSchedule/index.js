@@ -42,6 +42,8 @@ export default function MatchSchedule() {
     status: "Upcoming",
     homeTeamScore: "",
     awayTeamScore: "",
+    homeTeamWickets: "",
+    awayTeamWickets: "",
     winnerTeam: "",
   });
 
@@ -138,6 +140,8 @@ export default function MatchSchedule() {
         createdAt: new Date(),
         homeTeamScore: parseInt(formData.homeTeamScore),
         awayTeamScore: parseInt(formData.awayTeamScore),
+        homeTeamWickets: parseInt(formData.homeTeamWickets) || 0,
+        awayTeamWickets: parseInt(formData.awayTeamWickets) || 0,
         isLive: formData.status === "Live",
         homeTeamLogoUrl: homeTeamData?.teamLogoUrl || "",
         awayTeamLogoUrl: awayTeamData?.teamLogoUrl || "",
@@ -168,6 +172,8 @@ export default function MatchSchedule() {
         ...formData,
         homeTeamScore: parseInt(formData.homeTeamScore),
         awayTeamScore: parseInt(formData.awayTeamScore),
+        homeTeamWickets: parseInt(formData.homeTeamWickets) || 0,
+        awayTeamWickets: parseInt(formData.awayTeamWickets) || 0,
         isLive: formData.status === "Live",
         homeTeamLogoUrl: homeTeamData?.teamLogoUrl || "",
         awayTeamLogoUrl: awayTeamData?.teamLogoUrl || "",
@@ -205,6 +211,8 @@ export default function MatchSchedule() {
       status: match.status,
       homeTeamScore: match.homeTeamScore,
       awayTeamScore: match.awayTeamScore,
+      homeTeamWickets: match.homeTeamWickets || "",
+      awayTeamWickets: match.awayTeamWickets || "",
       winnerTeam: match.winnerTeam || "",
     });
     setShowEditModal(true);
@@ -221,6 +229,8 @@ export default function MatchSchedule() {
       status: "Scheduled",
       homeTeamScore: "",
       awayTeamScore: "",
+      homeTeamWickets: "",
+      awayTeamWickets: "",
       winnerTeam: "",
     });
     setCurrentMatch(null);
@@ -229,7 +239,7 @@ export default function MatchSchedule() {
   const getStatusBadge = (status) => {
     switch (status) {
       case "Scheduled":
-        return <Badge bg="info text-light">Scheduled</Badge>;
+        return <Badge bg="primary text-light">Scheduled</Badge>;
       case "Upcoming":
         return <Badge bg="primary text-light">Upcoming</Badge>;
       case "Live":
@@ -239,7 +249,9 @@ export default function MatchSchedule() {
       case "Postponed":
         return <Badge bg="warning text-light">Postponed</Badge>;
       case "Cancelled":
-        return <Badge bg="black text-light">Cancelled</Badge>;
+        return <Badge bg="dark text-light">Cancelled</Badge>;
+      default:
+        return <Badge bg="secondary text-light">{status}</Badge>;
     }
   };
 
@@ -257,26 +269,26 @@ export default function MatchSchedule() {
   const sortedMatches = [...matches].sort((a, b) => {
     // Define status priority order (case-insensitive)
     const statusPriority = {
-      "live": 1,
-      "upcoming": 2,
-      "scheduled": 3,
-      "completed": 4,
-      "postponed": 5,
-      "cancelled": 6
+      live: 1,
+      upcoming: 2,
+      scheduled: 3,
+      completed: 4,
+      postponed: 5,
+      cancelled: 6,
     };
-    
+
     // Get status in lowercase for case-insensitive comparison
     const statusA = (a.status || "").toLowerCase();
     const statusB = (b.status || "").toLowerCase();
-    
+
     // First sort by status priority
     const priorityA = statusPriority[statusA] || 999; // Default high number for unknown status
     const priorityB = statusPriority[statusB] || 999;
-    
+
     if (priorityA !== priorityB) {
       return priorityA - priorityB;
     }
-    
+
     // If status is the same, sort by date and time
     let dateA, dateB;
     try {
@@ -286,12 +298,12 @@ export default function MatchSchedule() {
       // Handle invalid dates
       return 0;
     }
-    
+
     // For upcoming/scheduled matches, sort chronologically (earlier first)
     if (["live", "upcoming", "scheduled"].includes(statusA)) {
       return dateA - dateB;
     }
-    
+
     // For completed/postponed/cancelled matches, sort reverse chronologically (recent first)
     return dateB - dateA;
   });
@@ -679,7 +691,11 @@ export default function MatchSchedule() {
                   {sortedMatches.map((match) => (
                     <tr
                       key={match.id}
-                      className={`match-row ${match.status.toLowerCase()}-match ${match.status.toLowerCase() === 'live' ? 'live-match-highlight' : ''}`}
+                      className={`match-row ${match.status.toLowerCase()}-match ${
+                        match.status.toLowerCase() === "live"
+                          ? "live-match-highlight"
+                          : ""
+                      }`}
                     >
                       <td className="text-center align-middle">
                         {getStatusBadge(match.status)}
@@ -706,10 +722,7 @@ export default function MatchSchedule() {
                           )}
                           <span className="team-name">{match.homeTeam}</span>
                           {match.winnerTeam === match.homeTeam && (
-                            <Badge
-                              bg="warning"
-                              className="winner-badge ms-1"
-                            >
+                            <Badge bg="warning" className="winner-badge ms-1">
                               Winner
                             </Badge>
                           )}
@@ -718,14 +731,28 @@ export default function MatchSchedule() {
                       <td className="score-cell text-center align-middle">
                         {match.status === "Live" ||
                         match.status === "Completed" ? (
-                          <div className={`score ${match.status === "Live" ? "live-score" : ""}`}>
+                          <div
+                            className={`score ${
+                              match.status === "Live" ? "live-score" : ""
+                            }`}
+                          >
                             <span className="home-score">
                               {match.homeTeamScore}
                             </span>
+                            {match.homeTeamWickets !== undefined && (
+                              <span className="wickets-info">
+                                /{match.homeTeamWickets}
+                              </span>
+                            )}
                             <span className="score-separator">-</span>
                             <span className="away-score">
                               {match.awayTeamScore}
                             </span>
+                            {match.awayTeamWickets !== undefined && (
+                              <span className="wickets-info">
+                                /{match.awayTeamWickets}
+                              </span>
+                            )}
                             {match.winnerTeam === "Draw" && (
                               <Badge bg="info" className="draw-badge mx-auto">
                                 Draw
@@ -755,10 +782,7 @@ export default function MatchSchedule() {
                           )}
                           <span className="team-name">{match.awayTeam}</span>
                           {match.winnerTeam === match.awayTeam && (
-                            <Badge
-                              bg="warning"
-                              className="winner-badge ms-1"
-                            >
+                            <Badge bg="warning" className="winner-badge ms-1">
                               Winner
                             </Badge>
                           )}
@@ -959,7 +983,7 @@ export default function MatchSchedule() {
             {(formData.status === "Live" ||
               formData.status === "Completed") && (
               <Row className="mb-3 score-section">
-                <Col>
+                <Col md={6}>
                   <Form.Group>
                     <Form.Label>Home Team Score</Form.Label>
                     <Form.Control
@@ -972,7 +996,21 @@ export default function MatchSchedule() {
                     />
                   </Form.Group>
                 </Col>
-                <Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label>Home Team Wickets</Form.Label>
+                    <Form.Control
+                      type="number"
+                      min="0"
+                      max="10"
+                      name="homeTeamWickets"
+                      value={formData.homeTeamWickets}
+                      onChange={handleScoreChange}
+                      className="form-control-custom score-input"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6} className="mt-3">
                   <Form.Group>
                     <Form.Label>Away Team Score</Form.Label>
                     <Form.Control
@@ -980,6 +1018,20 @@ export default function MatchSchedule() {
                       min="0"
                       name="awayTeamScore"
                       value={formData.awayTeamScore}
+                      onChange={handleScoreChange}
+                      className="form-control-custom score-input"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6} className="mt-3">
+                  <Form.Group>
+                    <Form.Label>Away Team Wickets</Form.Label>
+                    <Form.Control
+                      type="number"
+                      min="0"
+                      max="10"
+                      name="awayTeamWickets"
+                      value={formData.awayTeamWickets}
                       onChange={handleScoreChange}
                       className="form-control-custom score-input"
                     />
@@ -1184,7 +1236,7 @@ export default function MatchSchedule() {
             {(formData.status === "Live" ||
               formData.status === "Completed") && (
               <Row className="mb-3 score-section">
-                <Col>
+                <Col md={6}>
                   <Form.Group>
                     <Form.Label>Home Team Score</Form.Label>
                     <Form.Control
@@ -1196,13 +1248,42 @@ export default function MatchSchedule() {
                     />
                   </Form.Group>
                 </Col>
-                <Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label>Home Team Wickets</Form.Label>
+                    <Form.Control
+                      type="number"
+                      min="0"
+                      max="10"
+                      name="homeTeamWickets"
+                      value={formData.homeTeamWickets}
+                      onChange={handleScoreChange}
+                      className="form-control-custom score-input"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6} className="mt-3">
                   <Form.Group>
                     <Form.Label>Away Team Score</Form.Label>
                     <Form.Control
                       type="number"
+                      min="0"
                       name="awayTeamScore"
                       value={formData.awayTeamScore}
+                      onChange={handleScoreChange}
+                      className="form-control-custom score-input"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6} className="mt-3">
+                  <Form.Group>
+                    <Form.Label>Away Team Wickets</Form.Label>
+                    <Form.Control
+                      type="number"
+                      min="0"
+                      max="10"
+                      name="awayTeamWickets"
+                      value={formData.awayTeamWickets}
                       onChange={handleScoreChange}
                       className="form-control-custom score-input"
                     />
@@ -1254,7 +1335,11 @@ export default function MatchSchedule() {
             padding-bottom: 50px;
             min-height: 100vh;
             background-color: #f8f9fa;
-            background-image: linear-gradient(to bottom right, #f9f9f9, #f1f1f1);
+            background-image: linear-gradient(
+              to bottom right,
+              #f9f9f9,
+              #f1f1f1
+            );
           }
 
           .page-header {
@@ -1408,7 +1493,7 @@ export default function MatchSchedule() {
           }
 
           .score-cell {
-            min-width: 120px;
+            min-width: 150px;
             position: relative;
           }
 
@@ -1423,12 +1508,12 @@ export default function MatchSchedule() {
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
             transition: all 0.3s ease;
           }
-          
+
           .score:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
           }
-          
+
           .live-score {
             color: #fff !important;
             font-size: 1.3rem !important;
@@ -1482,7 +1567,7 @@ export default function MatchSchedule() {
             box-shadow: 0 2px 5px rgba(255, 152, 0, 0.3);
             animation: winnerGlow 2s infinite;
           }
-          
+
           @keyframes winnerGlow {
             0% {
               box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
@@ -1497,13 +1582,17 @@ export default function MatchSchedule() {
 
           .live-match-highlight {
             position: relative;
-            background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 244, 242, 1));
+            background: linear-gradient(
+              to right,
+              rgba(255, 255, 255, 1),
+              rgba(255, 244, 242, 1)
+            );
             box-shadow: 0 5px 15px rgba(255, 87, 34, 0.15);
             animation: livePulse 2s infinite;
             border-left: 4px solid #1e90ff;
             z-index: 1;
           }
-          
+
           @keyframes livePulse {
             0% {
               box-shadow: 0 5px 15px rgba(30, 144, 255, 0.2);
@@ -1644,19 +1733,19 @@ export default function MatchSchedule() {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
             transition: all 0.2s ease;
           }
-          
+
           .form-control-custom:focus {
             border-color: #4169e1;
             box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.15);
             outline: none;
           }
-          
+
           .score-input {
             font-weight: bold;
             font-size: 1.1rem;
             text-align: center;
           }
-          
+
           .score-section {
             background-color: rgba(248, 249, 250, 0.5);
             border-radius: 10px;
@@ -1664,7 +1753,7 @@ export default function MatchSchedule() {
             margin-top: 5px;
             border: 1px dashed rgba(0, 0, 0, 0.1);
           }
-          
+
           .winner-section {
             background-color: rgba(255, 243, 205, 0.5);
             border-radius: 10px;
@@ -1672,7 +1761,7 @@ export default function MatchSchedule() {
             margin-top: 5px;
             border: 1px dashed rgba(255, 193, 7, 0.3);
           }
-          
+
           .submit-btn {
             padding: 12px;
             border-radius: 8px;
@@ -1683,29 +1772,29 @@ export default function MatchSchedule() {
             box-shadow: 0 4px 8px rgba(65, 105, 225, 0.2);
             transition: all 0.3s ease;
           }
-          
+
           .submit-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(65, 105, 225, 0.3);
             background: linear-gradient(135deg, #4169e1, #1e90ff);
           }
-          
+
           .submit-btn:active {
             transform: translateY(1px);
             box-shadow: 0 2px 4px rgba(65, 105, 225, 0.2);
           }
-          
+
           /* Match Row Styling */
           .match-row {
             transition: all 0.2s ease;
           }
-          
+
           .match-row:hover {
             background-color: #f8f9fa;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
           }
-          
+
           /* Status Badge Styling */
           .badge {
             font-weight: 500;
@@ -1771,7 +1860,7 @@ export default function MatchSchedule() {
               padding: 15px 10px;
             }
           }
-          
+
           /* Print-specific styles */
           @media print {
             body {

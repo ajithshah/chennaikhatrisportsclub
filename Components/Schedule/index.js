@@ -270,10 +270,28 @@ export function SchedulePage() {
                                 <span className="home-score">
                                   {match.homeTeamScore}
                                 </span>
+                                {match.homeTeamWickets !== undefined && (
+                                  <span className="wickets-info">
+                                    /{match.homeTeamWickets}
+                                  </span>
+                                )}
                                 <span className="score-separator">-</span>
                                 <span className="away-score">
                                   {match.awayTeamScore}
                                 </span>
+                                {match.awayTeamWickets !== undefined && (
+                                  <span className="wickets-info">
+                                    /{match.awayTeamWickets}
+                                  </span>
+                                )}
+                                {match.winnerTeam === "Draw" && (
+                                  <Badge
+                                    bg="info"
+                                    className="draw-badge mx-auto"
+                                  >
+                                    Draw
+                                  </Badge>
+                                )}
                               </div>
                             ) : (
                               <span className="vs-text">VS</span>
@@ -310,7 +328,9 @@ export function SchedulePage() {
                             <div className="match-date">
                               {formatMatchDate(match.matchDate)}
                             </div>
-                            <div className="match-time">{match.matchTime} - {match.venue}</div>
+                            <div className="match-time">
+                              {match.matchTime} - {match.venue}
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -498,12 +518,12 @@ export function SchedulePage() {
           box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
           transition: all 0.3s ease;
         }
-        
+
         .score:hover {
           transform: translateY(-2px);
           box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
         }
-        
+
         .live-score {
           color: #fff !important;
           font-size: 1.3rem !important;
@@ -557,7 +577,7 @@ export function SchedulePage() {
           box-shadow: 0 2px 5px rgba(255, 152, 0, 0.3);
           animation: winnerGlow 2s infinite;
         }
-        
+
         @keyframes winnerGlow {
           0% {
             box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
@@ -649,13 +669,17 @@ export function SchedulePage() {
 
         .live-match-highlight {
           position: relative;
-          background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 244, 242, 1));
+          background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 1),
+            rgba(255, 244, 242, 1)
+          );
           box-shadow: 0 5px 15px rgba(255, 87, 34, 0.15);
           animation: livePulse 2s infinite;
           border-left: 4px solid #1e90ff;
           z-index: 1;
         }
-        
+
         @keyframes livePulse {
           0% {
             box-shadow: 0 5px 15px rgba(30, 144, 255, 0.2);
@@ -682,8 +706,8 @@ export function SchedulePage() {
         .refresh-button:hover {
           transform: translateY(-2px);
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-          border-color:rgb(255, 255, 255);
-          color:rgb(0, 0, 0);
+          border-color: rgb(255, 255, 255);
+          color: rgb(0, 0, 0);
         }
 
         .refresh-button:active {
