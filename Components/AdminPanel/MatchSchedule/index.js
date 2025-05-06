@@ -5,12 +5,9 @@ import {
   Col,
   Form,
   Button,
-  Card,
   Badge,
   Modal,
   Table,
-  Tabs,
-  Tab,
 } from "react-bootstrap";
 import { db } from "../../../firebase";
 import {
@@ -496,16 +493,7 @@ export default function MatchSchedule() {
             text-align: center;
             margin-top: 20px;
           }
-          .print-btn {
-            padding: 10px 20px;
-            background: #0d6efd;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-          }
-          /
+
           @media print {
             body {
               print-color-adjust: exact;
@@ -524,9 +512,6 @@ export default function MatchSchedule() {
             <h1 class="title">Match Schedule</h1>
             <p class="subtitle">Chennai Khatri Sports Club</p>
             <p class="subtitle">KPL Season 3</p>
-            <div class="match-count">Total Matches: ${
-              sortedMatches.length
-            }</div>
           </div>
           
           <table class="matches-table">
@@ -536,8 +521,7 @@ export default function MatchSchedule() {
                 <th>Home Team</th>
                 <th></th>
                 <th>Away Team</th>
-                <th>Date & Time</th>
-                <th>Venue</th>
+                <th>Date, Time & Venue</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -590,10 +574,11 @@ export default function MatchSchedule() {
                       <span class="date">${formatMatchDate(
                         match.matchDate
                       )}</span>
-                      <span class="time">${match.matchTime}</span>
+                      <span class="time">${match.matchTime} - ${
+                    match.venue
+                  }</span>
                     </div>
                   </td>
-                  <td class="venue">${match.venue}</td>
                   <td></td>
                 </tr>
               `
@@ -603,15 +588,10 @@ export default function MatchSchedule() {
           </table>
           
           <div class="footer">
-            <p>***Chennai Khatri Sports Club***</p>
+            <p>*** Chennai Khatri Sports Club ***</p>
             <p>Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
           </div>
-          
-          <div class="print-button">
-            <button class="print-btn" onclick="window.print()">
-              Print This Page
-            </button>
-          </div>
+
         </div>
         <script>
           // Automatically open print dialog when the page loads
@@ -643,14 +623,20 @@ export default function MatchSchedule() {
             onClick={() => setShowAddModal(true)}
             className="add-match-btn mr-1"
           >
-            <i className="bi bi-plus-circle me-2"></i>Add New Match
+            <i className="fas fa-plus me-2"></i>
           </Button>
           <Button
-            variant="outline-secondary"
+            variant="outline-primary"
+            className="ms-2 d-inline-flex align-items-center"
             onClick={printMatchSchedule}
-            className="print-btn d-print-none refresh-button"
+            style={{
+              borderRadius: "50px",
+              marginLeft: "0.5rem",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              fontWeight: "600",
+            }}
           >
-            <i className="bi bi-printer me-2"></i>Print
+            <i className="fas fa-print me-1 mr-1"></i>Print
           </Button>
         </Col>
       </Row>
@@ -1619,8 +1605,8 @@ export default function MatchSchedule() {
           .refresh-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-color: #ff5722;
-            color: #ff5722;
+            border-color: rgb(255, 255, 255);
+            color: rgb(255, 255, 255);
           }
 
           .refresh-button:active {
