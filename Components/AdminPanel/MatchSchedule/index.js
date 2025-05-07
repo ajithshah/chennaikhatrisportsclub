@@ -262,6 +262,30 @@ export default function MatchSchedule() {
     });
   };
 
+  // Format match time to readable format
+  const formatMatchTime = (timeString) => {
+    if (!timeString) return "TBD";
+    
+    try {
+      // Parse the time string (expected format: HH:MM or H:MM)
+      const [hours, minutes] = timeString.split(':').map(num => parseInt(num, 10));
+      
+      // Create a date object with today's date and the given time
+      const date = new Date();
+      date.setHours(hours, minutes, 0);
+      
+      // Format the time in 12-hour format
+      return date.toLocaleTimeString('en-US', { 
+        hour: 'numeric', 
+        minute: '2-digit', 
+        hour12: true 
+      });
+    } catch (error) {
+      console.error("Error formatting time:", error);
+      return timeString; // Return original time string if parsing fails
+    }
+  };
+
   // Sort matches by status priority and date
   const sortedMatches = [...matches].sort((a, b) => {
     // Define status priority order (case-insensitive)
@@ -780,7 +804,7 @@ export default function MatchSchedule() {
                         </div>
                         <div className="match-time">
                           <i className="bi bi-clock me-1"></i>
-                          {match.matchTime} - {match.venue}
+                          {formatMatchTime(match.matchTime)} - {match.venue}
                         </div>
                       </td>
 
