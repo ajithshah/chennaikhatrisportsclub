@@ -265,20 +265,22 @@ export default function MatchSchedule() {
   // Format match time to readable format
   const formatMatchTime = (timeString) => {
     if (!timeString) return "TBD";
-    
+
     try {
       // Parse the time string (expected format: HH:MM or H:MM)
-      const [hours, minutes] = timeString.split(':').map(num => parseInt(num, 10));
-      
+      const [hours, minutes] = timeString
+        .split(":")
+        .map((num) => parseInt(num, 10));
+
       // Create a date object with today's date and the given time
       const date = new Date();
       date.setHours(hours, minutes, 0);
-      
+
       // Format the time in 12-hour format
-      return date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit', 
-        hour12: true 
+      return date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
       });
     } catch (error) {
       console.error("Error formatting time:", error);
@@ -954,41 +956,47 @@ export default function MatchSchedule() {
               />
             </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Type</Form.Label>
-              <Form.Select
-                name="matchType"
-                value={formData.matchType}
-                onChange={handleInputChange}
-                required
-                className="form-select-custom"
-              >
-                <option value="League Match">League Match</option>
-                <option value="Knockout">Knockout</option>
-                <option value="Quarter Final">Quarter Final</option>
-                <option value="Semi Final">Semi Final</option>
-                <option value="Final">Final</option>
-                <option value="Friendly">Friendly</option>
-              </Form.Select>
-            </Form.Group>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3">
+                  <Form.Label>Type</Form.Label>
+                  <Form.Select
+                    name="matchType"
+                    value={formData.matchType}
+                    onChange={handleInputChange}
+                    required
+                    className="form-select-custom"
+                  >
+                    <option value="League Match">League Match</option>
+                    <option value="Knockout">Knockout</option>
+                    <option value="Quarter Final">Quarter Final</option>
+                    <option value="Semi Final">Semi Final</option>
+                    <option value="Final">Final</option>
+                    <option value="Friendly">Friendly</option>
+                  </Form.Select>
+                </Form.Group>
+                </Col>
+                <Col>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Status</Form.Label>
-              <Form.Select
-                name="status"
-                value={formData.status}
-                onChange={handleInputChange}
-                required
-                className="form-select-custom"
-              >
-                <option value="Scheduled">Scheduled</option>
-                <option value="Upcoming">Upcoming</option>
-                <option value="Live">Live</option>
-                <option value="Completed">Completed</option>
-                <option value="Postponed">Postponed</option>
-                <option value="Cancelled">Cancelled</option>
-              </Form.Select>
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Status</Form.Label>
+                  <Form.Select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleInputChange}
+                    required
+                    className="form-select-custom"
+                  >
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="Upcoming">Upcoming</option>
+                    <option value="Live">Live</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Postponed">Postponed</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
 
             {(formData.status === "Live" ||
               formData.status === "Completed") && (
