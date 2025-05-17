@@ -40,6 +40,8 @@ export default function ManageTeam() {
     name: "",
     role: "",
     userId: "",
+    backJerseyUrl: "",
+    frontJerseyUrl: "",
     phoneNumber: "",
     isCaptain: false,
     motherName: "",
@@ -379,7 +381,6 @@ export default function ManageTeam() {
       }
 
       return urlData.fileUrl;
-
     } catch (error) {
       console.error("Error uploading jersey image:", error);
       throw error;
@@ -411,7 +412,7 @@ export default function ManageTeam() {
       // Update local state
       setTeamData({
         ...teamData,
-        ...updates
+        ...updates,
       });
 
       setJerseyImages({ front: null, back: null });
@@ -626,6 +627,7 @@ export default function ManageTeam() {
                   <th>Name</th>
                   <th>Contact</th>
                   <th>Role</th>
+                  <th>Mother's Name</th>
                   <th>Jersey Name</th>
                   <th>Jersey No</th>
                   <th>Action</th>
@@ -647,6 +649,7 @@ export default function ManageTeam() {
                     const playerPhotoURL = playerData?.photoURL || "";
 
                     const jerseyName = player.jerseyName || "-";
+                    const motherName = player.motherName || "-";
                     const jerseyNumber = player.jerseyNumber || "-";
 
                     return `
@@ -671,6 +674,7 @@ export default function ManageTeam() {
                     </td>
                     <td>${playerPhone}</td>
                     <td>${playerRole}</td>
+                    <td>${motherName}</td>
                     <td>${jerseyName}</td>
                     <td>${jerseyNumber}</td>
                     <td></td>
@@ -1169,26 +1173,134 @@ export default function ManageTeam() {
 
               {/* Team Info */}
               <Row className="mb-4 team-info">
-                <Col md={6}>
-                  <div className="d-flex align-items-center mb-3">
-                    <div className="text-muted" style={{ width: "140px" }}>
-                      Team Captain:
+                <Col md={7}>
+                  <div className="p-3 bg-light rounded-3">
+                    <h5 className="mb-4 text-primary">Team Information</h5>
+                    <div className="d-flex align-items-center mb-3">
+                      <div className="text-muted" style={{ width: "140px" }}>
+                        Team Captain:
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <div>{teamData?.captain}</div>
+                        <Badge bg="primary" className="rounded-pill text-light">
+                          C
+                        </Badge>
+                      </div>
                     </div>
-                    <div className="d-flex align-items-center gap-2">
-                      <div>{teamData?.captain}</div>
-                      <Badge
-                        bg="primary ml-2"
-                        className="rounded-pill text-light"
-                      >
-                        C
-                      </Badge>
+                    <div className="d-flex align-items-center mb-3">
+                      <div className="text-muted" style={{ width: "140px" }}>
+                        Contact:
+                      </div>
+                      <div>{teamData?.captainPhoneNumber}</div>
                     </div>
+                    {teamData?.viceCaptain && (
+                      <>
+                        <div className="d-flex align-items-center mb-3">
+                          <div
+                            className="text-muted"
+                            style={{ width: "140px" }}
+                          >
+                            Vice Captain:
+                          </div>
+                          <div className="d-flex align-items-center gap-2">
+                            <div>{teamData?.viceCaptain}</div>
+                            <Badge
+                              bg="primary"
+                              className="rounded-pill text-light"
+                            >
+                              VC
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="d-flex align-items-center">
+                          <div
+                            className="text-muted"
+                            style={{ width: "140px" }}
+                          >
+                            Contact:
+                          </div>
+                          <div>{teamData?.viceCaptainPhoneNumber}</div>
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <div className="d-flex align-items-center mb-3">
-                    <div className="text-muted" style={{ width: "140px" }}>
-                      Contact:
+                </Col>
+                <Col md={5}>
+                  <div className="p-3 bg-light rounded-3 h-100">
+                    <h5 className="mb-4 text-primary">Team Jersey</h5>
+                    <div className="d-flex justify-content-center gap-4">
+                      <div className="jersey-container text-center">
+                        {teamData?.frontJerseyUrl ? (
+                          <div className="position-relative">
+                            <img
+                              src={teamData.frontJerseyUrl}
+                              alt="Front Jersey"
+                              style={{
+                                width: "200px",
+                                height: "200px",
+                                objectFit: "cover",
+                                borderRadius: "8px",
+                                border: "2px solid #dee2e6",
+                                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className="d-flex flex-column align-items-center justify-content-center"
+                            style={{
+                              width: "120px",
+                              height: "120px",
+                              backgroundColor: "#f8f9fa",
+                              borderRadius: "8px",
+                              border: "2px dashed #dee2e6",
+                            }}
+                          >
+                            <i className="fas fa-tshirt text-muted fa-2x mb-2"></i>
+                            <small className="text-muted">Front</small>
+                          </div>
+                        )}
+                      </div>
+                      <div className="jersey-container text-center">
+                        {teamData?.backJerseyUrl ? (
+                          <div className="position-relative">
+                            <img
+                              src={teamData.backJerseyUrl}
+                              alt="Back Jersey"
+                              style={{
+                                width: "200px",
+                                height: "200px",
+                                objectFit: "cover",
+                                borderRadius: "8px",
+                                border: "2px solid #dee2e6",
+                                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className="d-flex flex-column align-items-center justify-content-center"
+                            style={{
+                              width: "120px",
+                              height: "120px",
+                              backgroundColor: "#f8f9fa",
+                              borderRadius: "8px",
+                              border: "2px dashed #dee2e6",
+                            }}
+                          >
+                            <i className="fas fa-tshirt text-muted fa-2x mb-2"></i>
+                            <small className="text-muted">Back</small>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div>{teamData?.captainPhoneNumber}</div>
+                    {!teamData?.frontJerseyUrl && !teamData?.backJerseyUrl && (
+                      <div className="text-center mt-3">
+                        <small className="text-muted">
+                          No jersey images uploaded yet
+                        </small>
+                      </div>
+                    )}
                   </div>
                 </Col>
               </Row>
@@ -1203,7 +1315,7 @@ export default function ManageTeam() {
                       className="rounded-pill mr-2"
                       onClick={() => setShowJerseyModal(true)}
                     >
-                      <i className="fas fa-tshirt me-2"></i>
+                      <i className="fas fa-plus me-2 mr-2"></i>
                       Jersey Images
                     </Button>
                     <Button
@@ -1819,10 +1931,13 @@ export default function ManageTeam() {
                             if (file) {
                               if (file.size > 5 * 1024 * 1024) {
                                 alert("Image size should be less than 5MB");
-                                e.target.value = '';
+                                e.target.value = "";
                                 return;
                               }
-                              setJerseyImages(prev => ({ ...prev, front: file }));
+                              setJerseyImages((prev) => ({
+                                ...prev,
+                                front: file,
+                              }));
                             }
                           }}
                           className="file-upload-input"
@@ -1844,7 +1959,12 @@ export default function ManageTeam() {
                             variant="light"
                             size="sm"
                             className="remove-image-btn"
-                            onClick={() => setJerseyImages(prev => ({ ...prev, front: null }))}
+                            onClick={() =>
+                              setJerseyImages((prev) => ({
+                                ...prev,
+                                front: null,
+                              }))
+                            }
                           >
                             <i className="fas fa-times"></i>
                           </Button>
@@ -1881,10 +2001,13 @@ export default function ManageTeam() {
                             if (file) {
                               if (file.size > 5 * 1024 * 1024) {
                                 alert("Image size should be less than 5MB");
-                                e.target.value = '';
+                                e.target.value = "";
                                 return;
                               }
-                              setJerseyImages(prev => ({ ...prev, back: file }));
+                              setJerseyImages((prev) => ({
+                                ...prev,
+                                back: file,
+                              }));
                             }
                           }}
                           className="file-upload-input"
@@ -1906,7 +2029,12 @@ export default function ManageTeam() {
                             variant="light"
                             size="sm"
                             className="remove-image-btn"
-                            onClick={() => setJerseyImages(prev => ({ ...prev, back: null }))}
+                            onClick={() =>
+                              setJerseyImages((prev) => ({
+                                ...prev,
+                                back: null,
+                              }))
+                            }
                           >
                             <i className="fas fa-times"></i>
                           </Button>
@@ -1917,9 +2045,10 @@ export default function ManageTeam() {
                 </div>
 
                 <Form.Text className="text-muted d-block mb-3">
-                  • Maximum file size: 400 KB per image<br />
-                  • Supported formats: JPEG, PNG, JPG<br />
-                  • Recommended resolution: 1000x1000 pixels
+                  • Maximum file size: 400 KB per image
+                  <br />
+                  • Supported formats: JPEG, PNG, JPG
+                  <br />• Recommended resolution: 1000x1000 pixels
                 </Form.Text>
               </Modal.Body>
               <Modal.Footer>
@@ -1933,7 +2062,9 @@ export default function ManageTeam() {
                 <Button
                   variant="primary"
                   type="submit"
-                  disabled={isUploading || (!jerseyImages.front && !jerseyImages.back)}
+                  disabled={
+                    isUploading || (!jerseyImages.front && !jerseyImages.back)
+                  }
                 >
                   {isUploading ? (
                     <>
@@ -1945,7 +2076,7 @@ export default function ManageTeam() {
                       Uploading...
                     </>
                   ) : (
-                    'Upload Images'
+                    "Upload Images"
                   )}
                 </Button>
               </Modal.Footer>
