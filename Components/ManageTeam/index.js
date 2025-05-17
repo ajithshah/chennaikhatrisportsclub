@@ -1907,7 +1907,7 @@ export default function ManageTeam() {
                               : "Drag & Drop or Click to Select Front Jersey Image"}
                           </span>
                           <small className="text-muted mt-1">
-                            JPEG, PNG, or JPG (Max 5 MB)
+                            JPEG, PNG, or JPG (Max 400 KB)
                           </small>
                         </label>
                         <Form.Control
@@ -1918,8 +1918,8 @@ export default function ManageTeam() {
                           onChange={(e) => {
                             const file = e.target.files[0];
                             if (file) {
-                              if (file.size > 5 * 1024 * 1024) {
-                                alert("Image size should be less than 5MB");
+                              if (file.size > 400 * 1024) {
+                                alert("Image size should be less than 400 KB");
                                 e.target.value = "";
                                 return;
                               }
@@ -1977,7 +1977,7 @@ export default function ManageTeam() {
                               : "Drag & Drop or Click to Select Back Jersey Image"}
                           </span>
                           <small className="text-muted mt-1">
-                            JPEG, PNG, or JPG (Max 5 MB)
+                            JPEG, PNG, or JPG (Max 400 KB)
                           </small>
                         </label>
                         <Form.Control
@@ -1988,8 +1988,8 @@ export default function ManageTeam() {
                           onChange={(e) => {
                             const file = e.target.files[0];
                             if (file) {
-                              if (file.size > 5 * 1024 * 1024) {
-                                alert("Image size should be less than 5MB");
+                              if (file.size > 400 * 1024) {
+                                alert("Image size should be less than 400 KB");
                                 e.target.value = "";
                                 return;
                               }
@@ -2037,7 +2037,7 @@ export default function ManageTeam() {
                   • Maximum file size: 400 KB per image
                   <br />
                   • Supported formats: JPEG, PNG, JPG
-                  <br />• Recommended resolution: 1000x1000 pixels
+                  <br />
                 </Form.Text>
               </Modal.Body>
               <Modal.Footer>
