@@ -48,6 +48,12 @@ export default function ManageTeam() {
     jerseyName: "",
     jerseySize: "",
   });
+  const [showJerseyModal, setShowJerseyModal] = useState(false);
+  const [jerseyImages, setJerseyImages] = useState({
+    front: null,
+    back: null,
+  });
+  const [isUploading, setIsUploading] = useState(false);
 
   // Fetch team data
   const fetchTeamData = async () => {
@@ -347,6 +353,75 @@ export default function ManageTeam() {
     } catch (error) {
       console.error("Error updating player:", error);
       setIsModalAnimating(false);
+    }
+  };
+
+  const uploadJerseyImage = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadUrlResponse = await fetch("/api/jersey_upload", {
+        method: "POST",
+        body: formData,
+        // Skip certificate validation in development
+        agent:
+          process.env.NODE_ENV === "development"
+            ? { rejectUnauthorized: false }
+            : undefined,
+      });
+
+      const urlData = await uploadUrlResponse.json();
+      if (!uploadUrlResponse.ok) {
+        throw new Error(
+          urlData.error || `HTTP error: ${uploadUrlResponse.status}`
+        );
+      }
+
+      return urlData.fileUrl;
+
+    } catch (error) {
+      console.error("Error uploading jersey image:", error);
+      throw error;
+    }
+  };
+
+  const handleJerseyUpload = async (e) => {
+    e.preventDefault();
+
+    setIsUploading(true);
+    try {
+      const teamRef = doc(db, "cricket_teams", id);
+      const updates = {};
+
+      if (jerseyImages.front) {
+        const frontJerseyUrl = await uploadJerseyImage(jerseyImages.front);
+        updates.frontJerseyUrl = frontJerseyUrl;
+      }
+
+      if (jerseyImages.back) {
+        const backJerseyUrl = await uploadJerseyImage(jerseyImages.back);
+        updates.backJerseyUrl = backJerseyUrl;
+      }
+      console.log("updates", updates);
+
+      // Update team document
+      await updateDoc(teamRef, updates);
+
+      // Update local state
+      setTeamData({
+        ...teamData,
+        ...updates
+      });
+
+      setJerseyImages({ front: null, back: null });
+      setShowJerseyModal(false);
+      alert("Jersey images uploaded successfully!");
+    } catch (error) {
+      console.error("Error uploading jersey images:", error);
+      alert("Failed to upload jersey images. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -969,6 +1044,91 @@ export default function ManageTeam() {
             transform: rotate(360deg);
           }
         }
+
+        /* File Upload Styles */
+        .custom-file-upload {
+          width: 100%;
+          border: 2px dashed #dee2e6;
+          border-radius: 8px;
+          transition: all 0.3s ease;
+        }
+
+        .custom-file-upload:hover {
+          border-color: #0d6efd;
+        }
+
+        .file-upload-wrapper {
+          position: relative;
+          width: 100%;
+          height: 100%;
+        }
+
+        .file-upload-label {
+          cursor: pointer;
+          padding: 2rem 1rem;
+          margin: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(13, 110, 253, 0.02);
+          border-radius: 6px;
+          transition: all 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+          background-color: rgba(13, 110, 253, 0.05);
+        }
+
+        .file-upload-icon {
+          font-size: 2rem;
+        }
+
+        .file-upload-input {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          cursor: pointer;
+        }
+
+        .image-preview-container {
+          display: flex;
+          justify-content: center;
+        }
+
+        .image-preview-wrapper {
+          position: relative;
+          display: inline-block;
+        }
+
+        .image-preview {
+          object-fit: cover;
+          border-radius: 8px;
+          border: 2px solid #0d6efd;
+        }
+
+        .remove-image-btn {
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          width: 24px;
+          height: 24px;
+          padding: 0;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: white;
+          border: 2px solid #dc3545;
+          color: #dc3545;
+          transition: all 0.3s ease;
+        }
+
+        .remove-image-btn:hover {
+          background: #dc3545;
+          color: white;
+        }
       `}</style>
 
       <Container className="py-5">
@@ -1037,14 +1197,24 @@ export default function ManageTeam() {
               {teamData?.status === "active" && (
                 <div className="d-flex justify-content-between align-items-center mb-3 section-header">
                   <h4 className="mb-0">Team Players</h4>
-                  <Button
-                    variant="primary"
-                    className="rounded-pill"
-                    onClick={() => setShowModal(true)}
-                  >
-                    <i className="fas fa-plus me-2 mr-2"></i>
-                    Add Player
-                  </Button>
+                  <div className="d-flex gap-2">
+                    <Button
+                      variant="primary"
+                      className="rounded-pill mr-2"
+                      onClick={() => setShowJerseyModal(true)}
+                    >
+                      <i className="fas fa-tshirt me-2"></i>
+                      Jersey Images
+                    </Button>
+                    <Button
+                      variant="primary"
+                      className="rounded-pill"
+                      onClick={() => setShowModal(true)}
+                    >
+                      <i className="fas fa-plus me-2 mr-2"></i>
+                      Add Player
+                    </Button>
+                  </div>
                 </div>
               )}
 
@@ -1600,6 +1770,182 @@ export default function ManageTeam() {
                     </>
                   ) : (
                     "Update Player"
+                  )}
+                </Button>
+              </Modal.Footer>
+            </Form>
+          </div>
+        </Modal>
+
+        {/* Jersey Images Modal */}
+        <Modal
+          show={showJerseyModal}
+          onHide={() => !isUploading && setShowJerseyModal(false)}
+          centered
+          backdrop="static"
+        >
+          <div className={`modal-content ${isUploading ? "animate-out" : ""}`}>
+            <Modal.Header>
+              <Modal.Title>Upload Team Jersey Images</Modal.Title>
+            </Modal.Header>
+            <Form onSubmit={handleJerseyUpload}>
+              <Modal.Body>
+                <div className="mb-4">
+                  <Form.Group className="formGroup">
+                    <Form.Label>Front Jersey Image</Form.Label>
+                    <div className="custom-file-upload">
+                      <div className="file-upload-wrapper">
+                        <label
+                          htmlFor="frontJersey"
+                          className="file-upload-label d-flex flex-column align-items-center justify-content-center"
+                        >
+                          <i className="fas fa-tshirt mb-2 text-primary file-upload-icon"></i>
+                          <span className="text-center">
+                            {jerseyImages.front
+                              ? jerseyImages.front.name
+                              : "Drag & Drop or Click to Select Front Jersey Image"}
+                          </span>
+                          <small className="text-muted mt-1">
+                            JPEG, PNG, or JPG (Max 5 MB)
+                          </small>
+                        </label>
+                        <Form.Control
+                          type="file"
+                          name="frontJersey"
+                          id="frontJersey"
+                          accept="image/jpeg,image/png,image/jpg"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              if (file.size > 5 * 1024 * 1024) {
+                                alert("Image size should be less than 5MB");
+                                e.target.value = '';
+                                return;
+                              }
+                              setJerseyImages(prev => ({ ...prev, front: file }));
+                            }
+                          }}
+                          className="file-upload-input"
+                        />
+                      </div>
+                    </div>
+
+                    {jerseyImages.front && (
+                      <div className="image-preview-container mt-3">
+                        <div className="image-preview-wrapper">
+                          <img
+                            src={URL.createObjectURL(jerseyImages.front)}
+                            width={120}
+                            height={120}
+                            alt="Front Jersey Preview"
+                            className="image-preview"
+                          />
+                          <Button
+                            variant="light"
+                            size="sm"
+                            className="remove-image-btn"
+                            onClick={() => setJerseyImages(prev => ({ ...prev, front: null }))}
+                          >
+                            <i className="fas fa-times"></i>
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </Form.Group>
+
+                  <Form.Group className="formGroup mt-4">
+                    <Form.Label>Back Jersey Image</Form.Label>
+                    <div className="custom-file-upload">
+                      <div className="file-upload-wrapper">
+                        <label
+                          htmlFor="backJersey"
+                          className="file-upload-label d-flex flex-column align-items-center justify-content-center"
+                        >
+                          <i className="fas fa-tshirt mb-2 text-primary file-upload-icon"></i>
+                          <span className="text-center">
+                            {jerseyImages.back
+                              ? jerseyImages.back.name
+                              : "Drag & Drop or Click to Select Back Jersey Image"}
+                          </span>
+                          <small className="text-muted mt-1">
+                            JPEG, PNG, or JPG (Max 5 MB)
+                          </small>
+                        </label>
+                        <Form.Control
+                          type="file"
+                          name="backJersey"
+                          id="backJersey"
+                          accept="image/jpeg,image/png,image/jpg"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              if (file.size > 5 * 1024 * 1024) {
+                                alert("Image size should be less than 5MB");
+                                e.target.value = '';
+                                return;
+                              }
+                              setJerseyImages(prev => ({ ...prev, back: file }));
+                            }
+                          }}
+                          className="file-upload-input"
+                        />
+                      </div>
+                    </div>
+
+                    {jerseyImages.back && (
+                      <div className="image-preview-container mt-3">
+                        <div className="image-preview-wrapper">
+                          <img
+                            src={URL.createObjectURL(jerseyImages.back)}
+                            width={120}
+                            height={120}
+                            alt="Back Jersey Preview"
+                            className="image-preview"
+                          />
+                          <Button
+                            variant="light"
+                            size="sm"
+                            className="remove-image-btn"
+                            onClick={() => setJerseyImages(prev => ({ ...prev, back: null }))}
+                          >
+                            <i className="fas fa-times"></i>
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </Form.Group>
+                </div>
+
+                <Form.Text className="text-muted d-block mb-3">
+                  • Maximum file size: 400 KB per image<br />
+                  • Supported formats: JPEG, PNG, JPG<br />
+                  • Recommended resolution: 1000x1000 pixels
+                </Form.Text>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  onClick={() => !isUploading && setShowJerseyModal(false)}
+                  disabled={isUploading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  disabled={isUploading || (!jerseyImages.front && !jerseyImages.back)}
+                >
+                  {isUploading ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      Uploading...
+                    </>
+                  ) : (
+                    'Upload Images'
                   )}
                 </Button>
               </Modal.Footer>
