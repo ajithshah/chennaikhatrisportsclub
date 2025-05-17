@@ -70,13 +70,25 @@ export default async function handler(req, res) {
       });
     }
 
+    // Generate random string for unique filename
+    const randomString =
+      Math.random().toString(36).substring(2, 8) + Date.now().toString(36);
+    const fileExtension = file.originalname.split(".").pop();
+    const uniqueFileName = `${
+      file.originalname.split(".")[0]
+    }-${randomString}.${fileExtension}`;
+
     // Upload the file to Vercel Blob storage
-    const blob = await put(`team-jersey/${file.originalname}`, file.buffer, {
-      access: "public",
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-      allowOverwrite: true,
-      addRandomSuffix: false,
-    });
+    const blob = await put(
+      `team-jersey/${file.originalname}-${uniqueFileName}`,
+      file.buffer,
+      {
+        access: "public",
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+        allowOverwrite: true,
+        addRandomSuffix: false,
+      }
+    );
 
     // console.log("File uploaded successfully:", blob);
     return res.status(200).json({
