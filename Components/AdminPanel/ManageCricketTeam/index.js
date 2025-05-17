@@ -44,6 +44,7 @@ export default function ManageCricketTeam() {
     viceCaptain: "",
     captainPhoneNumber: "",
     viceCaptainPhoneNumber: "",
+    motherName: "",
     status: "freeze",
     email: "",
     players: [],
@@ -257,6 +258,7 @@ export default function ManageCricketTeam() {
             phoneNumber: teamForm.captainPhoneNumber,
             jerseyNumber: "",
             jerseyName: "",
+            motherName: "",
             jerseySize: "",
             role: "",
             userId:
@@ -272,6 +274,7 @@ export default function ManageCricketTeam() {
             jerseyNumber: "",
             jerseyName: "",
             jerseySize: "",
+            motherName: "",
             role: "",
             userId:
               availableCaptains.find(
@@ -306,6 +309,7 @@ export default function ManageCricketTeam() {
       viceCaptain: team.viceCaptain || "",
       captainPhoneNumber: team.captainPhoneNumber || "",
       viceCaptainPhoneNumber: team.viceCaptainPhoneNumber || "",
+      motherName: team.motherName || "",
       status: team.status || "freeze",
       email: team.email || "",
       players: team.players || [],
@@ -410,6 +414,7 @@ export default function ManageCricketTeam() {
           isViceCaptain: false,
           phoneNumber: teamForm.captainPhoneNumber,
           jerseyNumber: "",
+          motherName: "",
           jerseyName: "",
           jerseySize: "",
           role: "",
@@ -428,6 +433,7 @@ export default function ManageCricketTeam() {
           isViceCaptain: true,
           phoneNumber: teamForm.viceCaptainPhoneNumber,
           jerseyNumber: "",
+          motherName: "",
           jerseyName: "",
           jerseySize: "",
           role: "",
@@ -446,6 +452,7 @@ export default function ManageCricketTeam() {
         captainPhoneNumber: teamForm.captainPhoneNumber,
         viceCaptainPhoneNumber: teamForm.viceCaptainPhoneNumber,
         status: teamForm.status,
+        motherName: teamForm.motherName,
         email: teamForm.email,
         players: updatedPlayers,
         updatedAt: new Date().toISOString(),
@@ -514,6 +521,7 @@ export default function ManageCricketTeam() {
           role: player.role || "",
           jerseyNumber: player.jerseyNumber || "",
           jerseyName: player.jerseyName || "",
+          motherName: player.motherName || "",
           jerseySize: player.jerseySize || "",
           phoneNumber: player.phoneNumber || "",
           userId: player.userId || "", // Include userId for profile photo lookup
@@ -535,6 +543,7 @@ export default function ManageCricketTeam() {
       viceCaptain: "",
       captainPhoneNumber: "",
       viceCaptainPhoneNumber: "",
+      motherName: "",
       status: "freeze",
       email: "",
       players: [],
@@ -555,6 +564,7 @@ export default function ManageCricketTeam() {
     const teamLogo = viewTeamDetails.teamLogoUrl || "";
     const teamStatus = viewTeamDetails.status || "unknown";
     const captain = viewTeamDetails.captain || "Not assigned";
+    const motherName = viewTeamDetails.motherName || "Not assigned";
     const viceCaptain = viewTeamDetails.viceCaptain || "Not assigned";
     const captainPhone = viewTeamDetails.captainPhoneNumber || "-";
     const viceCaptainPhone = viewTeamDetails.viceCaptainPhoneNumber || "-";
@@ -765,6 +775,7 @@ export default function ManageCricketTeam() {
                   <th>Name</th>
                   <th>Role</th>
                   <th>Phone</th>
+                  <th>Mother's Name</th>
                   <th>Jersey Name</th>
                   <th>Jersey No</th>
                   <th>Jersey Size</th>
@@ -780,6 +791,7 @@ export default function ManageCricketTeam() {
                     const memberRole = member.role || "-";
                     const memberPhone = member.phoneNumber || "-";
                     const jerseyName = member.jerseyName || "-";
+                    const motherName = member.motherName || "-";
                     const jerseyNumber = member.jerseyNumber || "-";
                     const jerseySize = member.jerseySize || "";
 
@@ -814,6 +826,7 @@ export default function ManageCricketTeam() {
                     <td>${memberName}</td>
                     <td>${memberRole}</td>
                     <td>${memberPhone}</td>
+                    <td>${motherName}</td>
                     <td>${jerseyName}</td>
                     <td>${jerseyNumber}</td>
                     <td>${jerseySize ? jerseySize.toUpperCase() : "-"}</td>
@@ -2473,6 +2486,7 @@ export default function ManageCricketTeam() {
                           <th>Name</th>
                           <th>Role</th>
                           <th>Contact</th>
+                          <th>Mother's Name</th>
                           <th>Jersey Name</th>
                           <th>Jersey No</th>
                           <th>Jersey Size</th>
@@ -2545,6 +2559,7 @@ export default function ManageCricketTeam() {
                               </Badge>
                             </td> */}
                             <td>{member.phoneNumber}</td>
+                            <td>{member.motherName}</td>
                             <td>{member.jerseyName || "-"}</td>
                             <td>{member.jerseyNumber || "-"}</td>
                             <td>
