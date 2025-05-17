@@ -1226,82 +1226,71 @@ export default function ManageTeam() {
                   </div>
                 </Col>
                 <Col md={5}>
-                  <div className="p-3 bg-light rounded-3 h-100">
-                    <h5 className="mb-4 text-primary">Team Jersey</h5>
-                    <div className="d-flex justify-content-center gap-4">
-                      <div className="jersey-container text-center">
-                        {teamData?.frontJerseyUrl ? (
-                          <div className="position-relative">
-                            <img
-                              src={teamData.frontJerseyUrl}
-                              alt="Front Jersey"
-                              style={{
-                                width: "200px",
-                                height: "200px",
-                                objectFit: "cover",
-                                borderRadius: "8px",
-                                border: "2px solid #dee2e6",
-                                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                              }}
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className="d-flex flex-column align-items-center justify-content-center"
-                            style={{
-                              width: "120px",
-                              height: "120px",
-                              backgroundColor: "#f8f9fa",
-                              borderRadius: "8px",
-                              border: "2px dashed #dee2e6",
-                            }}
-                          >
-                            <i className="fas fa-tshirt text-muted fa-2x mb-2"></i>
-                            <small className="text-muted">Front</small>
-                          </div>
-                        )}
-                      </div>
-                      <div className="jersey-container text-center">
-                        {teamData?.backJerseyUrl ? (
-                          <div className="position-relative">
-                            <img
-                              src={teamData.backJerseyUrl}
-                              alt="Back Jersey"
-                              style={{
-                                width: "200px",
-                                height: "200px",
-                                objectFit: "cover",
-                                borderRadius: "8px",
-                                border: "2px solid #dee2e6",
-                                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                              }}
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className="d-flex flex-column align-items-center justify-content-center"
-                            style={{
-                              width: "120px",
-                              height: "120px",
-                              backgroundColor: "#f8f9fa",
-                              borderRadius: "8px",
-                              border: "2px dashed #dee2e6",
-                            }}
-                          >
-                            <i className="fas fa-tshirt text-muted fa-2x mb-2"></i>
-                            <small className="text-muted">Back</small>
-                          </div>
-                        )}
+                  {(teamData?.frontJerseyUrl || teamData?.backJerseyUrl) && (
+                    <div className="p-3 bg-light rounded-3 h-100">
+                      <h5 className="mb-4 text-primary">Team Jersey</h5>
+                      <div className="d-flex justify-content-center gap-4">
+                        <div className="jersey-container text-center">
+                          {teamData?.frontJerseyUrl && (
+                            <div className="position-relative">
+                              <img
+                                src={teamData.frontJerseyUrl}
+                                alt="Front Jersey"
+                                style={{
+                                  width: "200px",
+                                  height: "200px",
+                                  objectFit: "cover",
+                                  borderRadius: "8px",
+                                  border: "2px solid #dee2e6",
+                                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                                }}
+                              />
+                              <div
+                                className="position-absolute bottom-0 start-0 end-0 bg-primary text-white text-center py-1"
+                                style={{
+                                  borderBottomLeftRadius: "6px",
+                                  borderBottomRightRadius: "6px",
+                                  fontSize: "12px",
+                                  fontWeight: "500",
+                                }}
+                              >
+                                Front View
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <div className="jersey-container text-center">
+                          {teamData?.backJerseyUrl && (
+                            <div className="position-relative">
+                              <img
+                                src={teamData.backJerseyUrl}
+                                alt="Back Jersey"
+                                style={{
+                                  width: "200px",
+                                  height: "200px",
+                                  objectFit: "cover",
+                                  borderRadius: "8px",
+                                  border: "2px solid #dee2e6",
+                                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                                }}
+                              />
+                              <div
+                                className="position-absolute bottom-0 start-0 end-0 bg-primary text-white text-center py-1"
+                                style={{
+                                  borderBottomLeftRadius: "6px",
+                                  borderBottomRightRadius: "6px",
+                                  fontSize: "12px",
+                                  fontWeight: "500",
+                                }}
+                              >
+                                Back View
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    {!teamData?.frontJerseyUrl && !teamData?.backJerseyUrl && (
-                      <div className="text-center mt-3">
-                        <small className="text-muted">
-                          No jersey images uploaded yet
-                        </small>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </Col>
               </Row>
 
