@@ -42,6 +42,7 @@ export default function ManageTeam() {
     userId: "",
     phoneNumber: "",
     isCaptain: false,
+    motherName: "",
     isViceCaptain: false,
     jerseyNumber: "",
     jerseyName: "",
@@ -115,6 +116,7 @@ export default function ManageTeam() {
         userId: newPlayer.userId,
         phoneNumber: newPlayer.phoneNumber,
         isCaptain: newPlayer.isCaptain,
+        motherName: newPlayer.motherName,
         isViceCaptain: newPlayer.isViceCaptain,
         jerseyNumber: newPlayer.jerseyNumber,
         jerseyName: newPlayer.jerseyName,
@@ -141,6 +143,7 @@ export default function ManageTeam() {
         phoneNumber: "",
         isCaptain: false,
         isViceCaptain: false,
+        motherName: "",
         jerseyNumber: "",
         jerseyName: "",
         jerseySize: "",
@@ -229,6 +232,7 @@ export default function ManageTeam() {
       userId: player.userId,
       phoneNumber: player.phoneNumber,
       isCaptain: player.isCaptain,
+      motherName: player.motherName,
       isViceCaptain: player.isViceCaptain,
       jerseyNumber: player.jerseyNumber || "",
       jerseyName: player.jerseyName || "",
@@ -269,7 +273,7 @@ export default function ManageTeam() {
   useEffect(() => {
     const checkUserPermission = async () => {
       if (!teamData || !auth.currentUser) return;
-      
+
       const currentUser = auth.currentUser;
       const captainUser = teamData.players?.find(
         (player) => player.isCaptain
@@ -357,6 +361,7 @@ export default function ManageTeam() {
     const teamStatus = teamData.status || "unknown";
     const captain = teamData.captain || "Not assigned";
     const viceCaptain = teamData.viceCaptain || "Not assigned";
+    const motherName = teamData.motherName || "Not assigned";
     const viceCaptainPhoneNumber = teamData.viceCaptainPhoneNumber || "-";
     const captainPhone = teamData.captainPhoneNumber || "-";
     const teamLogo = teamData.teamLogoUrl || "";
@@ -1051,6 +1056,7 @@ export default function ManageTeam() {
                     <th>Name</th>
                     <th>Contact</th>
                     <th>Role</th>
+                    <th>Mother's Name</th>
                     <th>Jersey Name</th>
                     <th>Jersey Number</th>
                     <th>Jersey Size</th>
@@ -1128,6 +1134,7 @@ export default function ManageTeam() {
                         }
                       </td>
                       <td>{player.role}</td>
+                      <td>{player.motherName}</td>
                       <td>{player.jerseyName}</td>
                       <td>{player.jerseyNumber}</td>
                       <td>{player.jerseySize.toUpperCase()}</td>
@@ -1338,6 +1345,18 @@ export default function ManageTeam() {
                     placeholder="Contact will be auto-filled"
                   />
                 </Form.Group>
+
+                <Form.Group className="mb-3 formGroup">
+                  <Form.Label>Mother's Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Mother's Name"
+                    onChange={(e) =>
+                      setNewPlayer({ ...newPlayer, motherName: e.target.value })
+                    }
+                  />
+                </Form.Group>
+
                 <Form.Group className="mb-3 formGroup">
                   <Form.Label>Role</Form.Label>
                   <Form.Select
@@ -1466,6 +1485,22 @@ export default function ManageTeam() {
                     disabled
                   />
                 </Form.Group>
+
+                <Form.Group className="mb-3 formGroup">
+                  <Form.Label>Mother's Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Mother's Name"
+                    value={editingPlayer?.motherName || ""}
+                    onChange={(e) =>
+                      setEditingPlayer({
+                        ...editingPlayer,
+                        motherName: e.target.value,
+                      })
+                    }
+                  />
+                </Form.Group>
+
                 <Form.Group className="mb-3 formGroup">
                   <Form.Label>Role</Form.Label>
                   <Form.Select
