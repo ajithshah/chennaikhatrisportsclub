@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../firebase";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,7 +13,11 @@ const Team = () => {
     const fetchTeams = async () => {
       try {
         const teamsCollection = collection(db, "cricket_teams");
-        const teamSnapshot = await getDocs(teamsCollection);
+        const activeTeamsQuery = query(
+          teamsCollection,
+          where("status", "in", ["freeze", "active"])
+        );
+        const teamSnapshot = await getDocs(activeTeamsQuery);
         const teamsList = teamSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
