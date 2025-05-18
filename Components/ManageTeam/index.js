@@ -437,7 +437,6 @@ export default function ManageTeam() {
     const teamStatus = teamData.status || "unknown";
     const captain = teamData.captain || "Not assigned";
     const viceCaptain = teamData.viceCaptain || "Not assigned";
-    const motherName = teamData.motherName || "Not assigned";
     const viceCaptainPhoneNumber = teamData.viceCaptainPhoneNumber || "-";
     const captainPhone = teamData.captainPhoneNumber || "-";
     const teamLogo = teamData.teamLogoUrl || "";
@@ -541,9 +540,9 @@ export default function ManageTeam() {
             border-top: 1px solid #ddd;
           }
           .profile-image {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            border-radius: 10%;
             object-fit: cover;
             border: 2px solid #0d6efd;
             display: inline-block;
@@ -614,6 +613,48 @@ export default function ManageTeam() {
               <span class="info-value">${viceCaptainPhoneNumber}</span>
             </div>
           </div>
+
+          ${
+            teamData.frontJerseyUrl || teamData.backJerseyUrl
+              ? `
+                <div class="team-jersey-section" style="margin: 30px 0; text-align: center;">
+                  <h2 style="color: #0d6efd; margin-bottom: 20px;">Team Jersey</h2>
+                  <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                    ${
+                      teamData.frontJerseyUrl
+                        ? `
+                          <div class="jersey-container" style="text-align: center;">
+                            <div style="position: relative; display: inline-block;">
+                              <img
+                                src="${teamData.frontJerseyUrl}"
+                                alt="Front Jersey"
+                                style="width: 200px; height: 200px; object-fit: cover; border-radius: 8px; border: 2px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"
+                              />
+                            </div>
+                          </div>
+                        `
+                        : ""
+                    }
+                    ${
+                      teamData.backJerseyUrl
+                        ? `
+                          <div class="jersey-container" style="text-align: center;">
+                            <div style="position: relative; display: inline-block;">
+                              <img
+                                src="${teamData.backJerseyUrl}"
+                                alt="Back Jersey"
+                                style="width: 200px; height: 200px; object-fit: cover; border-radius: 8px; border: 2px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"
+                              />
+                            </div>
+                          </div>
+                        `
+                        : ""
+                    }
+                  </div>
+                </div>
+              `
+              : ""
+          }
           
           <h2>Team Players</h2>
           
@@ -1418,7 +1459,7 @@ export default function ManageTeam() {
                               className="rounded-pill action-button edit-btn"
                               onClick={() => handleEditPlayer(index)}
                             >
-                              Edit
+                              <i className="fas fa-edit me-2"></i>
                             </Button>{" "}
                             <Button
                               size="sm"
@@ -1426,7 +1467,7 @@ export default function ManageTeam() {
                               className="rounded-pill action-button remove-btn ms-1"
                               onClick={() => handleRemovePlayer(index)}
                             >
-                              Remove
+                              <i className="fas fa-trash me-2"></i>
                             </Button>
                           </>
                         )}
@@ -1618,10 +1659,13 @@ export default function ManageTeam() {
                 </Form.Group>
 
                 <Form.Group className="mb-3 formGroup">
-                  <Form.Label>Mother's Name</Form.Label>
+                  <Form.Label>
+                    Mother's Name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Mother's Name"
+                    required
                     onChange={(e) =>
                       setNewPlayer({ ...newPlayer, motherName: e.target.value })
                     }
@@ -1629,7 +1673,9 @@ export default function ManageTeam() {
                 </Form.Group>
 
                 <Form.Group className="mb-3 formGroup">
-                  <Form.Label>Role</Form.Label>
+                  <Form.Label>
+                    Role <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select
                     required
                     value={newPlayer.role}
@@ -1645,7 +1691,9 @@ export default function ManageTeam() {
                   </Form.Select>
                 </Form.Group>
                 <Form.Group className="mb-3 formGroup">
-                  <Form.Label>Jersey Name</Form.Label>
+                  <Form.Label>
+                    Jersey Name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Jersey Name"
@@ -1655,7 +1703,9 @@ export default function ManageTeam() {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3 formGroup">
-                  <Form.Label>Jersey Number</Form.Label>
+                  <Form.Label>
+                    Jersey Number <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control
                     type="number"
                     placeholder="Jersey Number"
@@ -1668,7 +1718,9 @@ export default function ManageTeam() {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3 formGroup">
-                  <Form.Label>Jersey Size</Form.Label>
+                  <Form.Label>
+                    Jersey Size <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select
                     required
                     onChange={(e) =>
@@ -1758,11 +1810,14 @@ export default function ManageTeam() {
                 </Form.Group>
 
                 <Form.Group className="mb-3 formGroup">
-                  <Form.Label>Mother's Name</Form.Label>
+                  <Form.Label>
+                    Mother's Name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Mother's Name"
                     value={editingPlayer?.motherName || ""}
+                    required
                     onChange={(e) =>
                       setEditingPlayer({
                         ...editingPlayer,
@@ -1773,7 +1828,9 @@ export default function ManageTeam() {
                 </Form.Group>
 
                 <Form.Group className="mb-3 formGroup">
-                  <Form.Label>Role</Form.Label>
+                  <Form.Label>
+                    Role <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select
                     required
                     value={editingPlayer?.role || ""}
@@ -1792,7 +1849,9 @@ export default function ManageTeam() {
                   </Form.Select>
                 </Form.Group>
                 <Form.Group className="mb-3 formGroup">
-                  <Form.Label>Jersey Name</Form.Label>
+                  <Form.Label>
+                    Jersey Name <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Jersey Name"
@@ -1806,7 +1865,9 @@ export default function ManageTeam() {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3 formGroup">
-                  <Form.Label>Jersey Number</Form.Label>
+                  <Form.Label>
+                    Jersey Number <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control
                     type="number"
                     placeholder="Jersey Number"
@@ -1820,7 +1881,9 @@ export default function ManageTeam() {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3 formGroup">
-                  <Form.Label>Jersey Size</Form.Label>
+                  <Form.Label>
+                    Jersey Size <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select
                     value={editingPlayer?.jerseySize || ""}
                     onChange={(e) =>

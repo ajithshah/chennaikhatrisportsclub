@@ -564,7 +564,6 @@ export default function ManageCricketTeam() {
     const teamLogo = viewTeamDetails.teamLogoUrl || "";
     const teamStatus = viewTeamDetails.status || "unknown";
     const captain = viewTeamDetails.captain || "Not assigned";
-    const motherName = viewTeamDetails.motherName || "Not assigned";
     const viceCaptain = viewTeamDetails.viceCaptain || "Not assigned";
     const captainPhone = viewTeamDetails.captainPhoneNumber || "-";
     const viceCaptainPhone = viewTeamDetails.viceCaptainPhoneNumber || "-";
@@ -762,6 +761,48 @@ export default function ManageCricketTeam() {
               <div class="leader-phone">${viceCaptainPhone}</div>
             </div>
           </div>
+
+ ${
+   viewTeamDetails.frontJerseyUrl || viewTeamDetails.backJerseyUrl
+     ? `
+                <div class="jersey-section" style="margin: 30px 0;">
+                  <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px; padding-bottom: 5px; border-bottom: 2px solid #ddd; color: #333;">Team Jersey</h2>
+                  <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                    ${
+                      viewTeamDetails.frontJerseyUrl
+                        ? `
+                          <div style="text-align: center;">
+                            <div style="position: relative; display: inline-block;">
+                              <img
+                                src="${viewTeamDetails.frontJerseyUrl}"
+                                alt="Front Jersey"
+                                style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"
+                              />
+                            </div>
+                          </div>
+                        `
+                        : ""
+                    }
+                    ${
+                      viewTeamDetails.backJerseyUrl
+                        ? `
+                          <div style="text-align: center;">
+                            <div style="position: relative; display: inline-block;">
+                              <img
+                                src="${viewTeamDetails.backJerseyUrl}"
+                                alt="Back Jersey"
+                                style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"
+                              />
+                            </div>
+                          </div>
+                        `
+                        : ""
+                    }
+                  </div>
+                </div>
+              `
+     : ""
+ }
           
           <h2 class="members-title">Team Members</h2>
           
@@ -870,8 +911,8 @@ export default function ManageCricketTeam() {
 
     printWindow.document.close();
   };
-  // ---------------- printTeamDetails ----------------
 
+  // ---------------- Print all team Details ----------------
   // Print teams table function
   const printTeamsTable = () => {
     const printWindow = window.open("", "_blank");
@@ -1749,14 +1790,39 @@ export default function ManageCricketTeam() {
           border-radius: 2px;
         }
 
-        /* Team members table styling */
-        .empty-members-message {
-          padding: 2rem;
+        /* Team jersey styling */
+        .team-jersey-section {
           text-align: center;
-          border-radius: 10px;
-          background-color: #fff3cd;
-          border: 1px solid #ffecb5;
-          color: #664d03;
+          margin: 1.5rem 0;
+        }
+
+        .jersey-container {
+          position: relative;
+          display: inline-block;
+          cursor: pointer;
+        }
+
+        .jersey-container img {
+          border-radius: 8px;
+          transition: transform 0.3s ease;
+        }
+
+        .jersey-container:hover img {
+          transform: scale(1.05);
+        }
+
+        .jersey-container .position-absolute {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: rgba(13, 110, 253, 0.8);
+          color: white;
+          padding: 0.5rem 0;
+          border-bottom-left-radius: 8px;
+          border-bottom-right-radius: 8px;
+          font-size: 0.9rem;
+          font-weight: 500;
         }
 
         /* React-select customization */
@@ -2474,10 +2540,54 @@ export default function ManageCricketTeam() {
                         </p>
                       </div>
                     </div>
+                    {/* Team Jersey Display */}
+                    {(viewTeamDetails.frontJerseyUrl ||
+                      viewTeamDetails.backJerseyUrl) && (
+                      <div className="team-jersey-section mt-4 mb-4">
+                        <h5 className="text-center mb-3">Team Jersey</h5>
+                        <div className="d-flex justify-content-center gap-4">
+                          {viewTeamDetails.frontJerseyUrl && (
+                            <div className="jersey-container text-center">
+                              <div className="position-relative mr-1">
+                                <img
+                                  src={viewTeamDetails.frontJerseyUrl}
+                                  alt="Front Jersey"
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                    borderRadius: "8px",
+                                    border: "2px solid #dee2e6",
+                                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                          {viewTeamDetails.backJerseyUrl && (
+                            <div className="jersey-container text-center">
+                              <div className="position-relative ml-1">
+                                <img
+                                  src={viewTeamDetails.backJerseyUrl}
+                                  alt="Back Jersey"
+                                  style={{
+                                    width: "200px",
+                                    height: "200px",
+                                    objectFit: "cover",
+                                    borderRadius: "8px",
+                                    border: "2px solid #dee2e6",
+                                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <h5 className="team-members-title">Team Members</h5>
-
                   {teamMembers.length > 0 ? (
                     <Table responsive striped className="team-members-table">
                       <thead>
