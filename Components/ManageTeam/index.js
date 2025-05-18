@@ -100,20 +100,38 @@ export default function ManageTeam() {
     e.preventDefault();
     if (!newPlayer.name || !newPlayer.role || !newPlayer.userId) return;
 
-    // Check if player already exists in team
-    if (
-      teamData?.players?.some((player) => player.userId === newPlayer.userId)
-    ) {
-      alert("This player is already in the team!");
-      return;
-    }
-    // Check if team has reached maximum number of players
-    if (teamData?.players?.length >= 15) {
-      alert("You can only add up to 15 players to the team!");
-      return;
-    }
-
     try {
+      // First check if player exists in current team
+      if (
+        teamData?.players?.some((player) => player.userId === newPlayer.userId)
+      ) {
+        alert("This player is already in the team!");
+        return;
+      }
+
+      // Check if player exists in any other team
+      const teamsRef = collection(db, "cricket_teams");
+      const teamsSnap = await getDocs(teamsRef);
+      let playerExists = false;
+
+      for (const doc of teamsSnap.docs) {
+        const team = doc.data();
+        if (
+          team.players?.some((player) => player.userId === newPlayer.userId)
+        ) {
+          playerExists = true;
+          alert(`This player is already registered with team: ${team.name}`);
+          return;
+        }
+      }
+
+      // Check if team has reached maximum number of players
+      if (teamData?.players?.length >= 14) {
+        alert("You can only add up to 14 players to the team!");
+        return;
+      }
+
+      // Continue with adding the player since they don't exist in any team
       setIsModalAnimating(true);
       const teamRef = doc(db, "cricket_teams", id);
       const players = teamData.players || [];
