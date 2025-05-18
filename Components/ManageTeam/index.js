@@ -450,12 +450,32 @@ export default function ManageTeam() {
       <head>
         <title>${teamName} - Players List</title>
         <meta charset="UTF-8">
+          <div class="header">
+            <p class="subtitle">Chennai Khatri Sports Club</p>
+            <p class="subtitle">KPL Season 3</p>
+          </div>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
           body {
             font-family: Arial, sans-serif;
             padding: 20px;
             color: #333;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+          }
+          .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #0d6efd;
+          }
+          .subtitle {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
           }
           .print-container {
             max-width: 800px;
@@ -1214,9 +1234,32 @@ export default function ManageTeam() {
 
               {/* Team Info */}
               <Row className="mb-4 team-info">
-                <Col md={7}>
+                <Col xs={12} className="mb-4">
+                  <div className="p-3 bg-light rounded-3 text-center">
+                    <div className="d-flex flex-column align-items-center">
+                      <div className="position-relative mb-3">
+                        <img
+                          src={
+                            teamData && teamData.teamLogoUrl
+                              ? teamData.teamLogoUrl
+                              : "/profile_user.jpg"
+                          }
+                          alt="Team Logo"
+                          style={{
+                            width: "150px",
+                            height: "150px",
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                            border: "3px solid #0d6efd",
+                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.15)",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+                <Col lg={6} md={12} className="mb-4 mb-lg-0">
                   <div className="p-3 bg-light rounded-3">
-                    <h5 className="mb-4 text-primary">Team Information</h5>
                     <div className="d-flex align-items-center mb-3">
                       <div className="text-muted" style={{ width: "140px" }}>
                         Team Captain:
@@ -1266,14 +1309,14 @@ export default function ManageTeam() {
                     )}
                   </div>
                 </Col>
-                <Col md={5}>
+                <Col md={6}>
                   {(teamData?.frontJerseyUrl || teamData?.backJerseyUrl) && (
                     <div className="p-3 bg-light rounded-3 h-100">
                       <h5 className="mb-4 text-primary">Team Jersey</h5>
-                      <div className="d-flex justify-content-center gap-4">
+                      <div className="d-flex flex-wrap justify-content-center gap-4">
                         <div className="jersey-container text-center">
                           {teamData?.frontJerseyUrl && (
-                            <div className="position-relative">
+                            <div className="position-relative mb-3 mb-md-0">
                               <img
                                 src={teamData.frontJerseyUrl}
                                 alt="Front Jersey"
@@ -1286,17 +1329,6 @@ export default function ManageTeam() {
                                   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
                                 }}
                               />
-                              <div
-                                className="position-absolute bottom-0 start-0 end-0 bg-primary text-white text-center py-1"
-                                style={{
-                                  borderBottomLeftRadius: "6px",
-                                  borderBottomRightRadius: "6px",
-                                  fontSize: "12px",
-                                  fontWeight: "500",
-                                }}
-                              >
-                                Front View
-                              </div>
                             </div>
                           )}
                         </div>
@@ -1315,17 +1347,6 @@ export default function ManageTeam() {
                                   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
                                 }}
                               />
-                              <div
-                                className="position-absolute bottom-0 start-0 end-0 bg-primary text-white text-center py-1"
-                                style={{
-                                  borderBottomLeftRadius: "6px",
-                                  borderBottomRightRadius: "6px",
-                                  fontSize: "12px",
-                                  fontWeight: "500",
-                                }}
-                              >
-                                Back View
-                              </div>
                             </div>
                           )}
                         </div>
@@ -1970,7 +1991,7 @@ export default function ManageTeam() {
                               : "Drag & Drop or Click to Select Front Jersey Image"}
                           </span>
                           <small className="text-muted mt-1">
-                            JPEG, PNG, or JPG (Max 400 KB)
+                            JPEG, PNG, or JPG (Max 5 MB)
                           </small>
                         </label>
                         <Form.Control
@@ -1981,8 +2002,8 @@ export default function ManageTeam() {
                           onChange={(e) => {
                             const file = e.target.files[0];
                             if (file) {
-                              if (file.size > 400 * 1024) {
-                                alert("Image size should be less than 400 KB");
+                              if (file.size > 5 * 1024 * 1024) {
+                                alert("Image size should be less than 5 MB");
                                 e.target.value = "";
                                 return;
                               }
@@ -2040,7 +2061,7 @@ export default function ManageTeam() {
                               : "Drag & Drop or Click to Select Back Jersey Image"}
                           </span>
                           <small className="text-muted mt-1">
-                            JPEG, PNG, or JPG (Max 400 KB)
+                            JPEG, PNG, or JPG (Max 5MB)
                           </small>
                         </label>
                         <Form.Control
@@ -2051,8 +2072,8 @@ export default function ManageTeam() {
                           onChange={(e) => {
                             const file = e.target.files[0];
                             if (file) {
-                              if (file.size > 400 * 1024) {
-                                alert("Image size should be less than 400 KB");
+                              if (file.size > 5 * 1024 * 1024) {
+                                alert("Image size should be less than 5 MB");
                                 e.target.value = "";
                                 return;
                               }
@@ -2097,7 +2118,7 @@ export default function ManageTeam() {
                 </div>
 
                 <Form.Text className="text-muted d-block mb-3">
-                  • Maximum file size: 400 KB per image
+                  • Maximum file size: 5MB per image
                   <br />
                   • Supported formats: JPEG, PNG, JPG
                   <br />

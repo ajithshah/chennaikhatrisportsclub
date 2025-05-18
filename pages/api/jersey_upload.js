@@ -17,8 +17,8 @@ export const config = {
 // Allowed MIME types for validation
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/jpg"];
 
-// File size limit (4.5 MB)
-const FILE_SIZE_LIMIT = 4.5 * 1024 * 1024;
+// File size limit (5 MB)
+const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 
 // Validate necessary environment variables
 const validateEnv = () => {
@@ -65,8 +65,8 @@ export default async function handler(req, res) {
     // Validate file size
     if (file.size > FILE_SIZE_LIMIT) {
       console.log("File size limit exceeded:", file.size);
-      return res.status(400).json({
-        error: `File size exceeds ${FILE_SIZE_LIMIT / (1024 * 1024)} MB limit.`,
+      return res.status(400).json({,
+        error: `File size exceeds ${FILE_SIZE_LIMIT / (1024 * 1024)} MB limit.`
       });
     }
 
