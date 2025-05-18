@@ -154,11 +154,9 @@ const PlayerCard = ({ player, userProfile }) => {
             </div>
             <div className="col-6">
               <p className="mb-2">
-                <small className="text-muted">Jersey Size</small>
+                <small className="text-muted">Mother's Name</small>
                 <br />
-                <span className="fw-medium">
-                  {player.jerseySize ? player.jerseySize.toUpperCase() : "-"}
-                </span>
+                <span className="fw-medium">{player.motherName || "-"}</span>
               </p>
             </div>
             <div className="col-6">
