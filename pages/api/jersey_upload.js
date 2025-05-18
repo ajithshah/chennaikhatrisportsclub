@@ -65,8 +65,8 @@ export default async function handler(req, res) {
     // Validate file size
     if (file.size > FILE_SIZE_LIMIT) {
       console.log("File size limit exceeded:", file.size);
-      return res.status(400).json({,
-        error: `File size exceeds ${FILE_SIZE_LIMIT / (1024 * 1024)} MB limit.`
+      return res.status(400).json({
+        error: `File size exceeds ${FILE_SIZE_LIMIT / (1024 * 1024)} MB limit.`,
       });
     }
 
