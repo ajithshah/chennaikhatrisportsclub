@@ -1772,6 +1772,9 @@ export default function ManageTeam() {
                     <option value="l">L</option>
                     <option value="xl">XL</option>
                     <option value="xxl">XXL</option>
+                    <option value="3xl">3XL</option>
+                    <option value="4xl">4XL</option>
+                    <option value="5xl">5XL</option>
                   </Form.Select>
                 </Form.Group>
               </Modal.Body>
@@ -1938,6 +1941,9 @@ export default function ManageTeam() {
                     <option value="l">L</option>
                     <option value="xl">XL</option>
                     <option value="xxl">XXL</option>
+                    <option value="3xl">3XL</option>
+                    <option value="4xl">4XL</option>
+                    <option value="5xl">5XL</option>
                   </Form.Select>
                 </Form.Group>
               </Modal.Body>
