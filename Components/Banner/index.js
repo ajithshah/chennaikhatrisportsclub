@@ -61,7 +61,7 @@ const Banner = () => {
         if (scrollElement) {
           scrollElement.style.animationPlayState = "running";
         }
-      }, 4000);
+      }, 2000);
     };
 
     scrollElement.addEventListener("mouseenter", handleMouseEnter);
