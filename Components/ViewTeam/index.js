@@ -251,7 +251,7 @@ const ViewTeam = () => {
 
           <Row xs={1} md={2} lg={3} className="g-4">
             {team.players.map((player) => (
-              <Col key={player.userId}>
+              <Col key={player.userId} className="mt-2">
                 <PlayerCard
                   player={player}
                   userProfile={userProfiles[player.userId]}

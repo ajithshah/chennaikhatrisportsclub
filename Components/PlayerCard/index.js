@@ -182,48 +182,51 @@ const PlayerCard = ({ player, userProfile }) => {
       <style jsx>{`
         .player-card {
           height: 100%;
-          min-height: 440px;
+          min-height: 450px;
           width: 100%;
           max-width: 320px;
-          border-radius: 20px;
-          transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+          border-radius: 16px;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           background-color: #ffffff;
-          border: 1px solid rgba(0, 0, 0, 0.04);
           overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
           position: relative;
           margin-bottom: 2rem;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+          border: none;
         }
 
         .player-card:hover {
-          transform: translateY(-10px);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+          transform: translateY(-8px);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
         }
 
-        .player-card:after {
+        /* Card background */
+        .player-card:before {
           content: "";
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
-          height: 6px;
-          background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+          height: 35%; /* Cover the top third of the card */
+          background: #0d6efd;
+          z-index: 0;
         }
 
         .player-image-container {
-          width: 120px;
-          height: 120px;
-          margin-bottom: 15px;
+          width: 130px;
+          height: 130px;
+          margin-bottom: 12px;
           position: relative;
           overflow: hidden;
-          border: 3px solid #ffffff;
-          box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
+          border: 4px solid #ffffff;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
           transition: all 0.3s ease;
+          z-index: 1;
         }
 
         .player-card:hover .player-image-container {
-          transform: scale(1.05);
-          box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+          transform: scale(1.05) rotate(3deg);
+          box-shadow: 0 12px 25px rgba(0, 0, 0, 0.18);
         }
 
         .image-wrapper {
@@ -232,6 +235,7 @@ const PlayerCard = ({ player, userProfile }) => {
           position: relative;
           overflow: hidden;
           border-radius: 50%;
+          background-color: #ffffff;
         }
 
         .profile-image {
@@ -242,93 +246,110 @@ const PlayerCard = ({ player, userProfile }) => {
         }
 
         .first-letter-container {
-          background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+          background: linear-gradient(135deg, #0a58ca, #0d6efd);
           color: white;
-          font-size: 2.3rem;
-          width: 120px;
-          height: 120px;
+          font-size: 2.5rem;
+          width: 130px;
+          height: 130px;
           font-weight: bold;
-          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+          text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
+          box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.3);
         }
 
         .card-body {
-          padding: 1.5rem;
+          padding: 1.8rem 1.5rem;
           position: relative;
           z-index: 1;
           background-color: #ffffff;
-        }
-
-        .card-body:before {
-          content: "";
-          position: absolute;
-          top: -50px;
-          left: 0;
-          width: 100%;
-          height: 50px;
-          background: linear-gradient(to top, #ffffff, transparent);
-          z-index: -1;
+          border-radius: 22px 22px 0 0;
+          margin-top: -20px;
         }
 
         .card-title {
           font-size: 1.4rem;
           font-weight: 700;
-          color: #2d3748;
-          margin-bottom: 1.2rem;
+          color: #333;
+          margin-bottom: 1.3rem;
+          position: relative;
+          display: inline-block;
+        }
+
+        .card-title:after {
+          content: "";
+          position: absolute;
+          width: 40%;
+          height: 3px;
+          background: linear-gradient(90deg, #0a58ca, #0d6efd);
+          bottom: -8px;
+          left: 30%;
+          border-radius: 2px;
         }
 
         .text-muted {
-          color: #718096 !important;
+          color: #6b7280 !important;
           font-size: 0.7rem;
           font-weight: 600;
           text-transform: uppercase;
-          letter-spacing: 0.8px;
+          letter-spacing: 1px;
         }
 
         .fw-medium {
           font-weight: 500;
-          color: #2d3748;
+          color: #374151;
           font-size: 0.95rem;
         }
 
         .badge {
-          padding: 0.35em 0.7em;
+          padding: 0.4em 0.8em;
           font-weight: 700;
-          border-radius: 6px;
+          border-radius: 30px;
+          font-size: 0.75rem;
+          letter-spacing: 0.5px;
         }
-
         .badge.bg-primary {
-          background: linear-gradient(90deg, #3a7bd5, #00d2ff) !important;
-          box-shadow: 0 2px 5px rgba(58, 123, 213, 0.3);
+          background: linear-gradient(90deg, #0a58ca, #0d6efd) !important;
+          box-shadow: 0 2px 5px rgba(13, 110, 253, 0.4);
+          border: none;
         }
 
         .badge.bg-secondary {
-          background: linear-gradient(90deg, #606c88, #3f4c6b) !important;
-          box-shadow: 0 2px 5px rgba(96, 108, 136, 0.3);
+          background: linear-gradient(90deg, #5a6268, #6c757d) !important;
+          box-shadow: 0 2px 5px rgba(108, 117, 125, 0.4);
+          border: none;
         }
 
         .row {
-          margin-top: 0.5rem;
+          margin-top: 0.75rem;
+        }
+
+        /* Field styles */
+        .col-6 p,
+        .col-12 p {
+          position: relative;
+          padding-bottom: 8px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
 
         @media (max-width: 576px) {
           .player-card {
-            min-height: 410px;
-            max-width: 290px;
+            min-height: 420px;
+            max-width: 300px;
           }
 
           .player-image-container {
-            width: 100px;
-            height: 100px;
+            width: 110px;
+            height: 110px;
+            margin-bottom: 10px;
           }
 
           .first-letter-container {
-            width: 100px;
-            height: 100px;
-            font-size: 1.8rem;
+            width: 110px;
+            height: 110px;
+            font-size: 2rem;
           }
 
           .card-body {
-            padding: 1.2rem;
+            padding: 1.4rem 1.2rem;
           }
 
           .card-title {
