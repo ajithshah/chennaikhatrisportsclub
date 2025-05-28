@@ -134,11 +134,12 @@ const Header = () => {
                 <Nav.Link className="px-3 text-dark">About</Nav.Link>
               </Link>
             )}
-            {/* {!isSchedultPage && (
+            {/* Schedule Link */}
+            {!isSchedultPage && (
               <Link href="/schedule" passHref legacyBehavior>
                 <Nav.Link className="px-3 text-dark">Schedule</Nav.Link>
               </Link>
-            )} */}
+            )}
           </Nav>
           <Nav className="d-flex align-items-center justify-content-end gap-3 w-100">
             {user ? (
