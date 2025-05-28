@@ -947,6 +947,14 @@ export default function Profile() {
                         {userData?.phoneNumber || "Not provided"}
                       </div>
                     </div>
+                    <div className="detail-group" style={{ "--i": 2 }}>
+                      <div className="detail-label">
+                        <i className="fas fa-tint"></i> Blood Group
+                      </div>
+                      <div className="detail-value">
+                        {userData?.bloodGroup || "Not provided"}
+                      </div>
+                    </div>
                   </Col>
 
                   <Col lg={6}>

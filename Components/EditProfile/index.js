@@ -23,6 +23,7 @@ export default function EditProfile() {
     email: "",
     dateOfBirth: "",
     photoURL: "",
+    bloodGroup: "",
     address: {
       street: "",
       city: "",
@@ -125,6 +126,7 @@ export default function EditProfile() {
             email: userData.email || "",
             dateOfBirth: userData.dateOfBirth || "",
             photoURL: userData.photoURL || "",
+            bloodGroup: userData.bloodGroup || "",
             address: userData.address || {
               street: "",
               city: "",
@@ -888,6 +890,39 @@ export default function EditProfile() {
                           value={formData.dateOfBirth}
                           onChange={handleChange}
                         />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <Row className="g-4">
+                    <Col lg={6}>
+                      <Form.Group className="formGroup" style={{ "--i": 3 }}>
+                        <Form.Label>
+                          <i className="fas fa-tint"></i> Blood Group
+                        </Form.Label>
+                        <Form.Select
+                          name="bloodGroup"
+                          value={formData.bloodGroup || ""}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select Blood Group</option>
+                          <option value="A+">A+</option>
+                          <option value="A-">A-</option>
+                          <option value="A1+">A1+</option>
+                          <option value="A1-">A1-</option>
+                          <option value="A2+">A2+</option>
+                          <option value="A2-">A2-</option>
+                          <option value="B+">B+</option>
+                          <option value="B-">B-</option>
+                          <option value="AB+">AB+</option>
+                          <option value="AB-">AB-</option>
+                          <option value="A1B+">A1B+</option>
+                          <option value="A1B-">A1B-</option>
+                          <option value="A2B+">A2B+</option>
+                          <option value="A2B-">A2B-</option>
+                          <option value="O+">O+</option>
+                          <option value="O-">O-</option>
+                        </Form.Select>
                       </Form.Group>
                     </Col>
                   </Row>
