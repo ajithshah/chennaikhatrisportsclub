@@ -25,7 +25,7 @@ const PlayerCard = ({ player, userProfile }) => {
       const userDoc = await getDoc(doc(db, "users", userId));
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        console.log("User profile data:", userData);
+        // console.log("User profile data:", userData);
         setUser(userData);
       } else {
         console.error("No user found with ID:", userId);
@@ -38,7 +38,6 @@ const PlayerCard = ({ player, userProfile }) => {
   };
 
   const calculateAge = (dateOfBirth) => {
-    console.log("Date of Birth:", dateOfBirth);
 
     try {
       if (!dateOfBirth) {
