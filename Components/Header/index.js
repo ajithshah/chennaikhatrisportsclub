@@ -157,7 +157,7 @@ const Header = () => {
                   isSchedultPage ? { borderBottom: "2px solid #0d6efd" } : {}
                 }
               >
-                Schedule
+                Match Schedule
               </Nav.Link>
             </Link>
 

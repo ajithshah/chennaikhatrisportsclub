@@ -61,7 +61,7 @@ const Banner = () => {
         if (scrollElement) {
           scrollElement.style.animationPlayState = "running";
         }
-      }, 3000);
+      }, 4000);
     };
 
     scrollElement.addEventListener("mouseenter", handleMouseEnter);
@@ -79,10 +79,9 @@ const Banner = () => {
 
   const announcementText = announcements.join(" • ");
 
-  // For mobile devices, duplicate the text to ensure seamless scrolling
-  const displayText = isMobile
-    ? `${announcementText} • ${announcementText}`
-    : announcementText;
+  // For mobile devices, we'll use the CSS ::after pseudo-element for repeating content
+  // No need to duplicate the text in JS as we're handling it in CSS
+  const displayText = announcementText;
 
   return (
     <>
