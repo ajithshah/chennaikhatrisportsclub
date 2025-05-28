@@ -1,11 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  Container,
-  Badge,
-  Table,
-  Button,
-  Form,
-} from "react-bootstrap";
+import { Container, Badge, Table, Button, Form } from "react-bootstrap";
 import { db } from "@/firebase";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import Header from "@/Components/Header";
@@ -141,7 +135,7 @@ export function SchedulePage() {
           <div className="page-header">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div>
-                <h1 className="page-title">KPL Match Schedule</h1>
+                <h1 className="page-title">Match Schedule</h1>
                 <p className="text-muted">
                   Follow all Cricket matches of Chennai Khatri Sports Club
                 </p>

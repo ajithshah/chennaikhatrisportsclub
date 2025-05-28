@@ -79,6 +79,8 @@ const Header = () => {
   const isHomePage = currentPath === "/";
   const isAboutPage = currentPath === "/about";
   const isSchedultPage = currentPath === "/schedule";
+  const isteamPage =
+    currentPath === "/team" || currentPath.startsWith("/team/");
 
   // Get display name from the database if available
   const displayName = dbUserData?.displayName || user?.displayName || "User";
@@ -121,25 +123,55 @@ const Header = () => {
           className="justify-content-between"
         >
           <Nav>
-            {/* Only show Home link if NOT on home page */}
-            {!isHomePage && (
-              <Link href="/" passHref legacyBehavior>
-                <Nav.Link className="px-3 text-dark">Home</Nav.Link>
-              </Link>
-            )}
+            {/* Home link - always show but highlight when active */}
+            <Link href="/" passHref legacyBehavior>
+              <Nav.Link
+                className={`px-3 ${
+                  isHomePage ? "fw-bold text-primary active" : "text-dark"
+                }`}
+                style={isHomePage ? { borderBottom: "2px solid #0d6efd" } : {}}
+              >
+                Home
+              </Nav.Link>
+            </Link>
 
             {/* About link */}
-            {!isAboutPage && (
-              <Link href="/about" passHref legacyBehavior>
-                <Nav.Link className="px-3 text-dark">About</Nav.Link>
-              </Link>
-            )}
+            <Link href="/about" passHref legacyBehavior>
+              <Nav.Link
+                className={`px-3 ${
+                  isAboutPage ? "fw-bold text-primary active" : "text-dark"
+                }`}
+                style={isAboutPage ? { borderBottom: "2px solid #0d6efd" } : {}}
+              >
+                About
+              </Nav.Link>
+            </Link>
+
             {/* Schedule Link */}
-            {!isSchedultPage && (
-              <Link href="/schedule" passHref legacyBehavior>
-                <Nav.Link className="px-3 text-dark">Schedule</Nav.Link>
-              </Link>
-            )}
+            <Link href="/schedule" passHref legacyBehavior>
+              <Nav.Link
+                className={`px-3 ${
+                  isSchedultPage ? "fw-bold text-primary active" : "text-dark"
+                }`}
+                style={
+                  isSchedultPage ? { borderBottom: "2px solid #0d6efd" } : {}
+                }
+              >
+                Schedule
+              </Nav.Link>
+            </Link>
+
+            {/* Team Link */}
+            <Link href="/team" passHref legacyBehavior>
+              <Nav.Link
+                className={`px-3 ${
+                  isteamPage ? "fw-bold text-primary active" : "text-dark"
+                }`}
+                style={isteamPage ? { borderBottom: "2px solid #0d6efd" } : {}}
+              >
+                Team
+              </Nav.Link>
+            </Link>
           </Nav>
           <Nav className="d-flex align-items-center justify-content-end gap-3 w-100">
             {user ? (

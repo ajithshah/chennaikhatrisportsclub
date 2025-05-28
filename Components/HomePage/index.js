@@ -5,12 +5,10 @@ import { auth } from "../../firebase";
 import Link from "next/link";
 import PrivacyModel from "../Model/PrivacyModel";
 import TermsModal from "../Model/TermsModal";
-import Team from "@/Components/HomePage/Team";
 import Banner from "../Banner";
 import { onAuthStateChanged } from "firebase/auth";
 import ImageSlider from "../ImageSlide";
 import { signInWithGoogle as authSignInWithGoogle } from "../../utils/auth";
-
 
 const HomePage = () => {
   const router = useRouter();
@@ -493,7 +491,6 @@ const HomePage = () => {
         </main>
         <Banner />
         <ImageSlider />
-        <Team />
       </div>
     );
   }

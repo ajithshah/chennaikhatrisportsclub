@@ -193,12 +193,11 @@ const ViewTeam = () => {
                     <Image
                       src={team.frontJerseyUrl}
                       alt={`${team.name} jersey front`}
-                      width={300}
-                      height={300}
+                      width={200}
+                      height={200}
                       className="jersey-image"
                       sizes="(max-width: 768px) 250px, 300px"
                     />
-                    <div className="jersey-label">Front View</div>
                   </div>
                 ) : (
                   <div className="jersey-placeholder">
@@ -206,7 +205,7 @@ const ViewTeam = () => {
                       <i className="fas fa-tshirt"></i>
                     </div>
                     <div className="placeholder-text">
-                      Front View Not Available
+                      Not Available
                     </div>
                   </div>
                 )}
@@ -217,12 +216,11 @@ const ViewTeam = () => {
                     <Image
                       src={team.backJerseyUrl}
                       alt={`${team.name} jersey back`}
-                      width={300}
-                      height={300}
+                      width={200}
+                      height={200}
                       className="jersey-image"
                       sizes="(max-width: 768px) 250px, 300px"
                     />
-                    <div className="jersey-label">Back View</div>
                   </div>
                 ) : (
                   <div className="jersey-placeholder">
@@ -230,7 +228,7 @@ const ViewTeam = () => {
                       <i className="fas fa-tshirt"></i>
                     </div>
                     <div className="placeholder-text">
-                      Back View Not Available
+                      Not Available
                     </div>
                   </div>
                 )}
