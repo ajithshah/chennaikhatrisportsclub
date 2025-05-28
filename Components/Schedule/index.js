@@ -1,17 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Container,
-  Row,
-  Col,
   Badge,
-  Tabs,
-  Tab,
   Table,
   Button,
   Form,
 } from "react-bootstrap";
 import { db } from "@/firebase";
-import { collection, getDocs, query, orderBy, where } from "firebase/firestore";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import Header from "@/Components/Header";
 import Meta from "@/Components/Meta";
 import Image from "next/image";
