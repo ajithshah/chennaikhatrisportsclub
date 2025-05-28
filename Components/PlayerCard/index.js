@@ -38,7 +38,6 @@ const PlayerCard = ({ player, userProfile }) => {
   };
 
   const calculateAge = (dateOfBirth) => {
-
     try {
       if (!dateOfBirth) {
         return "Not available";
@@ -78,18 +77,20 @@ const PlayerCard = ({ player, userProfile }) => {
   return (
     <div className="card shadow-sm mb-3 mx-auto player-card">
       {/* Image at the top */}
-      <div className="text-center pt-4 pb-2">
-        <div className="player-image-container mx-auto">
+      <div className="text-center pt-5 pb-3">
+        <div className="player-image-container rounded-circle mx-auto">
           {user && user.photoURL ? (
-            <Image
-              src={user.photoURL}
-              priority
-              alt={`${player.name}'s profile`}
-              width={120}
-              height={120}
-              className="rounded-circle"
-              sizes="(max-width: 576px) 100px, 120px"
-            />
+            <div className="image-wrapper">
+              <Image
+                src={user.photoURL}
+                priority
+                alt={`${player.name}'s profile`}
+                width={120}
+                height={120}
+                className="profile-image"
+                sizes="(max-width: 576px) 100px, 120px"
+              />
+            </div>
           ) : player.name ? (
             <div className="first-letter-container rounded-circle d-flex align-items-center justify-content-center mx-auto">
               <span className="first-letter">
@@ -114,7 +115,7 @@ const PlayerCard = ({ player, userProfile }) => {
           </div>
         </h5>
         <div className="card-text">
-          <div className="row g-2">
+          <div className="row g-3">
             <div className="col-6">
               <p className="mb-2">
                 <small className="text-muted">Role</small>
@@ -181,35 +182,138 @@ const PlayerCard = ({ player, userProfile }) => {
       <style jsx>{`
         .player-card {
           height: 100%;
-          min-height: 400px; /* Increased to accommodate vertical layout */
+          min-height: 440px;
           width: 100%;
-          max-width: 350px; /* Reduced width for a more compact card */
-          border-radius: 12px;
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          max-width: 320px;
+          border-radius: 20px;
+          transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+          background-color: #ffffff;
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+          position: relative;
+          margin-bottom: 2rem;
         }
 
         .player-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+          transform: translateY(-10px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .player-card:after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 6px;
+          background: linear-gradient(90deg, #3a7bd5, #00d2ff);
         }
 
         .player-image-container {
           width: 120px;
           height: 120px;
-          margin-bottom: 10px;
+          margin-bottom: 15px;
+          position: relative;
+          overflow: hidden;
+          border: 3px solid #ffffff;
+          box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
+          transition: all 0.3s ease;
+        }
+
+        .player-card:hover .player-image-container {
+          transform: scale(1.05);
+          box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+        }
+
+        .image-wrapper {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          overflow: hidden;
+          border-radius: 50%;
+        }
+
+        .profile-image {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover;
+          border-radius: 50%;
         }
 
         .first-letter-container {
-          background-color: #007bff;
+          background: linear-gradient(135deg, #3a7bd5, #00d2ff);
           color: white;
-          font-size: 2rem;
+          font-size: 2.3rem;
           width: 120px;
           height: 120px;
+          font-weight: bold;
+          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-body {
+          padding: 1.5rem;
+          position: relative;
+          z-index: 1;
+          background-color: #ffffff;
+        }
+
+        .card-body:before {
+          content: "";
+          position: absolute;
+          top: -50px;
+          left: 0;
+          width: 100%;
+          height: 50px;
+          background: linear-gradient(to top, #ffffff, transparent);
+          z-index: -1;
+        }
+
+        .card-title {
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: #2d3748;
+          margin-bottom: 1.2rem;
+        }
+
+        .text-muted {
+          color: #718096 !important;
+          font-size: 0.7rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+        }
+
+        .fw-medium {
+          font-weight: 500;
+          color: #2d3748;
+          font-size: 0.95rem;
+        }
+
+        .badge {
+          padding: 0.35em 0.7em;
+          font-weight: 700;
+          border-radius: 6px;
+        }
+
+        .badge.bg-primary {
+          background: linear-gradient(90deg, #3a7bd5, #00d2ff) !important;
+          box-shadow: 0 2px 5px rgba(58, 123, 213, 0.3);
+        }
+
+        .badge.bg-secondary {
+          background: linear-gradient(90deg, #606c88, #3f4c6b) !important;
+          box-shadow: 0 2px 5px rgba(96, 108, 136, 0.3);
+        }
+
+        .row {
+          margin-top: 0.5rem;
         }
 
         @media (max-width: 576px) {
           .player-card {
-            min-height: 380px;
+            min-height: 410px;
+            max-width: 290px;
           }
 
           .player-image-container {
@@ -220,7 +324,16 @@ const PlayerCard = ({ player, userProfile }) => {
           .first-letter-container {
             width: 100px;
             height: 100px;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
+          }
+
+          .card-body {
+            padding: 1.2rem;
+          }
+
+          .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
           }
         }
       `}</style>
