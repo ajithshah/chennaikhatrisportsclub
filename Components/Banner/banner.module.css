@@ -48,6 +48,8 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
     position: relative;
     border-radius: 6px; /* More rounded corners */
+    -webkit-overflow-scrolling: touch; /* Improve scroll on iOS */
+    overflow-x: hidden; /* Ensure horizontal overflow is hidden on mobile */
   }
   
   .scrollText {
@@ -58,6 +60,12 @@
     padding: 0 20px;
     font-weight: 500; /* Medium weight font */
     letter-spacing: 0.5px; /* Added letter spacing */
+    display: inline-block; /* Ensure the element takes the full width of its content */
+    will-change: transform; /* Optimize for animations */
+    backface-visibility: hidden; /* Standard property */
+    -webkit-backface-visibility: hidden; /* Prevent flickering on iOS */
+    -webkit-font-smoothing: antialiased; /* Smooth fonts on mobile */
+    text-rendering: optimizeLegibility; /* Improve text rendering */
   }
   
   @keyframes scrollText {
@@ -66,6 +74,21 @@
     }
     100% {
       transform: translateX(-100%);
+    }
+  }
+  
+  /* We'll use a different approach for continuous scrolling */
+  @media (max-width: 768px) {
+    .scrollText {
+      position: relative;
+    }
+    
+    .scrollText::after {
+      content: attr(data-content);
+      position: absolute;
+      white-space: nowrap;
+      padding-left: 50px; /* Add spacing between repeated content */
+      right: -100%;
     }
   }
   
@@ -84,7 +107,33 @@
       max-width: 90%;
     }
     
+    .scrollContainer {
+      padding: 10px 0;
+      margin-bottom: 15px;
+    }
+    
     .scrollText {
-      font-size: 16px;
+      font-size: 14px; /* Smaller font size for mobile */
+      animation: scrollText 25s linear infinite; /* Adjust speed for mobile */
+      padding: 0 15px;
+    }
+  }
+  
+  /* Small mobile devices */
+  @media (max-width: 480px) {
+    .scrollContainer {
+      padding: 8px 0;
+    }
+    
+    .scrollText {
+      font-size: 13px; /* Even smaller font for very small devices */
+      animation: scrollText 20s linear infinite; /* Slightly faster for small screens */
+    }
+  }
+  
+  /* Respect user preferences for reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .scrollText {
+      animation-duration: 60s; /* Much slower animation */
     }
   }

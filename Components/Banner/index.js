@@ -1,7 +1,10 @@
-import React from "react";
-import styles from "../../styles/banner.module.css";
+import React, { useEffect, useRef, useState } from "react";
+import styles from "./banner.module.css";
 
 const Banner = () => {
+  const scrollTextRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
   const announcements = [
     "📢 Attention team captains and vice captains:",
     "📢 Ensure to register your team members on or before 31 May",
@@ -14,11 +17,84 @@ const Banner = () => {
     return null;
   }
 
+  // Detect mobile devices
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Initial check
+    checkMobile();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
+
+  // Add a pause on hover effect
+  useEffect(() => {
+    const scrollElement = scrollTextRef.current;
+
+    if (!scrollElement) return;
+
+    const handleMouseEnter = () => {
+      scrollElement.style.animationPlayState = "paused";
+    };
+
+    const handleMouseLeave = () => {
+      scrollElement.style.animationPlayState = "running";
+    };
+
+    // Handle touch for mobile
+    const handleTouchStart = () => {
+      scrollElement.style.animationPlayState = "paused";
+    };
+
+    const handleTouchEnd = () => {
+      scrollElement.style.animationPlayState = "running";
+
+      // After a brief pause, resume the animation
+      setTimeout(() => {
+        if (scrollElement) {
+          scrollElement.style.animationPlayState = "running";
+        }
+      }, 3000);
+    };
+
+    scrollElement.addEventListener("mouseenter", handleMouseEnter);
+    scrollElement.addEventListener("mouseleave", handleMouseLeave);
+    scrollElement.addEventListener("touchstart", handleTouchStart);
+    scrollElement.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      scrollElement.removeEventListener("mouseenter", handleMouseEnter);
+      scrollElement.removeEventListener("mouseleave", handleMouseLeave);
+      scrollElement.removeEventListener("touchstart", handleTouchStart);
+      scrollElement.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, []);
+
+  const announcementText = announcements.join(" • ");
+
+  // For mobile devices, duplicate the text to ensure seamless scrolling
+  const displayText = isMobile
+    ? `${announcementText} • ${announcementText}`
+    : announcementText;
+
   return (
     <>
-      {/* Simple Scrolling Text Banner */}
       <div className={styles.scrollContainer}>
-        <div className={styles.scrollText}>{announcements.join(" • ")}</div>
+        <div
+          ref={scrollTextRef}
+          className={styles.scrollText}
+          aria-label="Announcements"
+          data-content={announcementText}
+        >
+          {displayText}
+        </div>
       </div>
     </>
   );
