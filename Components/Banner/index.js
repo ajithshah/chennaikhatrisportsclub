@@ -3,11 +3,10 @@ import styles from "../../styles/banner.module.css";
 
 const Banner = () => {
   const announcements = [
-    "📢 upcoming Events :",
-    // "🏆 Summer Cricket Tournament registrations open",
+    "📢 Attention team captains and vice captain: ",
+    "📢 Ensoure to register your team members no or before 31 May - ",
+    "Ballot for KPL Season 3 will be held on June 1st",
     "🏏 KPL Season 3 On July 5,6 at Pachaiyappas College Ground, Chennai",
-    "🎉 KPL Senior Season 1 (Men's above age 50)",
-    " Register Today ",
   ];
 
   // Skip rendering if no announcements
