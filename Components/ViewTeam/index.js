@@ -175,6 +175,70 @@ const ViewTeam = () => {
           </Card.Body>
         </Card>
 
+        {/* Team Jersey Section */}
+        <Card className="jersey-card mb-5 border-0 shadow-sm">
+          <Card.Body className="p-4">
+            <div className="section-header mb-4">
+              <h2 className="section-title">
+                <span className="title-icon">
+                  <i className="fas fa-tshirt"></i>
+                </span>
+                Team Jersey
+              </h2>
+            </div>
+            <Row>
+              <Col sm={6} className="text-center mb-4 mb-sm-0">
+                {team.frontJerseyUrl ? (
+                  <div className="jersey-image-container">
+                    <Image
+                      src={team.frontJerseyUrl}
+                      alt={`${team.name} jersey front`}
+                      width={300}
+                      height={300}
+                      className="jersey-image"
+                      sizes="(max-width: 768px) 250px, 300px"
+                    />
+                    <div className="jersey-label">Front View</div>
+                  </div>
+                ) : (
+                  <div className="jersey-placeholder">
+                    <div className="placeholder-icon">
+                      <i className="fas fa-tshirt"></i>
+                    </div>
+                    <div className="placeholder-text">
+                      Front View Not Available
+                    </div>
+                  </div>
+                )}
+              </Col>
+              <Col sm={6} className="text-center">
+                {team.backJerseyUrl ? (
+                  <div className="jersey-image-container">
+                    <Image
+                      src={team.backJerseyUrl}
+                      alt={`${team.name} jersey back`}
+                      width={300}
+                      height={300}
+                      className="jersey-image"
+                      sizes="(max-width: 768px) 250px, 300px"
+                    />
+                    <div className="jersey-label">Back View</div>
+                  </div>
+                ) : (
+                  <div className="jersey-placeholder">
+                    <div className="placeholder-icon">
+                      <i className="fas fa-tshirt"></i>
+                    </div>
+                    <div className="placeholder-text">
+                      Back View Not Available
+                    </div>
+                  </div>
+                )}
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
+
         <div className="players-section">
           <div className="section-header mb-4">
             <h2 className="section-title">
@@ -398,9 +462,77 @@ const ViewTeam = () => {
           }
         }
 
+        .jersey-card {
+          border-radius: 1rem;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          background: white;
+        }
+
+        .jersey-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .jersey-image-container {
+          position: relative;
+          padding: 1rem;
+          border-radius: 10px;
+          background: #f8f9fa;
+          transition: all 0.3s ease;
+        }
+
+        .jersey-image {
+          max-width: 100%;
+          height: auto;
+          filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
+          transition: transform 0.5s ease;
+        }
+
+        .jersey-card:hover .jersey-image {
+          transform: scale(1.03);
+        }
+
+        .jersey-label {
+          margin-top: 1rem;
+          font-weight: 600;
+          color: #0d6efd;
+          font-size: 1rem;
+        }
+
+        .jersey-placeholder {
+          padding: 3rem 2rem;
+          border-radius: 10px;
+          background: #f8f9fa;
+          border: 2px dashed #dee2e6;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .placeholder-icon {
+          font-size: 3rem;
+          color: #adb5bd;
+          margin-bottom: 1rem;
+        }
+
+        .placeholder-text {
+          color: #6c757d;
+          font-weight: 500;
+        }
+
         @media (max-width: 576px) {
           .responsive-image-container {
             max-width: 120px;
+          }
+          
+          .jersey-image-container {
+            padding: 0.5rem;
+          }
+          
+          .placeholder-icon {
+            font-size: 2.5rem;
           }
         }
       `}</style>
