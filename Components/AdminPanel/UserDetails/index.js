@@ -439,6 +439,12 @@ export default function UserDetails({ userId }) {
                         {user.createdAt || "Not available"}
                       </div>
                     </div>
+                    <div className="info-item mb-4">
+                      <div className="info-label">Blood Group</div>
+                      <div className="info-value">
+                        {user.bloodGroup || "Not available"}
+                      </div>
+                    </div>
 
                     <div className="info-item mb-4">
                       <div className="info-label">Address</div>

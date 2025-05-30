@@ -110,8 +110,11 @@ const Header = () => {
           <div>
             <div className="fs-5 mb-0 text-dark font-weight-bold">
               <Link href="/" passHref legacyBehavior>
-                <Nav.Link className="px-3 text-dark club-name d-none d-md-block">
-                  Chennai Khatri Sports Club
+                <Nav.Link className="px-3 text-dark club-name">
+                  <span className="d-none d-md-inline">
+                    Chennai Khatri Sports Club
+                  </span>
+                  <span className="d-inline d-md-none">CKSC</span>
                 </Nav.Link>
               </Link>
             </div>
@@ -154,10 +157,14 @@ const Header = () => {
                   isSchedultPage ? "fw-bold text-primary active" : "text-dark"
                 }`}
                 style={
-                  isSchedultPage ? { borderBottom: "2px solid #0d6efd" } : {}
+                  isSchedultPage
+                    ? {
+                        borderBottom: "2px solid #0d6efd",
+                      }
+                    : {}
                 }
               >
-                Match Schedule
+                Match&nbsp;Schedule
               </Nav.Link>
             </Link>
 
@@ -169,7 +176,7 @@ const Header = () => {
                 }`}
                 style={isteamPage ? { borderBottom: "2px solid #0d6efd" } : {}}
               >
-                Team
+                KPL&nbsp;Team
               </Nav.Link>
             </Link>
           </Nav>
