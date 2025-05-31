@@ -176,7 +176,7 @@ const Header = () => {
                 }`}
                 style={isteamPage ? { borderBottom: "2px solid #0d6efd" } : {}}
               >
-                KPL&nbsp;Team
+                KPL&nbsp;Teams
               </Nav.Link>
             </Link>
           </Nav>
