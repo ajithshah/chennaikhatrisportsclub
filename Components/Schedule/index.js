@@ -68,7 +68,7 @@ export function SchedulePage() {
   const getStatusBadge = (status) => {
     switch (status) {
       case "Scheduled":
-        return <Badge bg="primary text-light">Scheduled</Badge>;
+        return <Badge bg="success text-light">Scheduled</Badge>;
       case "Upcoming":
         return <Badge bg="primary text-light">Upcoming</Badge>;
       case "Live":
