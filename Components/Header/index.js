@@ -176,7 +176,7 @@ const Header = () => {
                 }`}
                 style={isteamPage ? { borderBottom: "2px solid #0d6efd" } : {}}
               >
-                KPL&nbsp;Teams
+                KPL&nbsp;Season&nbsp;3
               </Nav.Link>
             </Link>
           </Nav>
