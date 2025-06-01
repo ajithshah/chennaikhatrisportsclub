@@ -768,27 +768,29 @@ export default function MatchSchedule() {
                               {match.teamA.charAt(0)}
                             </div>
                           )}
-                          <span className="team-name">{match.teamA}</span>
-                          {match.winnerTeam === match.teamA && (
-                            <div className="d-flex flex-column">
-                              <div className="d-flex align-items-center">
+                          <div className="d-flex flex-column">
+                            <span className="team-name">{match.teamA}</span>
+                            {match.winnerTeam === match.teamA && (
+                              <>
                                 <Badge
                                   bg="warning"
                                   className="winner-badge ms-1"
                                 >
                                   Winner
                                 </Badge>
-                              </div>
-                              {match.manOfTheMatch && (
-                                <div className="motm-badge mt-1">
-                                  <small>
+
+                                {match.manOfTheMatch && (
+                                  <Badge
+                                    bg="primary"
+                                    className="primary-badge mt-1 text-light"
+                                  >
                                     <i className="fas fa-trophy me-1 mr-1"></i>
                                     {match.manOfTheMatch}
-                                  </small>
-                                </div>
-                              )} 
-                            </div>
-                          )}
+                                  </Badge>
+                                )}
+                              </>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="score-cell text-center align-middle">
@@ -843,27 +845,29 @@ export default function MatchSchedule() {
                               {match.teamB.charAt(0)}
                             </div>
                           )}
-                          <span className="team-name">{match.teamB}</span>
-                          {match.winnerTeam === match.teamB && (
-                            <div className="d-flex flex-column">
-                              <div className="d-flex align-items-center">
+                          <div className="d-flex flex-column">
+                            <span className="team-name">{match.teamB}</span>
+                            {match.winnerTeam === match.teamB && (
+                              <>
                                 <Badge
                                   bg="warning"
                                   className="winner-badge ms-1"
                                 >
                                   Winner
                                 </Badge>
-                              </div>
-                              {match.manOfTheMatch && (
-                                <div className="motm-badge mt-1">
-                                  <small className="text-muted">
-                                    <i className="fas fa-trophy me-1"></i>
-                                    MoM: {match.manOfTheMatch}
-                                  </small>
-                                </div>
-                              )}
-                            </div>
-                          )}
+
+                                {match.manOfTheMatch && (
+                                  <Badge
+                                    bg="primary"
+                                    className="primary-badge mt-1 text-light"
+                                  >
+                                    <i className="fas fa-trophy me-1 mr-1"></i>
+                                    {match.manOfTheMatch}
+                                  </Badge>
+                                )}
+                              </>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="align-middle">

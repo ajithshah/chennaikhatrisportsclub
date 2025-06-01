@@ -223,44 +223,55 @@ export function SchedulePage() {
                             {match.matchType}
                           </td>
                           <td className="team-cell">
-                            <div className="team-info">
-                              {match.teamALogoUrl ? (
-                                <div className="team-logo-container">
-                                  <Image
-                                    src={match.teamALogoUrl}
-                                    alt={`${match.teamA} logo`}
-                                    width={40}
-                                    height={40}
-                                    className="team-logo"
-                                  />
-                                </div>
-                              ) : (
-                                <div className="team-logo-placeholder">
-                                  {match.teamA.charAt(0)}
-                                </div>
-                              )}
-                              <span className="team-name">{match.teamA}</span>
-                              {match.winnerTeam === match.teamA && (
-                                <div className="d-flex flex-column">
-                                  <div className="d-flex align-items-center">
-                                    <Badge
-                                      bg="warning"
-                                      className="winner-badge ms-1"
-                                    >
-                                      Winner
-                                    </Badge>
-                                  </div>
-                                  {match.manOfTheMatch && (
-                                    <div className="motm-badge mt-1">
-                                      <small>
-                                        <i className="fas fa-trophy me-1 mr-1"></i>
-                                        {match.manOfTheMatch}
-                                      </small>
+                            <td className="team-cell">
+                              <div className="team-info">
+                                <div className="team-logo-section">
+                                  {match.teamALogoUrl ? (
+                                    <div className="team-logo-container">
+                                      <Image
+                                        src={match.teamALogoUrl}
+                                        alt={`${match.teamA} logo`}
+                                        width={40}
+                                        height={40}
+                                        className="team-logo"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="team-logo-placeholder">
+                                      {match.teamA.charAt(0)}
                                     </div>
                                   )}
                                 </div>
-                              )}
-                            </div>
+                                <div className="team-details">
+                                  <div className="d-flex flex-column">
+                                    <span className="team-name">
+                                      {match.teamA}
+                                    </span>
+
+                                    {match.winnerTeam === match.teamA && (
+                                      <>
+                                        <Badge
+                                          bg="warning"
+                                          className="winner-badge ms-1"
+                                        >
+                                          Winner
+                                        </Badge>
+
+                                        {match.manOfTheMatch && (
+                                          <Badge
+                                            bg="primary"
+                                            className="primary-badge mt-1 text-light"
+                                          >
+                                            <i className="fas fa-trophy me-1 mr-1"></i>
+                                            {match.manOfTheMatch}
+                                          </Badge>
+                                        )}
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
                           </td>
                           <td className="score-cell text-center align-middle">
                             {match.status === "Live" ||
@@ -301,44 +312,55 @@ export function SchedulePage() {
                             )}
                           </td>
                           <td className="team-cell">
-                            <div className="team-info">
-                              {match.teamBLogoUrl ? (
-                                <div className="team-logo-container">
-                                  <Image
-                                    src={match.teamBLogoUrl}
-                                    alt={`${match.teamB} logo`}
-                                    width={40}
-                                    height={40}
-                                    className="team-logo"
-                                  />
-                                </div>
-                              ) : (
-                                <div className="team-logo-placeholder">
-                                  {match.teamB.charAt(0)}
-                                </div>
-                              )}
-                              <span className="team-name">{match.teamB}</span>
-                              {match.winnerTeam === match.teamB && (
-                                <div className="d-flex flex-column">
-                                  <div className="d-flex align-items-center">
-                                    <Badge
-                                      bg="warning"
-                                      className="winner-badge ms-1"
-                                    >
-                                      Winner
-                                    </Badge>
-                                  </div>
-                                  {match.manOfTheMatch && (
-                                    <div className="motm-badge mt-1">
-                                      <small>
-                                        <i className="fas fa-trophy me-1 mr-1"></i>
-                                        {match.manOfTheMatch}
-                                      </small>
+                            <td className="team-cell">
+                              <div className="team-info">
+                                <div className="team-logo-section">
+                                  {match.teamALogoUrl ? (
+                                    <div className="team-logo-container">
+                                      <Image
+                                        src={match.teamALogoUrl}
+                                        alt={`${match.teamB} logo`}
+                                        width={40}
+                                        height={40}
+                                        className="team-logo"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="team-logo-placeholder">
+                                      {match.teamA.charAt(0)}
                                     </div>
                                   )}
                                 </div>
-                              )}
-                            </div>
+                                <div className="team-details">
+                                  <div className="d-flex flex-column">
+                                    <span className="team-name">
+                                      {match.teamA}
+                                    </span>
+
+                                    {match.winnerTeam === match.teamB && (
+                                      <>
+                                        <Badge
+                                          bg="warning"
+                                          className="winner-badge ms-1"
+                                        >
+                                          Winner
+                                        </Badge>
+
+                                        {match.manOfTheMatch && (
+                                          <Badge
+                                            bg="primary"
+                                            className="primary-badge mt-1 text-light"
+                                          >
+                                            <i className="fas fa-trophy me-1 mr-1"></i>
+                                            {match.manOfTheMatch}
+                                          </Badge>
+                                        )}
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
                           </td>
                           <td className="align-middle">
                             <div className="match-date">
@@ -360,25 +382,140 @@ export function SchedulePage() {
       </div>
 
       <style jsx global>{`
+        // Add to your style jsx global block
+        .team-logo-section {
+          position: relative;
+          margin-right: 12px;
+        }
 
-          .motm-badge {
+        .motm-badge-small {
+          font-size: 0.65rem;
+          padding: 1px 6px;
+          border-radius: 12px;
+          background: #fff8e1;
+          border: 1px solid #ffc107;
+          display: inline-flex;
+          align-items: center;
+          gap: 3px;
+          margin-top: 4px;
+          width: fit-content;
+        }
+
+        .motm-badge-small i {
+          font-size: 0.7rem;
+          color: #ffc107;
+        }
+
+        .motm-badge-small span {
+          font-weight: 600;
+          color: #664d03;
+        }
+
+        .team-details {
+          display: flex;
+          align-items: flex-start;
+          flex-grow: 1;
+          gap: 8px;
+        }
+
+        @media (max-width: 768px) {
+          .motm-badge-small {
+            font-size: 0.6rem;
+            padding: 1px 4px;
+          }
+
+          .motm-badge-small i {
+            font-size: 0.65rem;
+          }
+        }
+        .score {
+          font-weight: bold;
+          font-size: 1rem; /* Reduced from 1.2rem */
+          color: #333;
+          padding: 6px 12px; /* Slightly reduced padding */
+          border-radius: 10px;
+          display: inline-block;
+          background-color: #f8f9fa;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
+          transition: all 0.3s ease;
+        }
+
+        .live-score {
+          color: #fff !important;
+          font-size: 1.1rem !important; /* Reduced from 1.3rem */
+          font-weight: 700 !important;
+          background: linear-gradient(90deg, #1e90ff, #4169e1);
+          box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3);
+          padding: 6px 12px;
+          border-radius: 10px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .wickets-info {
+          font-size: 0.85rem; /* Added smaller font for wickets */
+        }
+
+        .score-separator {
+          margin: 0 6px;
+          color: inherit;
+          opacity: 0.8;
+          font-size: 0.9rem; /* Added smaller font for separator */
+        }
+
+        .vs-text {
+          font-weight: bold;
+          font-size: 1rem; /* Reduced from 1.2rem */
+          color: #aaa;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          background: linear-gradient(90deg, #ccc, #999);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        @media (max-width: 768px) {
+          .score {
+            font-size: 0.9rem; /* Reduced from 1rem */
+            padding: 5px 10px;
+          }
+
+          .live-score {
+            font-size: 1rem !important; /* Reduced from 1.1rem */
+            padding: 5px 10px;
+          }
+
+          .wickets-info {
             font-size: 0.75rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background-color: #f8f9fa;
-            display: inline-block;
-            margin-top: 4px;
-            border: 1px dashed #ffc107;
           }
 
-          .motm-badge i {
-            color: #ffc107;
+          .vs-text {
+            font-size: 0.9rem;
           }
+        }
 
-          .motm-badge small {
-            font-weight: 500;
-            white-space: nowrap;
-          }
+        .motm-badge {
+          font-size: 0.75rem;
+          padding: 2px 6px;
+          border-radius: 4px;
+          background-color: #f8f9fa;
+          display: block; /* Changed from inline-block */
+          margin-top: 4px;
+          border: 1px dashed #ffc107;
+          width: 100%; /* Added to make it full width */
+        }
+
+        .motm-badge i {
+          color: #ffc107;
+        }
+
+        .motm-badge small {
+          font-weight: 500;
+          white-space: nowrap;
+          display: block; /* Added to ensure text wraps properly */
+          overflow: hidden;
+          text-overflow: ellipsis; /* Added to handle long names */
+        }
 
         .match-schedule-page {
           padding-top: 100px;
@@ -449,6 +586,7 @@ export function SchedulePage() {
         .match-table tbody tr td {
           padding: 20px 15px;
           border: none;
+          font-size: 0.85rem;
           position: relative;
         }
 
@@ -545,9 +683,9 @@ export function SchedulePage() {
 
         .score {
           font-weight: bold;
-          font-size: 1.2rem;
+          font-size: 1rem;
           color: #333;
-          padding: 8px 16px;
+          padding: 6px 12px;
           border-radius: 10px;
           display: inline-block;
           background-color: #f8f9fa;
@@ -562,25 +700,30 @@ export function SchedulePage() {
 
         .live-score {
           color: #fff !important;
-          font-size: 1.3rem !important;
+          font-size: 1.1rem !important;
           font-weight: 700 !important;
           background: linear-gradient(90deg, #1e90ff, #4169e1);
           box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3);
-          padding: 8px 16px;
+          padding: 6px 12px;
           border-radius: 10px;
           position: relative;
           overflow: hidden;
         }
 
+        .wickets-info {
+          font-size: 0.85rem;
+        }
+
         .score-separator {
-          margin: 0 8px;
+          margin: 0 6px;
           color: inherit;
           opacity: 0.8;
+          font-size: 0.9rem;
         }
 
         .vs-text {
           font-weight: bold;
-          font-size: 1.2rem;
+          font-size: 1rem;
           color: #aaa;
           letter-spacing: 2px;
           text-transform: uppercase;
@@ -676,13 +819,21 @@ export function SchedulePage() {
           }
 
           .score {
-            font-size: 1rem;
-            padding: 6px 12px;
+            font-size: 0.9rem;
+            padding: 5px 10px;
           }
 
           .live-score {
-            font-size: 1.1rem !important;
-            padding: 6px 12px;
+            font-size: 1rem !important;
+            padding: 5px 10px;
+          }
+
+          .wickets-info {
+            font-size: 0.75rem;
+          }
+
+          .vs-text {
+            font-size: 0.9rem;
           }
 
           .match-date,
