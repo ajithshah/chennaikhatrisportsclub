@@ -70,20 +70,20 @@ const Team = () => {
       }}
     >
       <Container>
-        <div className="d-flex justify-content-between align-items-center mb-4 mb-md-5">
-          <h2 className="fw-bold">
+        <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 mb-md-5">
+          <h2 className="fw-bold m-0">
             <span className="border-bottom border-primary border-3 pb-2">
               KPL Season 3 Cricket Teams
             </span>
           </h2>
-          {/* <Button
+          <Button
             variant="outline-primary"
             onClick={handleShowRules}
-            className="rounded-pill"
+            className="rounded-pill w-md-auto"
           >
             <i className="fas fa-info-circle me-2"></i>
             Tournament Rules
-          </Button> */}
+          </Button>
         </div>
 
         <Row xs={1} md={3} className="g-4 justify-content-center">

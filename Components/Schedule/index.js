@@ -216,7 +216,10 @@ export function SchedulePage() {
                           <td className="text-center align-middle">
                             {getStatusBadge(match.status)}
                           </td>
-                          <td className="text-center align-middle">
+                          <td
+                            className="text-center align-middle"
+                            style={{ fontSize: "1.1rem", fontWeight: "500" }}
+                          >
                             {match.group}
                           </td>
                           <td className="text-center align-middle">
