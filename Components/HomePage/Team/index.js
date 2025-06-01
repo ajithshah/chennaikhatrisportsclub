@@ -77,14 +77,14 @@ const Team = () => {
             </span>
           </h2>
           <br></br>
-          {/* <Button
+          <Button
             variant="outline-primary"
             onClick={handleShowRules}
             className="rounded-pill w-md-auto"
           >
-            <i className="fas fa-info-circle me-2"></i>
+            <i className="fas fa-info-circle me-2 mr-1"></i>
             Tournament Rules
-          </Button> */}
+          </Button>
         </div>
 
         <Row xs={1} md={3} className="g-4 justify-content-center">
@@ -132,90 +132,123 @@ const Team = () => {
         </Modal.Header>
         <Modal.Body>
           <div className="p-3">
-            <h5 className="text-primary mb-3">General Rules</h5>
+            <h5 className="text-primary mb-3">Tournament Information</h5>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <i className="fas fa-circle-check text-success me-2"></i>
-                Each team must have a minimum of 11 players and maximum of 15
-                players
+                <i className="fas fa-users text-success me-2 mr-1"></i>
+                Total Teams: 18 teams registered
               </li>
               <li className="mb-2">
-                <i className="fas fa-circle-check text-success me-2"></i>
-                Matches will be played with 20 overs per innings (T20 format)
+                <i className="fas fa-calendar text-success me-2 mr-1"></i>
+                Match Dates: July 5th (Saturday) and July 6th (Sunday)
               </li>
               <li className="mb-2">
-                <i className="fas fa-circle-check text-success me-2"></i>
-                Power play: Only 2 fielders allowed outside 30-yard circle
-                (first 6 overs)
+                <i className="fas fa-map-marker-alt text-success me-2 mr-1"></i>
+                Venue: Pachayappas College - Ground B and C
               </li>
               <li className="mb-2">
-                <i className="fas fa-circle-check text-success me-2"></i>
-                Each bowler can bowl a maximum of 4 overs per match
-              </li>
-              <li className="mb-2">
-                <i className="fas fa-circle-check text-success me-2"></i>
-                Free hit will be awarded for all no-balls
-              </li>
-              <li className="mb-2">
-                <i className="fas fa-circle-check text-success me-2"></i>
-                DLS method will be used for rain-affected matches
+                <i className="fas fa-clock text-success me-2 mr-1"></i>
+                Timings: 6:00 a.m. to 5:30 p.m.
               </li>
             </ul>
 
-            <h5 className="text-primary mb-3 mt-4">Playing Conditions</h5>
+            <h5 className="text-primary mb-3 mt-4">Match Format</h5>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <i className="fas fa-cricket text-info me-2"></i>
-                Wide ball rules as per T20 international standards
+                <i className="fas fa-cricket-ball text-info me-2 mr-1"></i>
+                League Matches: 8 Overs per innings
               </li>
               <li className="mb-2">
-                <i className="fas fa-cricket text-info me-2"></i>5 penalty runs
-                for ball hitting helmet placed behind keeper
+                <i className="fas fa-trophy text-info me-2 mr-1"></i>
+                Quarter-Finals & Finals: 10 overs per innings
               </li>
               <li className="mb-2">
-                <i className="fas fa-cricket text-info me-2"></i>
-                Maximum 5 fielders on leg side at any time
+                <i className="fas fa-ruler text-info me-2 mr-1"></i>
+                Standard pitch length: 24 yards (adjustable upon mutual
+                agreement)
               </li>
               <li className="mb-2">
-                <i className="fas fa-cricket text-info me-2"></i>
-                Minimum 4 fielders (excluding bowler & keeper) inside circle at
-                all times
+                <i className="fas fa-baseball-bat text-info me-2 mr-1"></i>
+                Only wooden bats allowed - no plastic bats
               </li>
             </ul>
 
-            <h5 className="text-primary mb-3 mt-4">Points System</h5>
+            <h5 className="text-primary mb-3 mt-4">Playing Rules</h5>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <i className="fas fa-trophy text-warning me-2"></i>
-                Win: 2 points
+                <i className="fas fa-shield-alt text-warning me-2 mr-1"></i>
+                Power Play (8 Overs): First 2 overs - only 2 fielders outside
+                30-yard circle
               </li>
               <li className="mb-2">
-                <i className="fas fa-handshake text-info me-2"></i>
-                Tie/No Result: 1 point
+                <i className="fas fa-shield-alt text-warning me-2 mr-1"></i>
+                Power Play (10 Overs): First 4 overs with progressive fielding
+                restrictions
               </li>
               <li className="mb-2">
-                <i className="fas fa-times text-danger me-2"></i>
-                Loss: 0 points
+                <i className="fas fa-bowling-ball text-warning me-2 mr-1"></i>
+                Bowling Limit (8 Overs): Only 3 bowlers can bowl 2 overs
               </li>
               <li className="mb-2">
-                <i className="fas fa-bolt text-warning me-2"></i>
-                Bonus Point: 0.5 (for run rate 1.25 times that of opposition)
+                <i className="fas fa-bowling-ball text-warning me-2 mr-1"></i>
+                Bowling Limit (10 Overs): Maximum 2 overs per bowler
               </li>
             </ul>
 
-            <h5 className="text-primary mb-3 mt-4">Additional Regulations</h5>
+            <h5 className="text-primary mb-3 mt-4">Special Rules</h5>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <i className="fas fa-clock text-secondary me-2"></i>
-                Teams must complete their overs within 80 minutes
+                <i className="fas fa-user-friends text-info me-2 mr-1"></i>
+                Impact Player Rule: 2 players can be listed, 1 can be deployed
+                anytime
               </li>
               <li className="mb-2">
-                <i className="fas fa-user-clock text-secondary me-2"></i>
-                Player registration deadline: 24 hours before first match
+                <i className="fas fa-hand-paper text-info me-2 mr-1"></i>
+                No LBW/Leg Byes allowed
               </li>
               <li className="mb-2">
-                <i className="fas fa-exclamation-triangle text-warning me-2"></i>
-                Three warnings for slow over-rate will result in point deduction
+                <i className="fas fa-exclamation-circle text-info me-2 mr-1"></i>
+                One bouncer per over allowed (2nd bouncer = No ball + Free hit)
+              </li>
+              <li className="mb-2">
+                <i className="fas fa-random text-info me-2 mr-1"></i>
+                Mankading: First time warning, second time out
+              </li>
+            </ul>
+
+            <h5 className="text-primary mb-3 mt-4">Additional Features</h5>
+            <ul className="list-unstyled">
+              <li className="mb-2">
+                <i className="fas fa-utensils text-success me-2 mr-1"></i>
+                Breakfast, Lunch, and Refreshments provided
+              </li>
+              <li className="mb-2">
+                <i className="fas fa-tshirt text-success me-2 mr-1"></i>
+                Jersey provided for all team players (14 members/team)
+              </li>
+              <li className="mb-2">
+                <i className="fas fa-video text-success me-2 mr-1"></i>
+                Live YouTube streaming and Cricheroes scoring
+              </li>
+              <li className="mb-2">
+                <i className="fas fa-first-aid text-success me-2 mr-1"></i>
+                Medical support available for both days
+              </li>
+            </ul>
+
+            <h5 className="text-primary mb-3 mt-4">Contact Information</h5>
+            <ul className="list-unstyled">
+              <li className="mb-2">
+                <i className="fas fa-phone text-secondary me-2 mr-1"></i>
+                Mr. Vinod Kumar: +91 98408 80873
+              </li>
+              <li className="mb-2">
+                <i className="fas fa-phone text-secondary me-2 mr-1"></i>
+                Mr. Rajini: +91 98415 26709
+              </li>
+              <li className="mb-2">
+                <i className="fas fa-phone text-secondary me-2 mr-1"></i>
+                Mr. Sushil: +91 98417 12284
               </li>
             </ul>
           </div>
