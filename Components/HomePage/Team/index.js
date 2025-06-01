@@ -76,14 +76,14 @@ const Team = () => {
               KPL Season 3 Cricket Teams
             </span>
           </h2>
-          <Button
+          {/* <Button
             variant="outline-primary"
             onClick={handleShowRules}
             className="rounded-pill"
           >
             <i className="fas fa-info-circle me-2"></i>
             Tournament Rules
-          </Button>
+          </Button> */}
         </div>
 
         <Row xs={1} md={3} className="g-4 justify-content-center">

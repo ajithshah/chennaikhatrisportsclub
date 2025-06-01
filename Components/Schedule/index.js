@@ -199,6 +199,7 @@ export function SchedulePage() {
                     <thead>
                       <tr>
                         <th className="text-center">Status</th>
+                        <th className="text-center">Group</th>
                         <th className="text-center">Type</th>
                         <th className="text-center">Team A</th>
                         <th className="text-center">Score</th>
@@ -210,14 +211,13 @@ export function SchedulePage() {
                       {sortedMatches.map((match) => (
                         <tr
                           key={match.id}
-                          className={`match-row ${match.status.toLowerCase()}-match ${
-                            match.status === "Live"
-                              ? "live-match-highlight"
-                              : ""
-                          }`}
+                          className={`match-row ${match.status.toLowerCase()}-match ${"live-match-highlight"}`}
                         >
                           <td className="text-center align-middle">
                             {getStatusBadge(match.status)}
+                          </td>
+                          <td className="text-center align-middle">
+                            {match.group}
                           </td>
                           <td className="text-center align-middle">
                             {match.matchType}
@@ -274,13 +274,8 @@ export function SchedulePage() {
                             </td>
                           </td>
                           <td className="score-cell text-center align-middle">
-                            {match.status === "Live" ||
-                            match.status === "Completed" ? (
-                              <div
-                                className={`score ${
-                                  match.status === "Live" ? "live-score" : ""
-                                }`}
-                              >
+                            {match.status === "Completed" ? (
+                              <div className={`score ${"live-score"}`}>
                                 <span className="home-score">
                                   {match.teamAScore}
                                 </span>
@@ -318,7 +313,7 @@ export function SchedulePage() {
                                   {match.teamALogoUrl ? (
                                     <div className="team-logo-container">
                                       <Image
-                                        src={match.teamALogoUrl}
+                                        src={match.teamBLogoUrl}
                                         alt={`${match.teamB} logo`}
                                         width={40}
                                         height={40}
@@ -334,7 +329,7 @@ export function SchedulePage() {
                                 <div className="team-details">
                                   <div className="d-flex flex-column">
                                     <span className="team-name">
-                                      {match.teamA}
+                                      {match.teamB}
                                     </span>
 
                                     {match.winnerTeam === match.teamB && (
@@ -345,7 +340,6 @@ export function SchedulePage() {
                                         >
                                           Winner
                                         </Badge>
-
                                         {match.manOfTheMatch && (
                                           <Badge
                                             bg="primary"

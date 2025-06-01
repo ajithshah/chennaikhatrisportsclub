@@ -44,6 +44,7 @@ export default function MatchSchedule() {
     teamBWickets: "",
     winnerTeam: "",
     manOfTheMatch: "",
+    group: "",
   });
 
   useEffect(() => {
@@ -180,6 +181,7 @@ export default function MatchSchedule() {
         isLive: formData.status === "Live",
         teamALogoUrl: teamAData?.teamLogoUrl || "",
         teamBLogoUrl: teamBData?.teamLogoUrl || "",
+        group: formData.group || "",
       };
 
       await addDoc(collection(db, "matches"), matchData);
@@ -208,6 +210,7 @@ export default function MatchSchedule() {
         isLive: formData.status === "Live",
         teamALogoUrl: teamAData?.teamLogoUrl || "",
         teamBLogoUrl: teamBData?.teamLogoUrl || "",
+        group: formData.group || "",
       };
 
       await updateDoc(matchRef, updatedData);
@@ -246,6 +249,7 @@ export default function MatchSchedule() {
       teamBWickets: match.teamBWickets || "",
       winnerTeam: match.winnerTeam || "",
       manOfTheMatch: match.manOfTheMatch || "",
+      group: match.group || "",
     });
     setShowEditModal(true);
   };
@@ -265,6 +269,7 @@ export default function MatchSchedule() {
       teamBWickets: "",
       winnerTeam: "",
       manOfTheMatch: "",
+      group: "",
     });
     setCurrentMatch(null);
   };
@@ -326,45 +331,36 @@ export default function MatchSchedule() {
 
   // Sort matches by status priority and date
   const sortedMatches = [...matches].sort((a, b) => {
-    // Define status priority order (case-insensitive)
-    const statusPriority = {
-      live: 1,
-      upcoming: 2,
-      scheduled: 3,
-      completed: 4,
-      postponed: 5,
-      cancelled: 6,
+    // Define status priority order
+    const statusOrder = {
+      Live: 1,
+      Upcoming: 2,
+      Scheduled: 3,
+      Completed: 4,
+      Postponed: 5,
+      Cancelled: 6,
     };
 
-    // Get status in lowercase for case-insensitive comparison
-    const statusA = (a.status || "").toLowerCase();
-    const statusB = (b.status || "").toLowerCase();
+    // Get the priority for each match's status
+    const statusPriorityA = statusOrder[a.status] || 999;
+    const statusPriorityB = statusOrder[b.status] || 999;
 
-    // First sort by status priority
-    const priorityA = statusPriority[statusA] || 999; // Default high number for unknown status
-    const priorityB = statusPriority[statusB] || 999;
-
-    if (priorityA !== priorityB) {
-      return priorityA - priorityB;
+    // Compare status priorities first
+    if (statusPriorityA !== statusPriorityB) {
+      return statusPriorityA - statusPriorityB;
     }
 
     // If status is the same, sort by date and time
-    let dateA, dateB;
-    try {
-      dateA = new Date(a.matchDate + "T" + (a.matchTime || "00:00"));
-      dateB = new Date(b.matchDate + "T" + (b.matchTime || "00:00"));
-    } catch (e) {
-      // Handle invalid dates
-      return 0;
+    const dateTimeA = new Date(`${a.matchDate}T${a.matchTime || "00:00"}`);
+    const dateTimeB = new Date(`${b.matchDate}T${b.matchTime || "00:00"}`);
+
+    // For Live, Upcoming, and Scheduled matches, show earliest first
+    if (["Live", "Upcoming", "Scheduled"].includes(a.status)) {
+      return dateTimeA - dateTimeB;
     }
 
-    // For upcoming/scheduled matches, sort chronologically (earlier first)
-    if (["live", "upcoming", "scheduled"].includes(statusA)) {
-      return dateA - dateB;
-    }
-
-    // For completed/postponed/cancelled matches, sort reverse chronologically (recent first)
-    return dateB - dateA;
+    // For Completed, Postponed, and Cancelled matches, show most recent first
+    return dateTimeB - dateTimeA;
   });
 
   const printMatchSchedule = () => {
@@ -727,6 +723,7 @@ export default function MatchSchedule() {
                 <thead>
                   <tr>
                     <th className="text-center">Status</th>
+                    <th className="text-center">Group</th>
                     <th className="text-center">Type</th>
                     <th>Team A</th>
                     <th className="text-center">Score/Match</th>
@@ -747,6 +744,9 @@ export default function MatchSchedule() {
                     >
                       <td className="text-center align-middle">
                         {getStatusBadge(match.status)}
+                      </td>
+                      <td className="text-center align-middle">
+                        {match.group}
                       </td>
                       <td className="text-center align-middle">
                         {match.matchType}
@@ -794,8 +794,7 @@ export default function MatchSchedule() {
                         </div>
                       </td>
                       <td className="score-cell text-center align-middle">
-                        {match.status === "Live" ||
-                        match.status === "Completed" ? (
+                        {match.status === "Completed" ? (
                           <div
                             className={`score ${
                               match.status === "Live" ? "live-score" : ""
@@ -985,6 +984,25 @@ export default function MatchSchedule() {
               </div>
             </Form.Group>
 
+            <Form.Group className="mb-3">
+              <Form.Label>Group</Form.Label>
+              <Form.Select
+                name="group"
+                value={formData.group}
+                onChange={handleInputChange}
+                required
+                className="form-select-custom"
+              >
+                <option value="">Select Group</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+              </Form.Select>
+            </Form.Group>
+
             <Row>
               <Col>
                 <Form.Group className="mb-3">
@@ -1024,8 +1042,8 @@ export default function MatchSchedule() {
                 className="form-select-custom"
               >
                 <option value="">Select Venue</option>
-                <option value="Pachyappas Ground B">Pachyappas Ground B</option>
-                <option value="Pachyappas Ground C">Pachyappas Ground C</option>
+                <option value="Ground B">Pachyappas Ground B</option>
+                <option value="Ground C">Pachyappas Ground C</option>
               </Form.Select>
             </Form.Group>
 
@@ -1070,8 +1088,7 @@ export default function MatchSchedule() {
               </Col>
             </Row>
 
-            {(formData.status === "Live" ||
-              formData.status === "Completed") && (
+            {formData.status === "Completed" && (
               <Row className="mb-3 score-section">
                 <Col md={6}>
                   <Form.Group>
@@ -1268,6 +1285,25 @@ export default function MatchSchedule() {
               </div>
             </Form.Group>
 
+            <Form.Group className="mb-3">
+              <Form.Label>Group</Form.Label>
+              <Form.Select
+                name="group"
+                value={formData.group}
+                onChange={handleInputChange}
+                required
+                className="form-select-custom"
+              >
+                <option value="">Select Group</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+              </Form.Select>
+            </Form.Group>
+
             <Row>
               <Col>
                 <Form.Group className="mb-3">
@@ -1307,8 +1343,8 @@ export default function MatchSchedule() {
                 className="form-select-custom"
               >
                 <option value="">Select Venue</option>
-                <option value="Pachyappas Ground B">Pachyappas Ground B</option>
-                <option value="Pachyappas Ground C">Pachyappas Ground C</option>
+                <option value="Ground B">Pachyappas Ground B</option>
+                <option value="Ground C">Pachyappas Ground C</option>
               </Form.Select>
             </Form.Group>
 
@@ -1348,8 +1384,7 @@ export default function MatchSchedule() {
               </Form.Select>
             </Form.Group>
 
-            {(formData.status === "Live" ||
-              formData.status === "Completed") && (
+            {formData.status === "Completed" && (
               <Row className="mb-3 score-section">
                 <Col md={6}>
                   <Form.Group>
