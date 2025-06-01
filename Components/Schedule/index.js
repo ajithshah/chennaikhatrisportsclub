@@ -200,9 +200,9 @@ export function SchedulePage() {
                       <tr>
                         <th className="text-center">Status</th>
                         <th className="text-center">Type</th>
-                        <th className="text-center">Home Team</th>
+                        <th className="text-center">Team A</th>
                         <th className="text-center">Score</th>
-                        <th className="text-center">Away Team</th>
+                        <th className="text-center">Team B</th>
                         <th>Date, Time & Venue</th>
                       </tr>
                     </thead>
@@ -224,11 +224,11 @@ export function SchedulePage() {
                           </td>
                           <td className="team-cell">
                             <div className="team-info">
-                              {match.homeTeamLogoUrl ? (
+                              {match.teamALogoUrl ? (
                                 <div className="team-logo-container">
                                   <Image
-                                    src={match.homeTeamLogoUrl}
-                                    alt={`${match.homeTeam} logo`}
+                                    src={match.teamALogoUrl}
+                                    alt={`${match.teamA} logo`}
                                     width={40}
                                     height={40}
                                     className="team-logo"
@@ -236,16 +236,29 @@ export function SchedulePage() {
                                 </div>
                               ) : (
                                 <div className="team-logo-placeholder">
-                                  {match.homeTeam.charAt(0)}
+                                  {match.teamA.charAt(0)}
                                 </div>
                               )}
-                              <span className="team-name">
-                                {match.homeTeam}
-                              </span>
-                              {match.winnerTeam === match.homeTeam && (
-                                <Badge bg="warning" className="winner-badge">
-                                  Winner
-                                </Badge>
+                              <span className="team-name">{match.teamA}</span>
+                              {match.winnerTeam === match.teamA && (
+                                <div className="d-flex flex-column">
+                                  <div className="d-flex align-items-center">
+                                    <Badge
+                                      bg="warning"
+                                      className="winner-badge ms-1"
+                                    >
+                                      Winner
+                                    </Badge>
+                                  </div>
+                                  {match.manOfTheMatch && (
+                                    <div className="motm-badge mt-1">
+                                      <small>
+                                        <i className="fas fa-trophy me-1 mr-1"></i>
+                                        {match.manOfTheMatch}
+                                      </small>
+                                    </div>
+                                  )}
+                                </div>
                               )}
                             </div>
                           </td>
@@ -258,20 +271,20 @@ export function SchedulePage() {
                                 }`}
                               >
                                 <span className="home-score">
-                                  {match.homeTeamScore}
+                                  {match.teamAScore}
                                 </span>
-                                {match.homeTeamWickets !== undefined && (
+                                {match.teamAWickets !== undefined && (
                                   <span className="wickets-info">
-                                    /{match.homeTeamWickets}
+                                    /{match.teamAWickets}
                                   </span>
                                 )}
                                 <span className="score-separator">-</span>
                                 <span className="away-score">
-                                  {match.awayTeamScore}
+                                  {match.teamBScore}
                                 </span>
-                                {match.awayTeamWickets !== undefined && (
+                                {match.teamBWickets !== undefined && (
                                   <span className="wickets-info">
-                                    /{match.awayTeamWickets}
+                                    /{match.teamBWickets}
                                   </span>
                                 )}
                                 {match.winnerTeam === "Draw" && (
@@ -289,11 +302,11 @@ export function SchedulePage() {
                           </td>
                           <td className="team-cell">
                             <div className="team-info">
-                              {match.awayTeamLogoUrl ? (
+                              {match.teamBLogoUrl ? (
                                 <div className="team-logo-container">
                                   <Image
-                                    src={match.awayTeamLogoUrl}
-                                    alt={`${match.awayTeam} logo`}
+                                    src={match.teamBLogoUrl}
+                                    alt={`${match.teamB} logo`}
                                     width={40}
                                     height={40}
                                     className="team-logo"
@@ -301,16 +314,29 @@ export function SchedulePage() {
                                 </div>
                               ) : (
                                 <div className="team-logo-placeholder">
-                                  {match.awayTeam.charAt(0)}
+                                  {match.teamB.charAt(0)}
                                 </div>
                               )}
-                              <span className="team-name">
-                                {match.awayTeam}
-                              </span>
-                              {match.winnerTeam === match.awayTeam && (
-                                <Badge bg="warning" className="winner-badge">
-                                  Winner
-                                </Badge>
+                              <span className="team-name">{match.teamB}</span>
+                              {match.winnerTeam === match.teamB && (
+                                <div className="d-flex flex-column">
+                                  <div className="d-flex align-items-center">
+                                    <Badge
+                                      bg="warning"
+                                      className="winner-badge ms-1"
+                                    >
+                                      Winner
+                                    </Badge>
+                                  </div>
+                                  {match.manOfTheMatch && (
+                                    <div className="motm-badge mt-1">
+                                      <small>
+                                        <i className="fas fa-trophy me-1 mr-1"></i>
+                                        {match.manOfTheMatch}
+                                      </small>
+                                    </div>
+                                  )}
+                                </div>
                               )}
                             </div>
                           </td>
@@ -334,6 +360,26 @@ export function SchedulePage() {
       </div>
 
       <style jsx global>{`
+
+          .motm-badge {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            display: inline-block;
+            margin-top: 4px;
+            border: 1px dashed #ffc107;
+          }
+
+          .motm-badge i {
+            color: #ffc107;
+          }
+
+          .motm-badge small {
+            font-weight: 500;
+            white-space: nowrap;
+          }
+
         .match-schedule-page {
           padding-top: 100px;
           padding-bottom: 50px;

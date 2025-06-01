@@ -29,19 +29,21 @@ export default function MatchSchedule() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [currentMatch, setCurrentMatch] = useState(null);
+  const [players, setPlayers] = useState([]);
   const [formData, setFormData] = useState({
-    homeTeam: "",
-    awayTeam: "",
+    teamA: "",
+    teamB: "",
     matchDate: "",
     matchTime: "",
     venue: "",
     matchType: "League Match",
     status: "Upcoming",
-    homeTeamScore: "",
-    awayTeamScore: "",
-    homeTeamWickets: "",
-    awayTeamWickets: "",
+    teamAScore: "",
+    teamBScore: "",
+    teamAWickets: "",
+    teamBWickets: "",
     winnerTeam: "",
+    manOfTheMatch: "",
   });
 
   useEffect(() => {
@@ -49,13 +51,53 @@ export default function MatchSchedule() {
     fetchTeams();
   }, []);
 
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const playersSnapshot = await getDocs(collection(db, "cricket_teams"));
+        const playersList = [];
+
+        // Extract players from each team
+        playersSnapshot.docs.forEach((doc) => {
+          const teamData = doc.data();
+          const teamName = teamData.name;
+
+          // Add each player from the team's players array
+          if (teamData.players && Array.isArray(teamData.players)) {
+            teamData.players.forEach((player) => {
+              playersList.push({
+                id: `${doc.id}_${player.userId || player.name}`, // Unique ID
+                name: player.name,
+                teamName: teamName, // Changed from team to teamName to match filter
+                teamId: doc.id,
+                role: player.role || "",
+                jerseyNumber: player.jerseyNumber || "",
+              });
+            });
+          }
+        });
+
+        console.log("Fetched players:", playersList); // Debug log
+        setPlayers(playersList);
+      } catch (error) {
+        console.error("Error fetching players:", error);
+      }
+    };
+
+    fetchPlayers();
+  }, []);
+
   // Listen for status changes to show/hide winner selection
   useEffect(() => {
-    // If status changes to something other than Completed, clear the winner
-    if (formData.status !== "Completed" && formData.winnerTeam) {
+    // If status changes to something other than Completed, clear the winner and man of the match
+    if (
+      formData.status !== "Completed" &&
+      (formData.winnerTeam || formData.manOfTheMatch)
+    ) {
       setFormData({
         ...formData,
         winnerTeam: "",
+        manOfTheMatch: "",
       });
     }
   }, [formData.status]);
@@ -117,31 +159,27 @@ export default function MatchSchedule() {
   const handleAddMatch = async (e) => {
     e.preventDefault();
 
-    // Check if home and away teams are the same
-    if (formData.homeTeam === formData.awayTeam) {
-      alert("Home Team and Away Team cannot be the same");
+    // Check if Team And Team Bs are the same
+    if (formData.teamA === formData.teamB) {
+      alert("Team A and Team B cannot be the same");
       return;
     }
 
     try {
       // Find the selected teams' logo URLs
-      const homeTeamData = teams.find(
-        (team) => team.name === formData.homeTeam
-      );
-      const awayTeamData = teams.find(
-        (team) => team.name === formData.awayTeam
-      );
+      const teamAData = teams.find((team) => team.name === formData.teamA);
+      const teamBData = teams.find((team) => team.name === formData.teamB);
 
       const matchData = {
         ...formData,
         createdAt: new Date(),
-        homeTeamScore: parseInt(formData.homeTeamScore),
-        awayTeamScore: parseInt(formData.awayTeamScore),
-        homeTeamWickets: parseInt(formData.homeTeamWickets) || 0,
-        awayTeamWickets: parseInt(formData.awayTeamWickets) || 0,
+        teamAScore: parseInt(formData.teamAScore),
+        teamBScore: parseInt(formData.teamBScore),
+        teamAWickets: parseInt(formData.teamAWickets) || 0,
+        teamBWickets: parseInt(formData.teamBWickets) || 0,
         isLive: formData.status === "Live",
-        homeTeamLogoUrl: homeTeamData?.teamLogoUrl || "",
-        awayTeamLogoUrl: awayTeamData?.teamLogoUrl || "",
+        teamALogoUrl: teamAData?.teamLogoUrl || "",
+        teamBLogoUrl: teamBData?.teamLogoUrl || "",
       };
 
       await addDoc(collection(db, "matches"), matchData);
@@ -157,23 +195,19 @@ export default function MatchSchedule() {
     e.preventDefault();
     try {
       // Find the selected teams' logo URLs
-      const homeTeamData = teams.find(
-        (team) => team.name === formData.homeTeam
-      );
-      const awayTeamData = teams.find(
-        (team) => team.name === formData.awayTeam
-      );
+      const teamAData = teams.find((team) => team.name === formData.teamA);
+      const teamBData = teams.find((team) => team.name === formData.teamB);
 
       const matchRef = doc(db, "matches", currentMatch.id);
       const updatedData = {
         ...formData,
-        homeTeamScore: parseInt(formData.homeTeamScore),
-        awayTeamScore: parseInt(formData.awayTeamScore),
-        homeTeamWickets: parseInt(formData.homeTeamWickets) || 0,
-        awayTeamWickets: parseInt(formData.awayTeamWickets) || 0,
+        teamAScore: parseInt(formData.teamAScore),
+        teamBScore: parseInt(formData.teamBScore),
+        teamAWickets: parseInt(formData.teamAWickets) || 0,
+        teamBWickets: parseInt(formData.teamBWickets) || 0,
         isLive: formData.status === "Live",
-        homeTeamLogoUrl: homeTeamData?.teamLogoUrl || "",
-        awayTeamLogoUrl: awayTeamData?.teamLogoUrl || "",
+        teamALogoUrl: teamAData?.teamLogoUrl || "",
+        teamBLogoUrl: teamBData?.teamLogoUrl || "",
       };
 
       await updateDoc(matchRef, updatedData);
@@ -199,36 +233,38 @@ export default function MatchSchedule() {
   const openEditModal = (match) => {
     setCurrentMatch(match);
     setFormData({
-      homeTeam: match.homeTeam,
-      awayTeam: match.awayTeam,
+      teamA: match.teamA,
+      teamB: match.teamB,
       matchDate: match.matchDate,
       matchTime: match.matchTime,
       venue: match.venue,
       matchType: match.matchType,
       status: match.status,
-      homeTeamScore: match.homeTeamScore,
-      awayTeamScore: match.awayTeamScore,
-      homeTeamWickets: match.homeTeamWickets || "",
-      awayTeamWickets: match.awayTeamWickets || "",
+      teamAScore: match.teamAScore,
+      teamBScore: match.teamBScore,
+      teamAWickets: match.teamAWickets || "",
+      teamBWickets: match.teamBWickets || "",
       winnerTeam: match.winnerTeam || "",
+      manOfTheMatch: match.manOfTheMatch || "",
     });
     setShowEditModal(true);
   };
 
   const resetForm = () => {
     setFormData({
-      homeTeam: "",
-      awayTeam: "",
+      teamA: "",
+      teamB: "",
       matchDate: "",
       matchTime: "",
       venue: "",
       matchType: "League Match",
       status: "Scheduled",
-      homeTeamScore: "",
-      awayTeamScore: "",
-      homeTeamWickets: "",
-      awayTeamWickets: "",
+      teamAScore: "",
+      teamBScore: "",
+      teamAWickets: "",
+      teamBWickets: "",
       winnerTeam: "",
+      manOfTheMatch: "",
     });
     setCurrentMatch(null);
   };
@@ -544,9 +580,9 @@ export default function MatchSchedule() {
             <thead>
               <tr>
                 <th>Type</th>
-                <th>Home Team</th>
+                <th>Team A</th>
                 <th></th>
-                <th>Away Team</th>
+                <th>Team B</th>
                 <th>Date, Time & Venue</th>
                 <th>Action</th>
               </tr>
@@ -561,15 +597,15 @@ export default function MatchSchedule() {
                   <td>
                     <div class="team-container">
                       ${
-                        match.homeTeamLogoUrl
-                          ? `<img src="${match.homeTeamLogoUrl}" class="team-logo" alt="${match.homeTeam} logo">`
-                          : `<div class="team-logo-placeholder">${match.homeTeam.charAt(
+                        match.teamALogoUrl
+                          ? `<img src="${match.teamALogoUrl}" class="team-logo" alt="${match.teamA} logo">`
+                          : `<div class="team-logo-placeholder">${match.teamA.charAt(
                               0
                             )}</div>`
                       }
-                      <span>${match.homeTeam}</span>
+                      <span>${match.teamA}</span>
                       ${
-                        match.winnerTeam === match.homeTeam
+                        match.winnerTeam === match.teamA
                           ? '<span class="winner-badge">Winner</span>'
                           : ""
                       }
@@ -581,15 +617,15 @@ export default function MatchSchedule() {
                   <td>
                     <div class="team-container">
                       ${
-                        match.awayTeamLogoUrl
-                          ? `<img src="${match.awayTeamLogoUrl}" class="team-logo" alt="${match.awayTeam} logo">`
-                          : `<div class="team-logo-placeholder">${match.awayTeam.charAt(
+                        match.teamBLogoUrl
+                          ? `<img src="${match.teamBLogoUrl}" class="team-logo" alt="${match.teamB} logo">`
+                          : `<div class="team-logo-placeholder">${match.teamB.charAt(
                               0
                             )}</div>`
                       }
-                      <span>${match.awayTeam}</span>
+                      <span>${match.teamB}</span>
                       ${
-                        match.winnerTeam === match.awayTeam
+                        match.winnerTeam === match.teamB
                           ? '<span class="winner-badge">Winner</span>'
                           : ""
                       }
@@ -635,7 +671,7 @@ export default function MatchSchedule() {
   };
 
   return (
-    <Container className="my-4 match-schedule-page">
+    <Container className="md-6 match-schedule-page">
       <Row className="mb-4">
         <Col className="page-header">
           <h2 className="page-title">Match Schedule Management</h2>
@@ -692,9 +728,9 @@ export default function MatchSchedule() {
                   <tr>
                     <th className="text-center">Status</th>
                     <th className="text-center">Type</th>
-                    <th>Home Team</th>
+                    <th>Team A</th>
                     <th className="text-center">Score/Match</th>
-                    <th>Away Team</th>
+                    <th>Team B</th>
                     <th>Date, Time & Venue</th>
                     <th className="text-center">Actions</th>
                   </tr>
@@ -717,11 +753,11 @@ export default function MatchSchedule() {
                       </td>
                       <td className="team-cell align-middle">
                         <div className="team-info">
-                          {match.homeTeamLogoUrl ? (
+                          {match.teamALogoUrl ? (
                             <div className="team-logo-container">
                               <Image
-                                src={match.homeTeamLogoUrl}
-                                alt={`${match.homeTeam} logo`}
+                                src={match.teamALogoUrl}
+                                alt={`${match.teamA} logo`}
                                 width={40}
                                 height={40}
                                 className="team-logo"
@@ -729,14 +765,29 @@ export default function MatchSchedule() {
                             </div>
                           ) : (
                             <div className="team-logo-placeholder">
-                              {match.homeTeam.charAt(0)}
+                              {match.teamA.charAt(0)}
                             </div>
                           )}
-                          <span className="team-name">{match.homeTeam}</span>
-                          {match.winnerTeam === match.homeTeam && (
-                            <Badge bg="warning" className="winner-badge ms-1">
-                              Winner
-                            </Badge>
+                          <span className="team-name">{match.teamA}</span>
+                          {match.winnerTeam === match.teamA && (
+                            <div className="d-flex flex-column">
+                              <div className="d-flex align-items-center">
+                                <Badge
+                                  bg="warning"
+                                  className="winner-badge ms-1"
+                                >
+                                  Winner
+                                </Badge>
+                              </div>
+                              {match.manOfTheMatch && (
+                                <div className="motm-badge mt-1">
+                                  <small>
+                                    <i className="fas fa-trophy me-1 mr-1"></i>
+                                    {match.manOfTheMatch}
+                                  </small>
+                                </div>
+                              )} 
+                            </div>
                           )}
                         </div>
                       </td>
@@ -749,20 +800,20 @@ export default function MatchSchedule() {
                             }`}
                           >
                             <span className="home-score">
-                              {match.homeTeamScore}
+                              {match.teamAScore}
                             </span>
-                            {match.homeTeamWickets !== undefined && (
+                            {match.teamAWickets !== undefined && (
                               <span className="wickets-info">
-                                /{match.homeTeamWickets}
+                                /{match.teamAWickets}
                               </span>
                             )}
                             <span className="score-separator">-</span>
                             <span className="away-score">
-                              {match.awayTeamScore}
+                              {match.teamBScore}
                             </span>
-                            {match.awayTeamWickets !== undefined && (
+                            {match.teamBWickets !== undefined && (
                               <span className="wickets-info">
-                                /{match.awayTeamWickets}
+                                /{match.teamBWickets}
                               </span>
                             )}
                             {match.winnerTeam === "Draw" && (
@@ -777,11 +828,11 @@ export default function MatchSchedule() {
                       </td>
                       <td className="team-cell align-middle">
                         <div className="team-info">
-                          {match.awayTeamLogoUrl ? (
+                          {match.teamBLogoUrl ? (
                             <div className="team-logo-container">
                               <Image
-                                src={match.awayTeamLogoUrl}
-                                alt={`${match.awayTeam} logo`}
+                                src={match.teamBLogoUrl}
+                                alt={`${match.teamB} logo`}
                                 width={40}
                                 height={40}
                                 className="team-logo"
@@ -789,14 +840,29 @@ export default function MatchSchedule() {
                             </div>
                           ) : (
                             <div className="team-logo-placeholder">
-                              {match.awayTeam.charAt(0)}
+                              {match.teamB.charAt(0)}
                             </div>
                           )}
-                          <span className="team-name">{match.awayTeam}</span>
-                          {match.winnerTeam === match.awayTeam && (
-                            <Badge bg="warning" className="winner-badge ms-1">
-                              Winner
-                            </Badge>
+                          <span className="team-name">{match.teamB}</span>
+                          {match.winnerTeam === match.teamB && (
+                            <div className="d-flex flex-column">
+                              <div className="d-flex align-items-center">
+                                <Badge
+                                  bg="warning"
+                                  className="winner-badge ms-1"
+                                >
+                                  Winner
+                                </Badge>
+                              </div>
+                              {match.manOfTheMatch && (
+                                <div className="motm-badge mt-1">
+                                  <small className="text-muted">
+                                    <i className="fas fa-trophy me-1"></i>
+                                    MoM: {match.manOfTheMatch}
+                                  </small>
+                                </div>
+                              )}
+                            </div>
                           )}
                         </div>
                       </td>
@@ -862,25 +928,25 @@ export default function MatchSchedule() {
         <Modal.Body className="modal-body">
           <Form onSubmit={handleAddMatch}>
             <Form.Group className="mb-3">
-              <Form.Label>Home Team</Form.Label>
+              <Form.Label>Team A</Form.Label>
               <div className="team-select-container">
                 <Form.Select
-                  name="homeTeam"
-                  value={formData.homeTeam}
+                  name="teamA"
+                  value={formData.teamA}
                   onChange={handleInputChange}
                   required
                   className="form-select-custom"
                 >
-                  <option value="">Select Home Team</option>
+                  <option value="">Select Team A</option>
                   {teams.map((team) => (
                     <option
                       key={team.id}
                       value={team.name}
-                      disabled={team.name === formData.awayTeam}
+                      disabled={team.name === formData.teamB}
                     >
                       {team.name}{" "}
-                      {team.name === formData.awayTeam
-                        ? "(Already selected as Away Team)"
+                      {team.name === formData.teamB
+                        ? "(Already selected as Team B)"
                         : ""}
                     </option>
                   ))}
@@ -889,25 +955,25 @@ export default function MatchSchedule() {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Away Team</Form.Label>
+              <Form.Label>Team B</Form.Label>
               <div className="team-select-container">
                 <Form.Select
-                  name="awayTeam"
-                  value={formData.awayTeam}
+                  name="teamB"
+                  value={formData.teamB}
                   onChange={handleInputChange}
                   required
                   className="form-select-custom"
                 >
-                  <option value="">Select Away Team</option>
+                  <option value="">Select Team B</option>
                   {teams.map((team) => (
                     <option
                       key={team.id}
                       value={team.name}
-                      disabled={team.name === formData.homeTeam}
+                      disabled={team.name === formData.teamA}
                     >
                       {team.name}{" "}
-                      {team.name === formData.homeTeam
-                        ? "(Already selected as Home Team)"
+                      {team.name === formData.teamA
+                        ? "(Already selected as Team A)"
                         : ""}
                     </option>
                   ))}
@@ -946,14 +1012,17 @@ export default function MatchSchedule() {
 
             <Form.Group className="mb-3">
               <Form.Label>Venue</Form.Label>
-              <Form.Control
-                type="text"
+              <Form.Select
                 name="venue"
                 value={formData.venue}
                 onChange={handleInputChange}
-                placeholder="Enter match venue"
-                className="form-control-custom"
-              />
+                required
+                className="form-select-custom"
+              >
+                <option value="">Select Venue</option>
+                <option value="Pachyappas Ground B">Pachyappas Ground B</option>
+                <option value="Pachyappas Ground C">Pachyappas Ground C</option>
+              </Form.Select>
             </Form.Group>
 
             <Row>
@@ -975,9 +1044,8 @@ export default function MatchSchedule() {
                     <option value="Friendly">Friendly</option>
                   </Form.Select>
                 </Form.Group>
-                </Col>
-                <Col>
-
+              </Col>
+              <Col>
                 <Form.Group className="mb-3">
                   <Form.Label>Status</Form.Label>
                   <Form.Select
@@ -1003,12 +1071,12 @@ export default function MatchSchedule() {
               <Row className="mb-3 score-section">
                 <Col md={6}>
                   <Form.Group>
-                    <Form.Label>Home Team Score</Form.Label>
+                    <Form.Label>Team A Score</Form.Label>
                     <Form.Control
                       type="number"
                       min="0"
-                      name="homeTeamScore"
-                      value={formData.homeTeamScore}
+                      name="teamAScore"
+                      value={formData.teamAScore}
                       onChange={handleScoreChange}
                       className="form-control-custom score-input"
                     />
@@ -1016,13 +1084,13 @@ export default function MatchSchedule() {
                 </Col>
                 <Col md={6}>
                   <Form.Group>
-                    <Form.Label>Home Team Wickets</Form.Label>
+                    <Form.Label>Team A Wickets</Form.Label>
                     <Form.Control
                       type="number"
                       min="0"
                       max="10"
-                      name="homeTeamWickets"
-                      value={formData.homeTeamWickets}
+                      name="teamAWickets"
+                      value={formData.teamAWickets}
                       onChange={handleScoreChange}
                       className="form-control-custom score-input"
                     />
@@ -1030,12 +1098,12 @@ export default function MatchSchedule() {
                 </Col>
                 <Col md={6} className="mt-3">
                   <Form.Group>
-                    <Form.Label>Away Team Score</Form.Label>
+                    <Form.Label>Team B Score</Form.Label>
                     <Form.Control
                       type="number"
                       min="0"
-                      name="awayTeamScore"
-                      value={formData.awayTeamScore}
+                      name="teamBScore"
+                      value={formData.teamBScore}
                       onChange={handleScoreChange}
                       className="form-control-custom score-input"
                     />
@@ -1043,13 +1111,13 @@ export default function MatchSchedule() {
                 </Col>
                 <Col md={6} className="mt-3">
                   <Form.Group>
-                    <Form.Label>Away Team Wickets</Form.Label>
+                    <Form.Label>Team B Wickets</Form.Label>
                     <Form.Control
                       type="number"
                       min="0"
                       max="10"
-                      name="awayTeamWickets"
-                      value={formData.awayTeamWickets}
+                      name="teamBWickets"
+                      value={formData.teamBWickets}
                       onChange={handleScoreChange}
                       className="form-control-custom score-input"
                     />
@@ -1059,29 +1127,51 @@ export default function MatchSchedule() {
             )}
 
             {formData.status === "Completed" && (
-              <Form.Group className="mb-3 winner-section">
-                <Form.Label>Winner Team</Form.Label>
-                <Form.Select
-                  name="winnerTeam"
-                  value={formData.winnerTeam}
-                  onChange={handleInputChange}
-                  required={formData.status === "Completed"}
-                  className="form-select-custom winner-select"
-                >
-                  <option value="">Select Winner</option>
-                  {formData.homeTeam && (
-                    <option value={formData.homeTeam}>
-                      {formData.homeTeam}
-                    </option>
-                  )}
-                  {formData.awayTeam && (
-                    <option value={formData.awayTeam}>
-                      {formData.awayTeam}
-                    </option>
-                  )}
-                  <option value="Draw">Match Drawn</option>
-                </Form.Select>
-              </Form.Group>
+              <>
+                <Form.Group className="mb-3 winner-section">
+                  <Form.Label>Winner Team</Form.Label>
+                  <Form.Select
+                    name="winnerTeam"
+                    value={formData.winnerTeam}
+                    onChange={handleInputChange}
+                    required={formData.status === "Completed"}
+                    className="form-select-custom winner-select"
+                  >
+                    <option value="">Select Winner</option>
+                    {formData.teamA && (
+                      <option value={formData.teamA}>{formData.teamA}</option>
+                    )}
+                    {formData.teamB && (
+                      <option value={formData.teamB}>{formData.teamB}</option>
+                    )}
+                    <option value="Draw">Match Drawn</option>
+                  </Form.Select>
+                </Form.Group>
+
+                {formData.winnerTeam && formData.winnerTeam !== "Draw" && (
+                  <Form.Group className="mb-3 man-of-match-section">
+                    <Form.Label>Man of the Match</Form.Label>
+                    <Form.Select
+                      name="manOfTheMatch"
+                      value={formData.manOfTheMatch}
+                      onChange={handleInputChange}
+                      required
+                      className="form-select-custom"
+                    >
+                      <option value="">Select Man of the Match</option>
+                      {players
+                        .filter(
+                          (player) => formData.winnerTeam === player.teamName
+                        ) // Using teamName instead of team
+                        .map((player) => (
+                          <option key={player.id} value={player.name}>
+                            {player.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Form.Group>
+                )}
+              </>
             )}
 
             <div className="d-grid mt-4">
@@ -1119,26 +1209,26 @@ export default function MatchSchedule() {
         <Modal.Body className="modal-body">
           <Form onSubmit={handleEditMatch}>
             <Form.Group className="mb-3">
-              <Form.Label>Home Team</Form.Label>
+              <Form.Label>Team A</Form.Label>
               <div className="team-select-container">
                 <Form.Select
-                  name="homeTeam"
-                  value={formData.homeTeam}
+                  name="teamA"
+                  value={formData.teamA}
                   onChange={handleInputChange}
                   required
-                  disabled={currentMatch?.homeTeam}
+                  disabled={currentMatch?.teamA}
                   className="form-select-custom"
                 >
-                  <option value="">Select Home Team</option>
+                  <option value="">Select Team A</option>
                   {teams.map((team) => (
                     <option
                       key={team.id}
                       value={team.name}
-                      disabled={team.name === formData.awayTeam}
+                      disabled={team.name === formData.teamB}
                     >
                       {team.name}{" "}
-                      {team.name === formData.awayTeam
-                        ? "(Already selected as Away Team)"
+                      {team.name === formData.teamB
+                        ? "(Already selected as Team B)"
                         : ""}
                     </option>
                   ))}
@@ -1147,26 +1237,26 @@ export default function MatchSchedule() {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Away Team</Form.Label>
+              <Form.Label>Team B</Form.Label>
               <div className="team-select-container">
                 <Form.Select
-                  name="awayTeam"
-                  value={formData.awayTeam}
+                  name="teamB"
+                  value={formData.teamB}
                   onChange={handleInputChange}
                   required
-                  disabled={currentMatch?.awayTeam}
+                  disabled={currentMatch?.teamB}
                   className="form-select-custom"
                 >
-                  <option value="">Select Away Team</option>
+                  <option value="">Select Team B</option>
                   {teams.map((team) => (
                     <option
                       key={team.id}
                       value={team.name}
-                      disabled={team.name === formData.homeTeam}
+                      disabled={team.name === formData.teamA}
                     >
                       {team.name}{" "}
-                      {team.name === formData.homeTeam
-                        ? "(Already selected as Home Team)"
+                      {team.name === formData.teamA
+                        ? "(Already selected as Team A)"
                         : ""}
                     </option>
                   ))}
@@ -1205,14 +1295,17 @@ export default function MatchSchedule() {
 
             <Form.Group className="mb-3">
               <Form.Label>Venue</Form.Label>
-              <Form.Control
-                type="text"
+              <Form.Select
                 name="venue"
                 value={formData.venue}
                 onChange={handleInputChange}
-                placeholder="Enter match venue"
-                className="form-control-custom"
-              />
+                required
+                className="form-select-custom"
+              >
+                <option value="">Select Venue</option>
+                <option value="Pachyappas Ground B">Pachyappas Ground B</option>
+                <option value="Pachyappas Ground C">Pachyappas Ground C</option>
+              </Form.Select>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -1256,11 +1349,11 @@ export default function MatchSchedule() {
               <Row className="mb-3 score-section">
                 <Col md={6}>
                   <Form.Group>
-                    <Form.Label>Home Team Score</Form.Label>
+                    <Form.Label>Team A Score</Form.Label>
                     <Form.Control
                       type="number"
-                      name="homeTeamScore"
-                      value={formData.homeTeamScore}
+                      name="teamAScore"
+                      value={formData.teamAScore}
                       onChange={handleScoreChange}
                       className="form-control-custom score-input"
                     />
@@ -1268,13 +1361,13 @@ export default function MatchSchedule() {
                 </Col>
                 <Col md={6}>
                   <Form.Group>
-                    <Form.Label>Home Team Wickets</Form.Label>
+                    <Form.Label>Team A Wickets</Form.Label>
                     <Form.Control
                       type="number"
                       min="0"
                       max="10"
-                      name="homeTeamWickets"
-                      value={formData.homeTeamWickets}
+                      name="teamAWickets"
+                      value={formData.teamAWickets}
                       onChange={handleScoreChange}
                       className="form-control-custom score-input"
                     />
@@ -1282,12 +1375,12 @@ export default function MatchSchedule() {
                 </Col>
                 <Col md={6} className="mt-3">
                   <Form.Group>
-                    <Form.Label>Away Team Score</Form.Label>
+                    <Form.Label>Team B Score</Form.Label>
                     <Form.Control
                       type="number"
                       min="0"
-                      name="awayTeamScore"
-                      value={formData.awayTeamScore}
+                      name="teamBScore"
+                      value={formData.teamBScore}
                       onChange={handleScoreChange}
                       className="form-control-custom score-input"
                     />
@@ -1295,13 +1388,13 @@ export default function MatchSchedule() {
                 </Col>
                 <Col md={6} className="mt-3">
                   <Form.Group>
-                    <Form.Label>Away Team Wickets</Form.Label>
+                    <Form.Label>Team B Wickets</Form.Label>
                     <Form.Control
                       type="number"
                       min="0"
                       max="10"
-                      name="awayTeamWickets"
-                      value={formData.awayTeamWickets}
+                      name="teamBWickets"
+                      value={formData.teamBWickets}
                       onChange={handleScoreChange}
                       className="form-control-custom score-input"
                     />
@@ -1311,29 +1404,56 @@ export default function MatchSchedule() {
             )}
 
             {formData.status === "Completed" && (
-              <Form.Group className="mb-3 winner-section">
-                <Form.Label>Winner Team</Form.Label>
-                <Form.Select
-                  name="winnerTeam"
-                  value={formData.winnerTeam}
-                  onChange={handleInputChange}
-                  required={formData.status === "Completed"}
-                  className="form-select-custom winner-select"
-                >
-                  <option value="">Select Winner</option>
-                  {formData.homeTeam && (
-                    <option value={formData.homeTeam}>
-                      {formData.homeTeam}
-                    </option>
-                  )}
-                  {formData.awayTeam && (
-                    <option value={formData.awayTeam}>
-                      {formData.awayTeam}
-                    </option>
-                  )}
-                  <option value="Draw">Match Drawn</option>
-                </Form.Select>
-              </Form.Group>
+              <>
+                <Form.Group className="mb-3 winner-section">
+                  <Form.Label>Winner Team</Form.Label>
+                  <Form.Select
+                    name="winnerTeam"
+                    value={formData.winnerTeam}
+                    onChange={handleInputChange}
+                    required={formData.status === "Completed"}
+                    className="form-select-custom winner-select"
+                  >
+                    <option value="">Select Winner</option>
+                    {formData.teamA && (
+                      <option value={formData.teamA}>{formData.teamA}</option>
+                    )}
+                    {formData.teamB && (
+                      <option value={formData.teamB}>{formData.teamB}</option>
+                    )}
+                    <option value="Draw">Match Drawn</option>
+                  </Form.Select>
+                </Form.Group>
+
+                {formData.winnerTeam && formData.winnerTeam !== "Draw" && (
+                  <Form.Group className="mb-3 man-of-match-section">
+                    <Form.Label>Man of the Match</Form.Label>
+                    <Form.Select
+                      name="manOfTheMatch"
+                      value={formData.manOfTheMatch}
+                      onChange={handleInputChange}
+                      required
+                      className="form-select-custom"
+                    >
+                      <option value="">Select Man of the Match</option>
+                      {players
+                        .filter((player) => {
+                          console.log(
+                            "Comparing:",
+                            player.teamName,
+                            formData.winnerTeam
+                          );
+                          return formData.winnerTeam === player.teamName;
+                        })
+                        .map((player) => (
+                          <option key={player.id} value={player.name}>
+                            {player.name}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Form.Group>
+                )}
+              </>
             )}
 
             <div className="d-grid mt-4">
@@ -1585,6 +1705,24 @@ export default function MatchSchedule() {
             box-shadow: 0 2px 5px rgba(255, 152, 0, 0.3);
             animation: winnerGlow 2s infinite;
           }
+          .motm-badge {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            display: inline-block;
+            margin-top: 4px;
+            border: 1px dashed #ffc107;
+          }
+
+          .motm-badge i {
+            color: #ffc107;
+          }
+
+          .motm-badge small {
+            font-weight: 500;
+            white-space: nowrap;
+          }
 
           @keyframes winnerGlow {
             0% {
@@ -1778,6 +1916,27 @@ export default function MatchSchedule() {
             padding: 15px;
             margin-top: 5px;
             border: 1px dashed rgba(255, 193, 7, 0.3);
+          }
+
+          .man-of-match-section {
+            background-color: rgba(248, 250, 255, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            border: 1px dashed rgba(75, 85, 99, 0.3);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+          }
+
+          .man-of-match-section:hover {
+            background-color: rgba(248, 250, 255, 0.8);
+            border-color: rgba(59, 130, 246, 0.5);
+          }
+
+          .man-of-match-section .form-label {
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 8px;
           }
 
           .submit-btn {
