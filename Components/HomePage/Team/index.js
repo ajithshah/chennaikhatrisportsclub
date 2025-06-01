@@ -76,6 +76,7 @@ const Team = () => {
               KPL Season 3 Cricket Teams
             </span>
           </h2>
+          <br></br>
           <Button
             variant="outline-primary"
             onClick={handleShowRules}
