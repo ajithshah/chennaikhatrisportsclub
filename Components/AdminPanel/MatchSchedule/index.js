@@ -513,6 +513,17 @@ export default function MatchSchedule() {
             margin-left: 5px;
             background-color: #fffcf0;
           }
+          .mom-badge {
+            display: inline-block;
+            padding: 2px 5px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            color:rgb(254, 254, 254);
+            border: 1px solidrgb(252, 252, 252);
+            margin-left: 5px;
+            background-color:rgb(73, 98, 255);
+          }
           .draw-badge {
             display: inline-block;
             padding: 2px 5px;
@@ -576,11 +587,11 @@ export default function MatchSchedule() {
             <thead>
               <tr>
                 <th>Type</th>
+                <th>Group</th>
                 <th>Team A</th>
-                <th></th>
+                <th>Score</th>
                 <th>Team B</th>
                 <th>Date, Time & Venue</th>
-                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -590,6 +601,7 @@ export default function MatchSchedule() {
                   (match) => `
                 <tr>
                   <td>${match.matchType}</td>
+                  <td>${match.group}</td>
                   <td>
                     <div class="team-container">
                       ${
@@ -599,16 +611,23 @@ export default function MatchSchedule() {
                               0
                             )}</div>`
                       }
-                      <span>${match.teamA}</span>
-                      ${
-                        match.winnerTeam === match.teamA
-                          ? '<span class="winner-badge">Winner</span>'
-                          : ""
-                      }
+                      <div style="display: flex; flex-direction: column; align-items: center">
+                        <span>${match.teamA}</span>
+                        ${
+                          match.winnerTeam === match.teamA
+                            ? `<span class="winner-badge">Winner</span>
+                            <span class="mom-badge">${match.manOfTheMatch}</span>`
+                            : ""
+                        }
+                      </div>
                     </div>
                   </td>
-                  <td style="text-align: center">
-                    VS
+                  <td class="score">
+                    ${
+                      match.teamAScore && match.teamBScore
+                        ? `${match.teamAScore}/${match.teamAWickets} - ${match.teamBScore}${match.teamBWickets}`
+                        : "VS"
+                    }
                   </td>
                   <td>
                     <div class="team-container">
@@ -619,12 +638,15 @@ export default function MatchSchedule() {
                               0
                             )}</div>`
                       }
-                      <span>${match.teamB}</span>
-                      ${
-                        match.winnerTeam === match.teamB
-                          ? '<span class="winner-badge">Winner</span>'
-                          : ""
-                      }
+                      <div style="display: flex; flex-direction: column; align-items: center">
+                        <span>${match.teamB}</span>
+                        ${
+                          match.winnerTeam === match.teamB
+                            ? `<span class="winner-badge">Winner</span>
+                            <span class="mom-badge">${match.manOfTheMatch}</span>`
+                            : ""
+                        }
+                      </div>
                     </div>
                   </td>
                   <td>
@@ -637,7 +659,6 @@ export default function MatchSchedule() {
                   }</span>
                     </div>
                   </td>
-                  <td></td>
                 </tr>
               `
                 )

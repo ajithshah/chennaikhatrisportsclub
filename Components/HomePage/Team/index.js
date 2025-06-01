@@ -77,14 +77,14 @@ const Team = () => {
             </span>
           </h2>
           <br></br>
-          <Button
+          {/* <Button
             variant="outline-primary"
             onClick={handleShowRules}
             className="rounded-pill w-md-auto"
           >
             <i className="fas fa-info-circle me-2"></i>
             Tournament Rules
-          </Button>
+          </Button> */}
         </div>
 
         <Row xs={1} md={3} className="g-4 justify-content-center">
