@@ -1,1 +1,1 @@
-Schedule
+Release rules
