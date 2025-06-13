@@ -1021,6 +1021,9 @@ export default function MatchSchedule() {
                 <option value="D">D</option>
                 <option value="E">E</option>
                 <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+                <option value="I">I</option>
               </Form.Select>
             </Form.Group>
 
@@ -1322,6 +1325,9 @@ export default function MatchSchedule() {
                 <option value="D">D</option>
                 <option value="E">E</option>
                 <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+                <option value="I">I</option>
               </Form.Select>
             </Form.Group>
 
