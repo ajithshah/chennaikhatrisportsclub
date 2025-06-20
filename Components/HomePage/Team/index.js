@@ -6,7 +6,6 @@ import Image from "next/image";
 import {
   Container,
   Spinner,
-  Badge,
   Row,
   Col,
   Card,
@@ -70,6 +69,19 @@ const Team = () => {
       }}
     >
       <Container>
+        {/* Banner Image */}
+        <div className="text-center mb-5">
+          <Image
+            src="/bannerSponcers.jpeg"
+            alt="KPL Season 3 Sponsors Banner"
+            width={1000}
+            height={300}
+            objectFit="cover"
+            priority
+            className="banner-image rounded"
+          />
+        </div>
+
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 mb-md-5">
           <h2 className="fw-bold m-0">
             <span className="border-bottom border-primary border-3 pb-2">
@@ -326,6 +338,25 @@ const Team = () => {
       </Modal>
 
       <style jsx global>{`
+        .banner-image {
+          max-width: 100%;
+          height: auto;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+          transition: all 0.3s ease;
+          border: 2px solid rgba(13, 110, 253, 0.1);
+        }
+
+        .banner-image:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+          .banner-image {
+            border-radius: 0.5rem !important;
+          }
+        }
+
         .modal-body li {
           transition: all 0.2s ease;
         }
