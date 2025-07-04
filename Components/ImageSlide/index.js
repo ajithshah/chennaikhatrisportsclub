@@ -142,10 +142,12 @@ const ImageSlider = () => {
     if (typeof window === "undefined") return;
     function requestPlayerFullscreen(playerRef) {
       // Find the iframe inside the player div
-      const iframe = playerRef.current && playerRef.current.querySelector('iframe');
+      const iframe =
+        playerRef.current && playerRef.current.querySelector("iframe");
       if (iframe) {
         if (iframe.requestFullscreen) iframe.requestFullscreen();
-        else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+        else if (iframe.webkitRequestFullscreen)
+          iframe.webkitRequestFullscreen();
         else if (iframe.mozRequestFullScreen) iframe.mozRequestFullScreen();
         else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
       }
@@ -153,7 +155,13 @@ const ImageSlider = () => {
     function onYouTubeIframeAPIReady() {
       yt1.current = new window.YT.Player(ytPlayer1Ref.current, {
         videoId: "6YWC5yN31hY",
-        playerVars: { modestbranding: 1, rel: 0, controls: 1, showinfo: 0, autoplay: 1 },
+        playerVars: {
+          modestbranding: 1,
+          rel: 0,
+          controls: 1,
+          showinfo: 0,
+          autoplay: 1,
+        },
         events: {
           onReady: (event) => {
             event.target.playVideo();
@@ -168,7 +176,13 @@ const ImageSlider = () => {
       });
       yt2.current = new window.YT.Player(ytPlayer2Ref.current, {
         videoId: "JaFW8DSJ-Wc",
-        playerVars: { modestbranding: 1, rel: 0, controls: 1, showinfo: 0, autoplay: 0 },
+        playerVars: {
+          modestbranding: 1,
+          rel: 0,
+          controls: 1,
+          showinfo: 0,
+          autoplay: 0,
+        },
         events: {
           onStateChange: (event) => {
             if (event.data === window.YT.PlayerState.PLAYING && yt1.current) {
@@ -535,3 +549,4 @@ const ImageSlider = () => {
 };
 
 export default ImageSlider;
+
