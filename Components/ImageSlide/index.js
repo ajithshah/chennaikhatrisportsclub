@@ -30,6 +30,10 @@ const ImageSlider = () => {
   const [visibleItems, setVisibleItems] = useState([]);
   const loopTimerRef = useRef(null);
   const reshuffleTimerRef = useRef(null);
+  const ytPlayer1Ref = useRef(null);
+  const ytPlayer2Ref = useRef(null);
+  const yt1 = useRef(null);
+  const yt2 = useRef(null);
 
   // Generate random tile sizes for collage effect
   const generateTileSize = () => {
@@ -133,6 +137,58 @@ const ImageSlider = () => {
     };
   }, []);
 
+  // YouTube Iframe API setup
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    function requestPlayerFullscreen(playerRef) {
+      // Find the iframe inside the player div
+      const iframe = playerRef.current && playerRef.current.querySelector('iframe');
+      if (iframe) {
+        if (iframe.requestFullscreen) iframe.requestFullscreen();
+        else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+        else if (iframe.mozRequestFullScreen) iframe.mozRequestFullScreen();
+        else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
+      }
+    }
+    function onYouTubeIframeAPIReady() {
+      yt1.current = new window.YT.Player(ytPlayer1Ref.current, {
+        videoId: "6YWC5yN31hY",
+        playerVars: { modestbranding: 1, rel: 0, controls: 1, showinfo: 0, autoplay: 1 },
+        events: {
+          onReady: (event) => {
+            event.target.playVideo();
+          },
+          onStateChange: (event) => {
+            if (event.data === window.YT.PlayerState.PLAYING && yt2.current) {
+              yt2.current.pauseVideo();
+              requestPlayerFullscreen(ytPlayer1Ref);
+            }
+          },
+        },
+      });
+      yt2.current = new window.YT.Player(ytPlayer2Ref.current, {
+        videoId: "JaFW8DSJ-Wc",
+        playerVars: { modestbranding: 1, rel: 0, controls: 1, showinfo: 0, autoplay: 0 },
+        events: {
+          onStateChange: (event) => {
+            if (event.data === window.YT.PlayerState.PLAYING && yt1.current) {
+              yt1.current.pauseVideo();
+              requestPlayerFullscreen(ytPlayer2Ref);
+            }
+          },
+        },
+      });
+    }
+    if (!window.YT) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(tag);
+      window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+    } else {
+      onYouTubeIframeAPIReady();
+    }
+  }, []);
+
   // Get column count based on screen width
   const getColumnCount = () => {
     const { width } = windowSize;
@@ -144,6 +200,28 @@ const ImageSlider = () => {
 
   return (
     <div className="tiles-wrapper">
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 20,
+          justifyContent: "center",
+          marginBottom: 32,
+        }}
+      >
+        <div
+          ref={ytPlayer1Ref}
+          className="youtube-embed"
+          style={{ width: "100%", maxWidth: 560, height: 315 }}
+          // The iframe created by the API will inherit allowFullScreen and allow attributes
+        ></div>
+        <div
+          ref={ytPlayer2Ref}
+          className="youtube-embed"
+          style={{ width: "100%", maxWidth: 560, height: 315 }}
+        ></div>
+      </div>
+
       <div className="tiles-controls">
         <p className="event-title">Kids Event</p>
       </div>
@@ -416,6 +494,40 @@ const ImageSlider = () => {
             padding: 6px 12px;
             font-size: 12px;
           }
+        }
+
+        .youtube-embed {
+          position: relative;
+          width: 100%;
+          max-width: 560px;
+          height: 315px;
+          overflow: hidden;
+          border-radius: 16px;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+          border: 3px solid #3498db;
+          background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+          transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+
+        .youtube-embed:hover {
+          transform: scale(1.05);
+          box-shadow: 0 8px 32px 0 rgba(52, 152, 219, 0.25), 0 0 0 4px #85c1e9;
+          border-color: #217dbb;
+        }
+
+        .youtube-embed iframe {
+          width: 100%;
+          height: 100%;
+          border-radius: 16px;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+          border: 3px solid #3498db;
+          background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+          transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+        .youtube-embed iframe:hover {
+          transform: scale(1.05);
+          box-shadow: 0 8px 32px 0 rgba(52, 152, 219, 0.25), 0 0 0 4px #85c1e9;
+          border-color: #217dbb;
         }
       `}</style>
     </div>
