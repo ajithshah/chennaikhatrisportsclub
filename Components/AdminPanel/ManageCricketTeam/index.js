@@ -761,48 +761,6 @@ export default function ManageCricketTeam() {
               <div class="leader-phone">${viceCaptainPhone}</div>
             </div>
           </div>
-
- ${
-   viewTeamDetails.frontJerseyUrl || viewTeamDetails.backJerseyUrl
-     ? `
-                <div class="jersey-section" style="margin: 30px 0;">
-                  <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px; padding-bottom: 5px; border-bottom: 2px solid #ddd; color: #333;">Team Jersey</h2>
-                  <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
-                    ${
-                      viewTeamDetails.frontJerseyUrl
-                        ? `
-                          <div style="text-align: center;">
-                            <div style="position: relative; display: inline-block;">
-                              <img
-                                src="${viewTeamDetails.frontJerseyUrl}"
-                                alt="Front Jersey"
-                                style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"
-                              />
-                            </div>
-                          </div>
-                        `
-                        : ""
-                    }
-                    ${
-                      viewTeamDetails.backJerseyUrl
-                        ? `
-                          <div style="text-align: center;">
-                            <div style="position: relative; display: inline-block;">
-                              <img
-                                src="${viewTeamDetails.backJerseyUrl}"
-                                alt="Back Jersey"
-                                style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid #dee2e6; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"
-                              />
-                            </div>
-                          </div>
-                        `
-                        : ""
-                    }
-                  </div>
-                </div>
-              `
-     : ""
- }
           
           <h2 class="members-title">Team Members</h2>
           
