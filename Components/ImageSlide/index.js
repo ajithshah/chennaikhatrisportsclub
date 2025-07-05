@@ -175,7 +175,7 @@ const ImageSlider = () => {
         },
       });
       yt2.current = new window.YT.Player(ytPlayer2Ref.current, {
-        videoId: "",FwfBldmzrZBi5qVh
+        videoId: "FwfBldmzrZBi5qVh",
         playerVars: {
           modestbranding: 1,
           rel: 0,
