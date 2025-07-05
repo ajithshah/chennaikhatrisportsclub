@@ -154,7 +154,7 @@ const ImageSlider = () => {
     }
     function onYouTubeIframeAPIReady() {
       yt1.current = new window.YT.Player(ytPlayer1Ref.current, {
-        videoId: "VbozgPTn7SR05TOT",
+        videoId: "Y5UK1-BIOl4",
         playerVars: {
           modestbranding: 1,
           rel: 0,
@@ -175,7 +175,7 @@ const ImageSlider = () => {
         },
       });
       yt2.current = new window.YT.Player(ytPlayer2Ref.current, {
-        videoId: "FwfBldmzrZBi5qVh",
+        videoId: "p9vAYq5P5IE",
         playerVars: {
           modestbranding: 1,
           rel: 0,
