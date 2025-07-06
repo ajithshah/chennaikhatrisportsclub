@@ -31,9 +31,7 @@ const ImageSlider = () => {
   const loopTimerRef = useRef(null);
   const reshuffleTimerRef = useRef(null);
   const ytPlayer1Ref = useRef(null);
-  const ytPlayer2Ref = useRef(null);
   const yt1 = useRef(null);
-  const yt2 = useRef(null);
 
   // Generate random tile sizes for collage effect
   const generateTileSize = () => {
@@ -154,7 +152,7 @@ const ImageSlider = () => {
     }
     function onYouTubeIframeAPIReady() {
       yt1.current = new window.YT.Player(ytPlayer1Ref.current, {
-        videoId: "Y5UK1-BIOl4",
+        videoId: "Th9X8vWrstQ",
         playerVars: {
           modestbranding: 1,
           rel: 0,
@@ -167,27 +165,8 @@ const ImageSlider = () => {
             event.target.playVideo();
           },
           onStateChange: (event) => {
-            if (event.data === window.YT.PlayerState.PLAYING && yt2.current) {
-              yt2.current.pauseVideo();
+            if (event.data === window.YT.PlayerState.PLAYING) {
               requestPlayerFullscreen(ytPlayer1Ref);
-            }
-          },
-        },
-      });
-      yt2.current = new window.YT.Player(ytPlayer2Ref.current, {
-        videoId: "p9vAYq5P5IE",
-        playerVars: {
-          modestbranding: 1,
-          rel: 0,
-          controls: 1,
-          showinfo: 0,
-          autoplay: 0,
-        },
-        events: {
-          onStateChange: (event) => {
-            if (event.data === window.YT.PlayerState.PLAYING && yt1.current) {
-              yt1.current.pauseVideo();
-              requestPlayerFullscreen(ytPlayer2Ref);
             }
           },
         },
@@ -225,12 +204,6 @@ const ImageSlider = () => {
       >
         <div
           ref={ytPlayer1Ref}
-          className="youtube-embed"
-          style={{ width: "100%", maxWidth: 560, height: 315 }}
-          // The iframe created by the API will inherit allowFullScreen and allow attributes
-        ></div>
-        <div
-          ref={ytPlayer2Ref}
           className="youtube-embed"
           style={{ width: "100%", maxWidth: 560, height: 315 }}
         ></div>
