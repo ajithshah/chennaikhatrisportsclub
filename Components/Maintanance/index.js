@@ -52,9 +52,6 @@ const Maintenance = () => {
 
         {/* Developer Info */}
         <div className="developer-info">
-          <p className="thanks">
-            Special thanks to the developer for maintaining this platform.
-          </p>
           <p>
             Developer Support:{" "}
             <a href="mailto:ajithshah37@gmail.com">
@@ -150,12 +147,6 @@ const Maintenance = () => {
           border-top: 1px dashed rgba(255, 255, 255, 0.25);
           font-size: 0.95rem;
           opacity: 0.9;
-        }
-
-        .developer-info .thanks {
-          margin-bottom: 0.5rem;
-          font-style: italic;
-          color: #f8bf02;
         }
 
         .developer-info a {
