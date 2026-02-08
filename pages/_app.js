@@ -7,9 +7,9 @@ import Maintenance from "@/Components/Maintanance";
 export default function App({ Component, pageProps }) {
   return (
     <>
-      {/* <Maintenance /> */}
-      <Component {...pageProps} />
-      <Analytics />
+        <Maintenance />
+      {/* <Component {...pageProps} /> */}
+      {/* <Analytics /> */}
     </>
   );
 }
