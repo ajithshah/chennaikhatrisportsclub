@@ -49,6 +49,25 @@ const Maintenance = () => {
             </a>
           </p>
         </div>
+
+        {/* Developer Info */}
+        <div className="developer-info">
+          <p className="thanks">
+            Special thanks to the developer for maintaining this platform.
+          </p>
+          <p>
+            Developer Support:{" "}
+            <a href="mailto:ajithshah37@gmail.com">
+              ajithshah37@gmail.com
+            </a>
+          </p>
+          <p>
+            Phone:{" "}
+            <a href="tel:+919962748001">
+              +91 99627 48001
+            </a>
+          </p>
+        </div>
       </div>
 
       <style jsx>{`
@@ -59,7 +78,6 @@ const Maintenance = () => {
           justify-content: center;
           min-height: 100vh;
           padding: 2rem;
-          //   background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/wallpaper.jpg');
           background-size: cover;
           background-position: center;
           color: white;
@@ -87,7 +105,7 @@ const Maintenance = () => {
         h1 {
           font-size: 2.5rem;
           margin-bottom: 1.5rem;
-          color: #f8bf02; /* Using gold color for heading */
+          color: #f8bf02;
         }
 
         .maintenance-message {
@@ -112,6 +130,7 @@ const Maintenance = () => {
         .contact-info {
           font-size: 1rem;
           opacity: 0.9;
+          margin-bottom: 1.5rem;
         }
 
         .contact-info a {
@@ -121,6 +140,30 @@ const Maintenance = () => {
         }
 
         .contact-info a:hover {
+          color: white;
+          text-decoration: underline;
+        }
+
+        .developer-info {
+          margin-top: 2rem;
+          padding-top: 1.5rem;
+          border-top: 1px dashed rgba(255, 255, 255, 0.25);
+          font-size: 0.95rem;
+          opacity: 0.9;
+        }
+
+        .developer-info .thanks {
+          margin-bottom: 0.5rem;
+          font-style: italic;
+          color: #f8bf02;
+        }
+
+        .developer-info a {
+          color: #f8bf02;
+          text-decoration: none;
+        }
+
+        .developer-info a:hover {
           color: white;
           text-decoration: underline;
         }
