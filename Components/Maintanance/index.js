@@ -94,7 +94,7 @@ const Maintenance = () => {
 
         <div className="tech-footer">
           <div className="hex-pattern"></div>
-          <span>CKSC © 2026</span>
+          <span>CKSC © 2024</span>
         </div>
       </div>
 
