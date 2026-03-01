@@ -9,8 +9,8 @@ import {
   Card,
   Pagination,
 } from "react-bootstrap";
-import { auth, db } from "../../../firebase";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { auth } from "../../../firebase";
+import { usersDb } from "../../../lib/db";
 import Header from "@/Components/Header";
 import Meta from "@/Components/Meta";
 
@@ -25,22 +25,22 @@ export default function ManageUsers() {
   useEffect(() => {
     const checkAdminAndFetchUsers = async (currentUser) => {
       // Check if user is admin
-      const userRef = doc(db, "users", currentUser.uid);
-      const userSnap = await getDoc(userRef);
+      const userData = await usersDb.get(currentUser.uid);
 
-      if (!userSnap.exists() || !userSnap.data().isAdmin) {
+      if (!userData || !userData.isAdmin) {
         router.push("/");
         return;
       }
 
       // Fetch all users
-      const usersSnap = await getDocs(collection(db, "users"));
-      const usersData = usersSnap.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
+      const usersData = await usersDb.getAll();
+      // Transform to include id field
+      const usersWithId = usersData.map((user) => ({
+        ...user,
+        id: user._id || user.uid,
       }));
 
-      setUsers(usersData);
+      setUsers(usersWithId);
       setLoading(false);
     };
 

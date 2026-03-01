@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Container, Badge, Table, Button, Form } from "react-bootstrap";
-import { db } from "@/firebase";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { matchesDb } from "@/lib/db";
 import Header from "@/Components/Header";
 import Meta from "@/Components/Meta";
 import Image from "next/image";
@@ -47,16 +46,7 @@ export function SchedulePage() {
   const fetchMatches = async () => {
     try {
       setLoading(true);
-      const matchesCollection = collection(db, "matches");
-      const matchesQuery = query(
-        matchesCollection,
-        orderBy("matchDate", "asc")
-      );
-      const matchesSnapshot = await getDocs(matchesQuery);
-      const matchesList = matchesSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const matchesList = await matchesDb.getAll({ orderBy: "matchDate", orderDir: "asc" });
       setMatches(matchesList);
       setLoading(false);
     } catch (error) {

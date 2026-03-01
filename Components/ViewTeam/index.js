@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { db } from "@/firebase";
 import Image from "next/image";
-import { doc, getDoc } from "firebase/firestore";
+import { teamsDb, usersDb } from "@/lib/db";
 import PlayerCard from "../PlayerCard";
 import { Container, Spinner, Card, Row, Col, Badge } from "react-bootstrap";
 
@@ -21,9 +20,8 @@ const ViewTeam = () => {
 
   const fetchTeam = async (teamId) => {
     try {
-      const teamDoc = await getDoc(doc(db, "cricket_teams", teamId));
-      if (teamDoc.exists()) {
-        const teamData = teamDoc.data();
+      const teamData = await teamsDb.get(teamId);
+      if (teamData) {
         setTeam(teamData);
 
         // Fetch profile photos for team members
@@ -33,12 +31,12 @@ const ViewTeam = () => {
             .filter((player) => player.userId)
             .map(async (player) => {
               try {
-                const userDoc = await getDoc(doc(db, "users", player.userId));
-                if (userDoc.exists()) {
+                const userData = await usersDb.get(player.userId);
+                if (userData) {
                   userProfilesObj[player.userId] = {
-                    photoURL: userDoc.data().photoURL || null,
+                    photoURL: userData.photoURL || null,
                     displayName:
-                      userDoc.data().displayName || userDoc.data().name,
+                      userData.displayName || userData.name,
                   };
                 }
               } catch (err) {

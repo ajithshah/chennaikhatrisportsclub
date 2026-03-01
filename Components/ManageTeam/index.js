@@ -13,14 +13,8 @@ import {
   Form,
 } from "react-bootstrap";
 import Select from "react-select";
-import { auth, db } from "../../firebase";
-import {
-  doc,
-  getDoc,
-  updateDoc,
-  collection,
-  getDocs,
-} from "firebase/firestore";
+import { auth } from "../../firebase";
+import { teamsDb, usersDb } from "../../lib/db";
 import Meta from "@/Components/Meta";
 
 export default function ManageTeam() {
@@ -62,11 +56,10 @@ export default function ManageTeam() {
     if (!id) return;
 
     try {
-      const teamRef = doc(db, "cricket_teams", id);
-      const teamSnap = await getDoc(teamRef);
+      const teamData = await teamsDb.get(id);
 
-      if (teamSnap.exists()) {
-        setTeamData({ id: teamSnap.id, ...teamSnap.data() });
+      if (teamData) {
+        setTeamData(teamData);
       } else {
         router.push("/profile");
       }
@@ -79,14 +72,14 @@ export default function ManageTeam() {
   // Fetch available players from users collection
   const fetchAvailablePlayers = async () => {
     try {
-      const usersSnap = await getDocs(collection(db, "users"));
-      const players = usersSnap.docs
-        .map((doc) => ({
-          id: doc.id,
-          name: doc.data().displayName || doc.data().name,
-          email: doc.data().email,
-          phoneNumber: doc.data().phoneNumber,
-          photoURL: doc.data().photoURL,
+      const usersData = await usersDb.getAll();
+      const players = usersData
+        .map((user) => ({
+          id: user._id || user.uid,
+          name: user.displayName || user.name,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          photoURL: user.photoURL,
         }))
         .filter((player) => player.phoneNumber); // Only include players with phone numbers
 
@@ -110,12 +103,10 @@ export default function ManageTeam() {
       }
 
       // Check if player exists in any other team
-      const teamsRef = collection(db, "cricket_teams");
-      const teamsSnap = await getDocs(teamsRef);
+      const allTeams = await teamsDb.getAll();
       let playerExists = false;
 
-      for (const doc of teamsSnap.docs) {
-        const team = doc.data();
+      for (const team of allTeams) {
         if (
           team.players?.some((player) => player.userId === newPlayer.userId)
         ) {
@@ -133,7 +124,6 @@ export default function ManageTeam() {
 
       // Continue with adding the player since they don't exist in any team
       setIsModalAnimating(true);
-      const teamRef = doc(db, "cricket_teams", id);
       const players = teamData.players || [];
 
       const playerData = {
@@ -151,7 +141,7 @@ export default function ManageTeam() {
       };
 
       // Update team data
-      await updateDoc(teamRef, {
+      await teamsDb.update(id, {
         players: [...players, playerData],
       });
 
@@ -239,11 +229,10 @@ export default function ManageTeam() {
     if (!window.confirm("Are you sure you want to remove this player?")) return;
 
     try {
-      const teamRef = doc(db, "cricket_teams", id);
       const players = [...teamData.players];
       players.splice(index, 1);
 
-      await updateDoc(teamRef, { players });
+      await teamsDb.update(id, { players });
       setTeamData({ ...teamData, players });
     } catch (error) {
       console.error("Error removing player:", error);
@@ -331,7 +320,6 @@ export default function ManageTeam() {
 
     try {
       setIsModalAnimating(true);
-      const teamRef = doc(db, "cricket_teams", id);
       const updatedPlayers = [...teamData.players];
 
       // If making this player captain, remove captain status from others
@@ -357,7 +345,7 @@ export default function ManageTeam() {
         ...editingPlayer,
       };
 
-      await updateDoc(teamRef, { players: updatedPlayers });
+      await teamsDb.update(id, { players: updatedPlayers });
 
       setTeamData({
         ...teamData,
@@ -410,7 +398,6 @@ export default function ManageTeam() {
 
     setIsUploading(true);
     try {
-      const teamRef = doc(db, "cricket_teams", id);
       const updates = {};
 
       if (jerseyImages.front) {
@@ -425,7 +412,7 @@ export default function ManageTeam() {
       console.log("updates", updates);
 
       // Update team document
-      await updateDoc(teamRef, updates);
+      await teamsDb.update(id, updates);
 
       // Update local state
       setTeamData({

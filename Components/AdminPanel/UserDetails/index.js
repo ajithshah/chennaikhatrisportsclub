@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Container, Card, Row, Col, Badge, Button } from "react-bootstrap";
-import { auth, db } from "../../../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { auth } from "../../../firebase";
+import { usersDb } from "../../../lib/db";
 import Image from "next/image";
 import Meta from "@/Components/Meta";
 
@@ -19,11 +19,10 @@ export default function UserDetails({ userId }) {
           return;
         }
 
-        const userDoc = doc(db, "users", userId);
-        const userSnapshot = await getDoc(userDoc);
+        const userData = await usersDb.get(userId);
 
-        if (userSnapshot.exists()) {
-          setUser({ id: userSnapshot.id, ...userSnapshot.data() });
+        if (userData) {
+          setUser({ id: userId, ...userData });
         } else {
           router.push("/adminpanel/users");
         }

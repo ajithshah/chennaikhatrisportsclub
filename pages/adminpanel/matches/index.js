@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { auth, db } from "../../../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { auth } from "../../../firebase";
+import { usersDb } from "../../../lib/db";
 import Header from "../../../Components/Header";
 import Meta from "../../../Components/Meta";
 import Footer from "@/Components/Footer";
@@ -15,10 +15,9 @@ export default function MatchesAdminPage() {
   useEffect(() => {
     const checkAdmin = async (currentUser) => {
       try {
-        const userRef = doc(db, "users", currentUser.uid);
-        const userSnap = await getDoc(userRef);
+        const userData = await usersDb.get(currentUser.uid);
 
-        if (!userSnap.exists() || !userSnap.data().isAdmin) {
+        if (!userData || !userData.isAdmin) {
           router.push("/");
           return;
         }

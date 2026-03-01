@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import logo from "../../public/logo.png";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { auth, db } from "../../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { auth } from "../../firebase";
+import { usersDb } from "../../lib/db";
 import {
   signInWithGoogle,
   handleSignOut as signOutUser,
@@ -31,12 +31,11 @@ const Header = () => {
         // Get the Firebase auth user
         setUser(authUser);
 
-        // Fetch the user data from Firestore
-        const userRef = doc(db, "users", authUser.uid);
-        const userSnap = await getDoc(userRef);
+        // Fetch the user data from MongoDB
+        const userData = await usersDb.get(authUser.uid);
 
-        if (userSnap.exists()) {
-          setDbUserData(userSnap.data());
+        if (userData) {
+          setDbUserData(userData);
         }
       } else {
         setUser(null);

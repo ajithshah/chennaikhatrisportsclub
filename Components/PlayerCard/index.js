@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { db } from "@/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { usersDb } from "@/lib/db";
 
 const PlayerCard = ({ player, userProfile }) => {
   const [user, setUser] = useState(null);
@@ -22,9 +21,8 @@ const PlayerCard = ({ player, userProfile }) => {
   const fetchUserProfile = async (userId) => {
     try {
       setLoading(true);
-      const userDoc = await getDoc(doc(db, "users", userId));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
+      const userData = await usersDb.get(userId);
+      if (userData) {
         // console.log("User profile data:", userData);
         setUser(userData);
       } else {

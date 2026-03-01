@@ -2,15 +2,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { Card, Row, Col, Button, Badge } from "react-bootstrap";
-import { auth, db } from "../../firebase";
-import {
-  doc,
-  getDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
+import { auth } from "../../firebase";
+import { usersDb, teamsDb } from "../../lib/db";
 import Header from "../../Components/Header";
 import Meta from "../../Components/Meta";
 
@@ -28,61 +21,48 @@ export default function Profile() {
     }
 
     try {
-      const teamsRef = collection(db, "cricket_teams");
       const userPhone = userData.phoneNumber;
 
       // First check if user is a team owner (captain or viceCaptain)
-      const teamQuery = query(
-        teamsRef,
-        where("captainPhoneNumber", "==", userPhone)
-      );
-      const teamSnapshot = await getDocs(teamQuery);
-
-      // Check if user is vice captain
-      const viceCaptainQuery = query(
-        teamsRef,
-        where("viceCaptainPhoneNumber", "==", userPhone)
-      );
-      const viceCaptainSnapshot = await getDocs(viceCaptainQuery);
+      const captainTeams = await teamsDb.findByCaptainPhone(userPhone);
+      const viceCaptainTeams = await teamsDb.findByViceCaptainPhone(userPhone);
 
       let foundAsOwner = false;
 
-      if (!teamSnapshot.empty) {
-        const teamDoc = teamSnapshot.docs[0];
-        const teamData = teamDoc.data();
+      if (captainTeams.length > 0) {
+        const team = captainTeams[0];
         foundAsOwner = true;
         setTeamData({
-          id: teamDoc.id,
-          ...teamData,
+          id: team.id,
+          ...team,
           role: "Captain",
           jerseyNumber:
-            teamData.players?.find((p) => p.phoneNumber === userPhone)
+            team.players?.find((p) => p.phoneNumber === userPhone)
               ?.jerseyNumber || "",
           jerseyName:
-            teamData.players?.find((p) => p.phoneNumber === userPhone)
+            team.players?.find((p) => p.phoneNumber === userPhone)
               ?.jerseyName || "",
           jerseySize:
-            teamData.players?.find((p) => p.phoneNumber === userPhone)
+            team.players?.find((p) => p.phoneNumber === userPhone)
               ?.jerseySize || "",
           isCaptain: true,
           isViceCaptain: false,
         });
-      } else if (!viceCaptainSnapshot.empty) {
-        const teamDoc = viceCaptainSnapshot.docs[0];
-        const teamData = teamDoc.data();
+      } else if (viceCaptainTeams.length > 0) {
+        const team = viceCaptainTeams[0];
         foundAsOwner = true;
         setTeamData({
-          id: teamDoc.id,
-          ...teamData,
+          id: team.id,
+          ...team,
           role: "Vice Captain",
           jerseyNumber:
-            teamData.players?.find((p) => p.phoneNumber === userPhone)
+            team.players?.find((p) => p.phoneNumber === userPhone)
               ?.jerseyNumber || "",
           jerseyName:
-            teamData.players?.find((p) => p.phoneNumber === userPhone)
+            team.players?.find((p) => p.phoneNumber === userPhone)
               ?.jerseyName || "",
           jerseySize:
-            teamData.players?.find((p) => p.phoneNumber === userPhone)
+            team.players?.find((p) => p.phoneNumber === userPhone)
               ?.jerseySize || "",
           isCaptain: false,
           isViceCaptain: true,
@@ -91,31 +71,19 @@ export default function Profile() {
 
       if (!foundAsOwner) {
         // Then check if user exists in any team's players array
-        const teamsSnapshot = await getDocs(teamsRef);
-        let playerTeam = null;
+        const result = await teamsDb.findByPlayerPhone(userPhone);
 
-        // Search through all teams for matching player
-        for (const doc of teamsSnapshot.docs) {
-          const team = doc.data();
-          const playerMatch = team.players?.find(
-            (player) => player.phoneNumber === userPhone
-          );
-          if (playerMatch) {
-            playerTeam = { id: doc.id, ...team, playerDetails: playerMatch };
-            break;
-          }
-        }
-
-        if (playerTeam) {
+        if (result) {
+          const { team, player } = result;
           setTeamData({
-            id: playerTeam.id,
-            name: playerTeam.name,
+            id: team.id,
+            name: team.name,
             role: "Player",
-            jerseyNumber: playerTeam.playerDetails.jerseyNumber || "",
-            jerseyName: playerTeam.playerDetails.jerseyName || "",
-            jerseySize: playerTeam.playerDetails.jerseySize || "",
-            isCaptain: playerTeam.playerDetails.isCaptain || false,
-            isViceCaptain: playerTeam.playerDetails.isViceCaptain || false,
+            jerseyNumber: player.jerseyNumber || "",
+            jerseyName: player.jerseyName || "",
+            jerseySize: player.jerseySize || "",
+            isCaptain: player.isCaptain || false,
+            isViceCaptain: player.isViceCaptain || false,
           });
         } else {
           console.log("User not found in any team");
@@ -131,11 +99,10 @@ export default function Profile() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
+        const userDoc = await usersDb.get(user.uid);
 
-        if (userSnap.exists()) {
-          const userData = { ...userSnap.data(), id: user.uid };
+        if (userDoc) {
+          const userData = { ...userDoc, id: user.uid };
           setUserData(userData);
           await fetchTeamData(userData); // Pass the full userData object
         }

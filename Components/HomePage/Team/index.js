@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../../../firebase";
+import { teamsDb } from "../../../lib/db";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -24,16 +23,7 @@ const Team = () => {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const teamsCollection = collection(db, "cricket_teams");
-        const activeTeamsQuery = query(
-          teamsCollection,
-          where("status", "in", ["freeze", "active"])
-        );
-        const teamSnapshot = await getDocs(activeTeamsQuery);
-        const teamsList = teamSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const teamsList = await teamsDb.getAll({ status: ["freeze", "active"] });
         setTeams(teamsList);
       } catch (error) {
         console.error("Error fetching teams:", error);

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Container } from "react-bootstrap";
-import { auth, db } from "../../firebase";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { auth } from "../../firebase";
+import { usersDb, teamsDb } from "../../lib/db";
 import Header from "../Header";
 import Meta from "../Meta";
 
@@ -88,21 +88,19 @@ export default function AdminPanel() {
     // },
   ];
 
-  // Fetch counts from Firestore
+  // Fetch counts from MongoDB
   const fetchCounts = async () => {
     try {
       // Get team count
-      const teamsCollection = collection(db, "cricket_teams");
-      const teamsSnapshot = await getDocs(teamsCollection);
+      const teams = await teamsDb.getAll();
 
       // Get user count
-      const usersCollection = collection(db, "users");
-      const usersSnapshot = await getDocs(usersCollection);
+      const users = await usersDb.getAll();
 
       setCategoryStats((prev) => ({
         ...prev,
-        cricket: teamsSnapshot.size,
-        users: usersSnapshot.size,
+        cricket: teams.length,
+        users: users.length,
       }));
     } catch (error) {
       console.error("Error fetching counts:", error);
@@ -111,10 +109,9 @@ export default function AdminPanel() {
 
   useEffect(() => {
     const checkAdmin = async (currentUser) => {
-      const userRef = doc(db, "users", currentUser.uid);
-      const userSnap = await getDoc(userRef);
+      const userData = await usersDb.get(currentUser.uid);
 
-      if (!userSnap.exists() || !userSnap.data().isAdmin) {
+      if (!userData || !userData.isAdmin) {
         router.push("/");
         return;
       }

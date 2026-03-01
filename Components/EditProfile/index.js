@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
 import {
   Card,
   Row,
@@ -9,7 +8,8 @@ import {
   Button,
   Spinner,
 } from "react-bootstrap";
-import { auth, db } from "../../firebase";
+import { auth } from "../../firebase";
+import { usersDb } from "../../lib/db";
 import Header from "../Header";
 import Meta from "../Meta";
 
@@ -115,11 +115,9 @@ export default function EditProfile() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
+        const userData = await usersDb.get(user.uid);
 
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
+        if (userData) {
           setFormData({
             displayName: userData.displayName || user.displayName || "",
             phoneNumber: userData.phoneNumber || "",
@@ -157,8 +155,7 @@ export default function EditProfile() {
     try {
       const user = auth.currentUser;
       if (user) {
-        const userRef = doc(db, "users", user.uid);
-        await updateDoc(userRef, {
+        await usersDb.update(user.uid, {
           ...formData,
           updatedAt: new Date().toISOString(),
         });

@@ -1,9 +1,5 @@
-import { put } from "@vercel/blob";
 import multer from "multer";
-import { config as dotenvConfig } from "dotenv";
-
-// Initialize configuration for environment variables
-dotenvConfig();
+import { getCollection } from "../../lib/mongodb";
 
 // Setup multer to use memory storage
 const upload = multer({ storage: multer.memoryStorage() });
@@ -19,13 +15,6 @@ const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/jpg"];
 
 // File size limit (5 MB)
 const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
-
-// Validate necessary environment variables
-const validateEnv = () => {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    throw new Error("Missing BLOB_READ_WRITE_TOKEN environment variable");
-  }
-};
 
 // Processing file upload using multer middleware
 const processFileUpload = (req) => {
@@ -47,12 +36,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Validate environment variables
-    validateEnv();
-
     // Process file upload
     const file = await processFileUpload(req);
-    // console.log("Received file:", file);
 
     // Validate MIME type
     if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
@@ -78,23 +63,30 @@ export default async function handler(req, res) {
       file.originalname.split(".")[0]
     }-${randomString}.${fileExtension}`;
 
-    // Upload the file to Vercel Blob storage
-    const blob = await put(
-      `team-jersey/${file.originalname}-${uniqueFileName}`,
-      file.buffer,
-      {
-        access: "public",
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-        allowOverwrite: true,
-        addRandomSuffix: false,
-      }
-    );
+    // Convert buffer to base64
+    const base64Data = file.buffer.toString("base64");
+    
+    // Store in MongoDB
+    const collection = await getCollection("images");
+    const imageDoc = {
+      _id: `jersey_${uniqueFileName}`,
+      filename: uniqueFileName,
+      category: "jersey",
+      mimetype: file.mimetype,
+      data: base64Data,
+      size: file.size,
+      createdAt: new Date().toISOString(),
+    };
+    
+    await collection.insertOne(imageDoc);
 
-    // console.log("File uploaded successfully:", blob);
+    // Return URL that points to our image serving API
+    const fileUrl = `/api/images/${imageDoc._id}`;
+    
     return res.status(200).json({
       message: "File uploaded successfully",
-      fileUrl: blob.url,
-      fileId: blob.pathname,
+      fileUrl: fileUrl,
+      fileId: imageDoc._id,
     });
   } catch (error) {
     console.error("Error in upload handler:", error);

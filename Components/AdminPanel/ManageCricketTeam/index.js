@@ -11,16 +11,8 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
-import { auth, db } from "../../../firebase";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
+import { auth } from "../../../firebase";
+import { usersDb, teamsDb } from "../../../lib/db";
 import Image from "next/image";
 import Header from "@/Components/Header";
 import Meta from "@/Components/Meta";
@@ -54,21 +46,16 @@ export default function ManageCricketTeam() {
   useEffect(() => {
     const checkAuthAndFetchData = async (currentUser) => {
       try {
-        const userRef = doc(db, "users", currentUser.uid);
-        const userSnap = await getDoc(userRef);
+        const userData = await usersDb.get(currentUser.uid);
 
-        if (!userSnap.exists() || !userSnap.data().isAdmin) {
+        if (!userData || !userData.isAdmin) {
           router.push("/");
           return;
         }
 
         await fetchAvailableCaptains();
 
-        const teamsSnap = await getDocs(collection(db, "cricket_teams"));
-        const teamsData = teamsSnap.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const teamsData = await teamsDb.getAll();
 
         setTeams(teamsData);
         setLoading(false);
@@ -91,14 +78,14 @@ export default function ManageCricketTeam() {
 
   const fetchAvailableCaptains = async () => {
     try {
-      const usersSnap = await getDocs(collection(db, "users"));
-      const captains = usersSnap.docs
-        .map((doc) => ({
-          id: doc.id,
-          name: doc.data().name || doc.data().displayName,
-          phoneNumber: doc.data().phoneNumber,
-          email: doc.data().email,
-          photoURL: doc.data().photoURL || doc.data().profilePic || "",
+      const usersData = await usersDb.getAll();
+      const captains = usersData
+        .map((user) => ({
+          id: user._id || user.uid,
+          name: user.name || user.displayName,
+          phoneNumber: user.phoneNumber,
+          email: user.email,
+          photoURL: user.photoURL || user.profilePic || "",
         }))
         .filter((captain) => captain.phoneNumber);
 
@@ -287,9 +274,9 @@ export default function ManageCricketTeam() {
         updatedAt: new Date().toISOString(),
       };
 
-      // Save newTeam to database (e.g., Firestore)
-      const docRef = await addDoc(collection(db, "cricket_teams"), newTeam);
-      setTeams([...teams, { id: docRef.id, ...newTeam }]);
+      // Save newTeam to database (MongoDB)
+      const savedTeam = await teamsDb.create(newTeam);
+      setTeams([...teams, savedTeam]);
 
       // Close modal and reset form (if applicable)
       setShowModal(false);
@@ -444,7 +431,6 @@ export default function ManageCricketTeam() {
         });
       }
 
-      const teamRef = doc(db, "cricket_teams", teamForm.id);
       const updateData = {
         name: teamForm.name,
         captain: teamForm.captain,
@@ -459,7 +445,7 @@ export default function ManageCricketTeam() {
         teamLogoUrl: teamLogoUrl,
       };
 
-      await updateDoc(teamRef, updateData);
+      await teamsDb.update(teamForm.id, updateData);
 
       setTeams(
         teams.map((team) =>
@@ -478,15 +464,12 @@ export default function ManageCricketTeam() {
 
   const handleDeleteTeam = async (teamId) => {
     try {
-      const teamRef = doc(db, "cricket_teams", teamId);
-      const teamSnap = await getDoc(teamRef);
+      const teamData = await teamsDb.get(teamId);
 
-      if (!teamSnap.exists()) {
+      if (!teamData) {
         console.error("Team not found");
         return;
       }
-
-      const teamData = teamSnap.data();
 
       if (teamData.players && teamData.players.length > 2) {
         // Allow deletion if only captain and vice-captain exist
@@ -497,7 +480,7 @@ export default function ManageCricketTeam() {
       }
 
       if (window.confirm("Are you sure you want to delete this team?")) {
-        await deleteDoc(teamRef);
+        await teamsDb.delete(teamId);
         setTeams(teams.filter((team) => team.id !== teamId));
       }
     } catch (error) {
@@ -508,11 +491,9 @@ export default function ManageCricketTeam() {
 
   const handleViewTeam = async (teamId) => {
     try {
-      const teamRef = doc(db, "cricket_teams", teamId);
-      const teamSnap = await getDoc(teamRef);
+      const teamData = await teamsDb.get(teamId);
 
-      if (teamSnap.exists()) {
-        const teamData = teamSnap.data();
+      if (teamData) {
         setViewTeamDetails(teamData);
 
         const membersData = teamData.players.map((player, index) => ({

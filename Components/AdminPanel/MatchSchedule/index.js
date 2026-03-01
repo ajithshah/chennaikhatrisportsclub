@@ -9,17 +9,7 @@ import {
   Modal,
   Table,
 } from "react-bootstrap";
-import { db } from "../../../firebase";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  updateDoc,
-  deleteDoc,
-  query,
-  orderBy,
-} from "firebase/firestore";
+import { matchesDb, teamsDb } from "../../../lib/db";
 import Image from "next/image";
 
 export default function MatchSchedule() {
@@ -55,22 +45,21 @@ export default function MatchSchedule() {
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const playersSnapshot = await getDocs(collection(db, "cricket_teams"));
+        const teamsData = await teamsDb.getAll();
         const playersList = [];
 
         // Extract players from each team
-        playersSnapshot.docs.forEach((doc) => {
-          const teamData = doc.data();
-          const teamName = teamData.name;
+        teamsData.forEach((team) => {
+          const teamName = team.name;
 
           // Add each player from the team's players array
-          if (teamData.players && Array.isArray(teamData.players)) {
-            teamData.players.forEach((player) => {
+          if (team.players && Array.isArray(team.players)) {
+            team.players.forEach((player) => {
               playersList.push({
-                id: `${doc.id}_${player.userId || player.name}`, // Unique ID
+                id: `${team.id}_${player.userId || player.name}`, // Unique ID
                 name: player.name,
                 teamName: teamName, // Changed from team to teamName to match filter
-                teamId: doc.id,
+                teamId: team.id,
                 role: player.role || "",
                 jerseyNumber: player.jerseyNumber || "",
               });
@@ -106,16 +95,7 @@ export default function MatchSchedule() {
   const fetchMatches = async () => {
     try {
       setLoading(true);
-      const matchesCollection = collection(db, "matches");
-      const matchesQuery = query(
-        matchesCollection,
-        orderBy("matchDate", "asc")
-      );
-      const matchesSnapshot = await getDocs(matchesQuery);
-      const matchesList = matchesSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const matchesList = await matchesDb.getAll({ orderBy: "matchDate", orderDir: "asc" });
       setMatches(matchesList);
       setLoading(false);
     } catch (error) {
@@ -126,13 +106,7 @@ export default function MatchSchedule() {
 
   const fetchTeams = async () => {
     try {
-      const teamsCollection = collection(db, "cricket_teams");
-      const teamsSnapshot = await getDocs(teamsCollection);
-      const teamsList = teamsSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        name: doc.data().name,
-        teamLogoUrl: doc.data().teamLogoUrl || "",
-      }));
+      const teamsList = await teamsDb.getAll();
       setTeams(teamsList);
     } catch (error) {
       console.error("Error fetching teams:", error);
@@ -184,7 +158,7 @@ export default function MatchSchedule() {
         group: formData.group || "",
       };
 
-      await addDoc(collection(db, "matches"), matchData);
+      await matchesDb.create(matchData);
       setShowAddModal(false);
       resetForm();
       fetchMatches();
@@ -200,7 +174,6 @@ export default function MatchSchedule() {
       const teamAData = teams.find((team) => team.name === formData.teamA);
       const teamBData = teams.find((team) => team.name === formData.teamB);
 
-      const matchRef = doc(db, "matches", currentMatch.id);
       const updatedData = {
         ...formData,
         teamAScore: parseInt(formData.teamAScore),
@@ -213,7 +186,7 @@ export default function MatchSchedule() {
         group: formData.group || "",
       };
 
-      await updateDoc(matchRef, updatedData);
+      await matchesDb.update(currentMatch.id, updatedData);
       setShowEditModal(false);
       resetForm();
       fetchMatches();
@@ -225,7 +198,7 @@ export default function MatchSchedule() {
   const handleDeleteMatch = async (matchId) => {
     if (window.confirm("Are you sure you want to delete this match?")) {
       try {
-        await deleteDoc(doc(db, "matches", matchId));
+        await matchesDb.delete(matchId);
         fetchMatches();
       } catch (error) {
         console.error("Error deleting match:", error);

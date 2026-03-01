@@ -1,6 +1,6 @@
 import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
-import { getDoc, setDoc, doc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { auth } from "../firebase";
+import { usersDb } from "../lib/db";
 
 export const signInWithGoogle = async (onSuccess, onError, setIsLoading) => {
   try {
@@ -11,8 +11,8 @@ export const signInWithGoogle = async (onSuccess, onError, setIsLoading) => {
     const user = result.user;
 
     if (user) {
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
+      // Check if user exists in MongoDB
+      const existingUser = await usersDb.get(user.uid);
 
       const userData = {
         uid: user.uid,
@@ -22,15 +22,15 @@ export const signInWithGoogle = async (onSuccess, onError, setIsLoading) => {
       };
 
       // Create or update the user document
-      await setDoc(userRef, userData, { merge: true });
+      await usersDb.set(user.uid, userData);
 
       // If this is a new user, set additional default fields
-      if (!userSnap.exists()) {
+      if (!existingUser) {
         userData.isAdmin = false;
         userData.createdAt = new Date().toISOString();
-        userData.displayName = userSnap.displayName || "";
-        userData.photoURL = userSnap.photoURL || "";
-        await setDoc(userRef, userData, { merge: true });
+        userData.displayName = user.displayName || "";
+        userData.photoURL = user.photoURL || "";
+        await usersDb.set(user.uid, userData);
       }
 
       // Call the success callback if provided
