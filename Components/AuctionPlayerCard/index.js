@@ -281,22 +281,101 @@ const AuctionPlayerCard = ({ player }) => {
         }
 
         @media (max-width: 576px) {
-          .player-image-section {
-            height: 180px;
+          .auction-player-card {
+            flex-direction: row;
+            border-radius: 12px;
+            min-height: auto;
           }
 
-          .image-wrapper,
-          .placeholder-image {
+          .auction-player-card:hover {
+            transform: translateY(-4px);
+          }
+
+          .sold-banner {
+            font-size: 1rem;
+            padding: 8px 20px;
+            transform: rotate(-15deg);
+          }
+
+          .player-image-section {
             width: 120px;
-            height: 120px;
+            min-width: 120px;
+            height: auto;
+            min-height: 180px;
+            border-radius: 12px 0 0 12px;
+          }
+
+          .image-wrapper {
+            width: 90px;
+            height: 90px;
+            border-radius: 8px;
+          }
+
+          .placeholder-image {
+            width: 80px;
+            height: 80px;
           }
 
           .initials {
-            font-size: 36px;
+            font-size: 28px;
+          }
+
+          .player-info {
+            padding: 10px;
+            justify-content: flex-start;
           }
 
           .player-name {
-            font-size: 1.2rem;
+            font-size: 0.95rem;
+            text-align: left;
+            margin-bottom: 2px;
+          }
+
+          .jersey-name {
+            text-align: left;
+            font-size: 0.7rem;
+            margin-bottom: 4px;
+          }
+
+          .skill-badge {
+            text-align: left;
+            margin-bottom: 6px;
+          }
+
+          .badge {
+            padding: 3px 8px;
+            font-size: 0.6rem;
+          }
+
+          .player-details {
+            display: block;
+          }
+
+          .detail-row {
+            gap: 4px;
+            margin-bottom: 4px;
+          }
+
+          .detail-row.single {
+            display: flex;
+          }
+
+          .detail-item {
+            padding: 4px 6px;
+            border-radius: 4px;
+          }
+
+          .detail-item.full {
+            flex: 1;
+          }
+
+          .label {
+            font-size: 0.55rem;
+            margin-bottom: 0;
+          }
+
+          .value {
+            font-size: 0.7rem;
           }
         }
       `}</style>
