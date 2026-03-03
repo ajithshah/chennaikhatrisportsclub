@@ -105,7 +105,7 @@ const ImageSlider = () => {
         const availableItems = mediaItems.filter(
           (item) =>
             !currentSources.includes(item.src) ||
-            item.src === newItems[randomIndex].src
+            item.src === newItems[randomIndex].src,
         );
 
         // If no unique items left, use the original item being replaced
@@ -202,11 +202,11 @@ const ImageSlider = () => {
           marginBottom: 32,
         }}
       >
-        <div
+        {/* <div
           ref={ytPlayer1Ref}
           className="youtube-embed"
           style={{ width: "100%", maxWidth: 560, height: 315 }}
-        ></div>
+        ></div> */}
       </div>
 
       <div className="tiles-controls">
@@ -372,7 +372,9 @@ const ImageSlider = () => {
           overflow: hidden;
           border-radius: 8px;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          transition: transform 0.5s ease, opacity 0.5s ease;
+          transition:
+            transform 0.5s ease,
+            opacity 0.5s ease;
           min-height: 100px;
           animation: fadeIn 0.5s ease-in-out;
         }
@@ -493,12 +495,17 @@ const ImageSlider = () => {
           box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
           border: 3px solid #3498db;
           background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-          transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+          transition:
+            transform 0.2s,
+            box-shadow 0.2s,
+            border-color 0.2s;
         }
 
         .youtube-embed:hover {
           transform: scale(1.05);
-          box-shadow: 0 8px 32px 0 rgba(52, 152, 219, 0.25), 0 0 0 4px #85c1e9;
+          box-shadow:
+            0 8px 32px 0 rgba(52, 152, 219, 0.25),
+            0 0 0 4px #85c1e9;
           border-color: #217dbb;
         }
 
@@ -509,11 +516,16 @@ const ImageSlider = () => {
           box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
           border: 3px solid #3498db;
           background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-          transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+          transition:
+            transform 0.2s,
+            box-shadow 0.2s,
+            border-color 0.2s;
         }
         .youtube-embed iframe:hover {
           transform: scale(1.05);
-          box-shadow: 0 8px 32px 0 rgba(52, 152, 219, 0.25), 0 0 0 4px #85c1e9;
+          box-shadow:
+            0 8px 32px 0 rgba(52, 152, 219, 0.25),
+            0 0 0 4px #85c1e9;
           border-color: #217dbb;
         }
       `}</style>

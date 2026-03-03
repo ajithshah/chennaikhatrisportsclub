@@ -150,7 +150,7 @@ const Header = () => {
             </Link>
 
             {/* Schedule Link */}
-            <Link href="/schedule" passHref legacyBehavior>
+            <Link href="/auction" passHref legacyBehavior>
               <Nav.Link
                 className={`px-3 ${
                   isSchedultPage ? "fw-bold text-primary active" : "text-dark"
@@ -163,12 +163,12 @@ const Header = () => {
                     : {}
                 }
               >
-                Match&nbsp;Schedule
+                Auction
               </Nav.Link>
             </Link>
 
             {/* Team Link */}
-            <Link href="/team" passHref legacyBehavior>
+            {/* <Link href="/team" passHref legacyBehavior>
               <Nav.Link
                 className={`px-3 ${
                   isteamPage ? "fw-bold text-primary active" : "text-dark"
@@ -177,7 +177,7 @@ const Header = () => {
               >
                 KPL&nbsp;Season&nbsp;3
               </Nav.Link>
-            </Link>
+            </Link> */}
           </Nav>
           <Nav className="d-flex align-items-center justify-content-end gap-3 w-100">
             {user ? (
