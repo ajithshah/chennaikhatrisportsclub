@@ -80,6 +80,7 @@ const Header = () => {
   const isSchedultPage = currentPath === "/schedule";
   const isteamPage =
     currentPath === "/team" || currentPath.startsWith("/team/");
+  const isContactPage = currentPath === "/contact";
 
   // Get display name from the database if available
   const displayName = dbUserData?.displayName || user?.displayName || "User";
@@ -164,6 +165,18 @@ const Header = () => {
                 }
               >
                 Auction
+              </Nav.Link>
+            </Link>
+
+            {/* Contact Link */}
+            <Link href="/contact" passHref legacyBehavior>
+              <Nav.Link
+                className={`px-3 ${
+                  isContactPage ? "fw-bold text-primary active" : "text-dark"
+                }`}
+                style={isContactPage ? { borderBottom: "2px solid #0d6efd" } : {}}
+              >
+                Contact
               </Nav.Link>
             </Link>
 

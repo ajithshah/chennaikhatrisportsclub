@@ -155,13 +155,25 @@ const AuctionPlayerCard = ({ player }) => {
 
         .sold-team {
           text-align: center;
-          background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-          color: #ffd700;
-          font-size: 0.8rem;
-          font-weight: 700;
+          background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+          color: #1a202c;
+          font-size: 0.85rem;
+          font-weight: 800;
           padding: 8px 12px;
-          letter-spacing: 1px;
+          letter-spacing: 1.5px;
           text-transform: uppercase;
+          text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+          box-shadow: 0 -2px 10px rgba(255, 215, 0, 0.3);
+          animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+          from {
+            box-shadow: 0 -2px 10px rgba(255, 215, 0, 0.3);
+          }
+          to {
+            box-shadow: 0 -2px 20px rgba(255, 215, 0, 0.6);
+          }
         }
 
         .player-image-section {
@@ -312,9 +324,10 @@ const AuctionPlayerCard = ({ player }) => {
             bottom: 0;
             left: 0;
             right: 0;
-            font-size: 0.6rem;
-            padding: 4px 8px;
+            font-size: 0.65rem;
+            padding: 5px 8px;
             border-radius: 0 0 12px 12px;
+            font-weight: 800;
           }
 
           .player-image-section {
