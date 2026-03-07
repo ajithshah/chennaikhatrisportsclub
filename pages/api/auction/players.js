@@ -36,7 +36,8 @@ export default async function handler(req, res) {
       
       row.c.forEach((cell, colIndex) => {
         const header = headers[colIndex];
-        const value = cell ? (cell.v !== null ? cell.v : cell.f || "") : "";
+        const value = cell ? (cell.v !== null && cell.v !== undefined ? cell.v : cell.f || "") : "";
+        const displayValue = cell ? (cell.f || (cell.v !== null && cell.v !== undefined ? String(cell.v) : "")) : "";
         
         // Map headers to clean property names
         switch (header.toLowerCase().trim()) {
@@ -71,7 +72,7 @@ export default async function handler(req, res) {
             player.jerseyName = value;
             break;
           case "jersey number":
-            player.jerseyNumber = value;
+            player.jerseyNumber = displayValue || String(value || "");
             break;
           case "jersey size":
             player.jerseySize = value;
@@ -81,6 +82,9 @@ export default async function handler(req, res) {
             break;
           case "status":
             player.status = value;
+            break;
+          case "team":
+            player.team = value;
             break;
           default:
             // Handle any other columns

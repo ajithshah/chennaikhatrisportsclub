@@ -30,18 +30,14 @@ const AuctionPlayerCard = ({ player }) => {
 
   const imageUrl = getImageUrl(player.photoURL);
   const isSold = player.status?.toLowerCase() === "sold";
+  const isAvailable = player.status?.toLowerCase() === "available";
 
   return (
     <div className={`auction-player-card ${isSold ? "sold" : ""}`}>
-      {/* Sold Overlay */}
-      {isSold && (
-        <div className="sold-overlay">
-          <div className="sold-banner">SOLD</div>
-        </div>
-      )}
-
       {/* Player Image */}
       <div className="player-image-section">
+        {isSold && <div className="sold-banner">SOLD</div>}
+        {isAvailable && <div className="available-banner">AVAILABLE</div>}
         {imageUrl ? (
           <div className="image-wrapper">
             <Image
@@ -108,6 +104,10 @@ const AuctionPlayerCard = ({ player }) => {
         </div>
       </div>
 
+      {isSold && player.team && (
+        <div className="sold-team">{player.team}</div>
+      )}
+
       <style jsx>{`
         .auction-player-card {
           background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
@@ -127,33 +127,41 @@ const AuctionPlayerCard = ({ player }) => {
         }
 
         .auction-player-card.sold {
-          opacity: 0.85;
+          filter: brightness(0.5);
         }
 
-        .sold-overlay {
+        .sold-banner,
+        .available-banner {
           position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.4);
-          z-index: 10;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          pointer-events: none;
+          top: 10px;
+          left: 10px;
+          z-index: 5;
+          color: white;
+          font-size: 0.7rem;
+          font-weight: 800;
+          padding: 4px 12px;
+          border-radius: 6px;
+          letter-spacing: 1px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .sold-banner {
           background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
-          color: white;
-          font-size: 2rem;
-          font-weight: 800;
-          padding: 15px 50px;
-          transform: rotate(-15deg);
-          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-          letter-spacing: 3px;
-          border: 3px solid white;
+        }
+
+        .available-banner {
+          background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+        }
+
+        .sold-team {
+          text-align: center;
+          background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+          color: #ffd700;
+          font-size: 0.8rem;
+          font-weight: 700;
+          padding: 8px 12px;
+          letter-spacing: 1px;
+          text-transform: uppercase;
         }
 
         .player-image-section {
@@ -291,10 +299,22 @@ const AuctionPlayerCard = ({ player }) => {
             transform: translateY(-4px);
           }
 
-          .sold-banner {
-            font-size: 1rem;
-            padding: 8px 20px;
-            transform: rotate(-15deg);
+          .sold-banner,
+          .available-banner {
+            font-size: 0.55rem;
+            padding: 3px 8px;
+            top: 6px;
+            left: 6px;
+          }
+
+          .sold-team {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            font-size: 0.6rem;
+            padding: 4px 8px;
+            border-radius: 0 0 12px 12px;
           }
 
           .player-image-section {

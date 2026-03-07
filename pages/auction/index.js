@@ -58,7 +58,19 @@ const AuctionPage = () => {
 
   const filteredPlayers = players.filter((player) => {
     const matchesFilter = filter === "all" || player.skill?.toLowerCase()?.includes(filter.toLowerCase());
-    const matchesSearch = !searchQuery || player.name?.toLowerCase()?.includes(searchQuery.toLowerCase());
+    const query = searchQuery.toLowerCase();
+    const matchesSearch = !searchQuery || [
+      player.name,
+      player.jerseyName,
+      player.jerseyNumber,
+      player.skill,
+      player.battingStyle,
+      player.bowlingStyle,
+      player.location,
+      player.team,
+      player.status,
+      player.age != null ? String(player.age) : "",
+    ].some(field => field?.toLowerCase()?.includes(query));
     return matchesFilter && matchesSearch;
   });
 
@@ -133,7 +145,7 @@ const AuctionPage = () => {
               <input
                 type="text"
                 className="search-input"
-                placeholder="Search player by name..."
+                placeholder="Search by name, skill, status..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />

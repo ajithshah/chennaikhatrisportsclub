@@ -50,7 +50,7 @@ const Footer = () => {
               <p className="developer-credit text-light">
                 Developed by{" "}
                 <span className="developer-name">
-                  Shanthosh sha , Ajith sha
+                  Tech Brothers
                 </span>
               </p>
             }
