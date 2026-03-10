@@ -151,7 +151,7 @@ const Header = () => {
             </Link>
 
             {/* Schedule Link */}
-            <Link href="/auction" passHref legacyBehavior>
+            {/* <Link href="/auction" passHref legacyBehavior>
               <Nav.Link
                 className={`px-3 ${
                   isSchedultPage ? "fw-bold text-primary active" : "text-dark"
@@ -165,6 +165,23 @@ const Header = () => {
                 }
               >
                 Auction
+              </Nav.Link>
+            </Link> */}
+
+            <Link href="/auction/teams" passHref legacyBehavior>
+              <Nav.Link
+                className={`px-3 ${
+                  isSchedultPage ? "fw-bold text-primary active" : "text-dark"
+                }`}
+                style={
+                  isSchedultPage
+                    ? {
+                        borderBottom: "2px solid #0d6efd",
+                      }
+                    : {}
+                }
+              >
+                Teams
               </Nav.Link>
             </Link>
 
