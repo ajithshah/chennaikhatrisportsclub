@@ -43,10 +43,10 @@ const AuctionTeamsPage = () => {
         <div className="page-header">
           <Container>
             <div className="header-content">
-              <Link href="/auction" className="back-link">
+              {/* <Link href="/auction" className="back-link">
                 <i className="fas fa-arrow-left"></i> Back to Auction
-              </Link>
-              <h1 className="page-title">Auction Teams</h1>
+              </Link> */}
+              <h1 className="page-title">Khatri Champions League</h1>
               <p className="page-subtitle">
                 View all teams and their squad members
               </p>
@@ -79,13 +79,13 @@ const AuctionTeamsPage = () => {
             <>
               <div className="teams-summary mb-4">
                 <Row className="g-3">
-                  <Col xs={6} md={4}>
+                  <Col xs={6} md={6}>
                     <div className="summary-card">
                       <span className="summary-value">{teams.length}</span>
                       <span className="summary-label">Total Teams</span>
                     </div>
                   </Col>
-                  <Col xs={6} md={4}>
+                  <Col xs={6} md={6}>
                     <div className="summary-card">
                       <span className="summary-value">
                         {teams.reduce(
@@ -94,14 +94,6 @@ const AuctionTeamsPage = () => {
                         )}
                       </span>
                       <span className="summary-label">Total Players</span>
-                    </div>
-                  </Col>
-                  <Col xs={6} md={4}>
-                    <div className="summary-card">
-                      <span className="summary-value">
-                        {teams.filter((t) => t.status === "active").length}
-                      </span>
-                      <span className="summary-label">Active Teams</span>
                     </div>
                   </Col>
                 </Row>

@@ -120,7 +120,7 @@ const ViewAuctionTeam = () => {
       >
         <Container>
           <div className="banner-content">
-            <Link href="/auction/teams" className="back-link">
+            <Link href="/auction/teams" className="back-link text-light">
               <i className="fas fa-arrow-left"></i> All Teams
             </Link>
             <div className="team-info">
@@ -248,7 +248,6 @@ const ViewAuctionTeam = () => {
         }
 
         .back-link:hover {
-          color: white;
           transform: translateX(-5px);
         }
 

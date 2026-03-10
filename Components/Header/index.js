@@ -181,7 +181,7 @@ const Header = () => {
                     : {}
                 }
               >
-                Teams
+                KCL
               </Nav.Link>
             </Link>
 

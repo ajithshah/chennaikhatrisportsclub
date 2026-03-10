@@ -75,8 +75,8 @@ const AuctionTeamCard = ({ team }) => {
         </div>
 
         <Link href={`/auction/teams/${team.id}`} className="view-team-btn">
-          <span>View Squad</span>
-          <i className="fas fa-arrow-right"></i>
+          <span className="text-danger">View Squad</span>
+          <i className="fas fa-arrow-right text-danger"></i>
         </Link>
       </div>
 
