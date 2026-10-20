@@ -78,6 +78,7 @@ const Header = () => {
   const isHomePage = currentPath === "/";
   const isAboutPage = currentPath === "/about";
   const isSchedultPage = currentPath === "/schedule";
+  const isKplPage = currentPath === "/kpl-season-4";
   const isteamPage =
     currentPath === "/team" || currentPath.startsWith("/team/");
   const isContactPage = currentPath === "/contact";
@@ -168,20 +169,20 @@ const Header = () => {
               </Nav.Link>
             </Link> */}
 
-            <Link href="/auction/teams" passHref legacyBehavior>
+            <Link href="/kpl-season-4" passHref legacyBehavior>
               <Nav.Link
                 className={`px-3 ${
-                  isSchedultPage ? "fw-bold text-primary active" : "text-dark"
+                  isKplPage ? "fw-bold text-primary active" : "text-dark"
                 }`}
                 style={
-                  isSchedultPage
+                  isKplPage
                     ? {
                         borderBottom: "2px solid #0d6efd",
                       }
                     : {}
                 }
               >
-                KCL
+                KPL4
               </Nav.Link>
             </Link>
 

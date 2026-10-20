@@ -1,0 +1,119 @@
+.page {
+  background: #f8f9fa;
+}
+
+.hero {
+  background: linear-gradient(135deg, #0b1f4d 0%, #1b3a8a 60%, #c8102e 100%);
+  color: #fff;
+  text-align: center;
+  padding: 4rem 0 5rem;
+}
+
+.presents {
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.title {
+  font-size: clamp(2.8rem, 9vw, 5.5rem);
+  font-weight: 800;
+  margin: 0.5rem 0 1rem;
+}
+
+.title span {
+  color: #ffc107;
+}
+
+.tagline {
+  max-width: 640px;
+  margin: 0 auto 1.5rem;
+  font-size: 1.15rem;
+}
+
+.badge {
+  display: inline-block;
+  background: #ffc107;
+  color: #0b1f4d;
+  font-weight: 700;
+  padding: 0.6rem 1.5rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.detailsSection {
+  margin-top: -2.5rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.75rem 1rem;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.cardIcon {
+  font-size: 2.2rem;
+}
+
+.cardLabel {
+  color: #6c757d;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  margin-top: 0.5rem;
+}
+
+.cardValue {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0b1f4d;
+  margin-top: 0.25rem;
+}
+
+.messageSection {
+  text-align: center;
+  padding: 2rem 0 4rem;
+}
+
+.message {
+  font-weight: 800;
+  color: #c8102e;
+}
+
+.sub {
+  max-width: 640px;
+  margin: 1rem auto;
+  font-size: 1.1rem;
+}
+
+.road {
+  margin-top: 2rem;
+  font-weight: 800;
+  color: #0b1f4d;
+}
+
+.cta {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.tags {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tags span {
+  background: #e7ecf8;
+  color: #1b3a8a;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
