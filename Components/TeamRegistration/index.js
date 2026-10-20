@@ -20,6 +20,18 @@ const initialForm = {
 
 const TeamRegistration = () => {
   const { settings, loaded } = useSettings();
+  // QR uploaded by the super admin, else the old static file if one exists
+  const qrSrc = settings.paymentQrUrl || "/payment-qr.png";
+  useEffect(() => setQrMissing(false), [qrSrc]);
+  const copyUpi = async () => {
+    try {
+      await navigator.clipboard.writeText(settings.upiId);
+      setUpiCopied(true);
+      setTimeout(() => setUpiCopied(false), 2000);
+    } catch (e) {
+      console.error("Could not copy UPI ID:", e);
+    }
+  };
   const [form, setForm] = useState(initialForm);
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
@@ -29,6 +41,7 @@ const TeamRegistration = () => {
   const [uploading, setUploading] = useState(false);
   const [fileKey, setFileKey] = useState(0);
   const [qrMissing, setQrMissing] = useState(false);
+  const [upiCopied, setUpiCopied] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((u) => {
@@ -176,14 +189,14 @@ const TeamRegistration = () => {
                 <h2 className={styles.section}>Payment</h2>
                 <div className={styles.qrBox}>
                   <div className={styles.qrFrame}>
-                    {qrMissing ? (
+                    {!qrSrc || qrMissing ? (
                       <span className={styles.qrMissing}>
                         QR code coming soon
                       </span>
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src="/payment-qr.png"
+                        src={qrSrc}
                         alt="Scan this QR code to pay the registration fee"
                         className={styles.qrImage}
                         onError={() => setQrMissing(true)}
@@ -198,6 +211,20 @@ const TeamRegistration = () => {
                       PhonePe, Paytm), then upload the payment screenshot
                       below.
                     </p>
+                    {settings.upiId && (
+                      <div className={styles.upiRow}>
+                        <span className={styles.upiLabel}>UPI ID</span>
+                        <strong>{settings.upiId}</strong>
+                        <button
+                          type="button"
+                          className={styles.copyBtn}
+                          onClick={copyUpi}
+                        >
+                          <i className={`fas ${upiCopied ? "fa-check" : "fa-copy"}`}></i>{" "}
+                          {upiCopied ? "Copied" : "Copy"}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <Form.Group className="mb-3">

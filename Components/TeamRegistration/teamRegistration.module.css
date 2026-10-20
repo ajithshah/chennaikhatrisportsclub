@@ -148,3 +148,40 @@
   margin-bottom: 0;
   color: #495057;
 }
+
+.upiRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+  background: #fff;
+  border: 1px dashed #1b3a8a;
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  color: #0b1f4d;
+  word-break: break-all;
+}
+
+.upiLabel {
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.copyBtn {
+  margin-left: auto;
+  background: #e7ecf8;
+  color: #1b3a8a;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.25rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.copyBtn:hover {
+  background: #d5def3;
+}

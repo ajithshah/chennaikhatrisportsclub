@@ -1,13 +1,9 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import Meta from "../Meta";
+import { useSettings } from "../../lib/useSettings";
 import styles from "./contact.module.css";
 
-const organizers = [
-  { name: "Vinod Kumar", display: "+91 98408 80873", number: "919840880873" },
-  { name: "Sushil", display: "+91 98417 12284", number: "919841712284" },
-  { name: "Rajini", display: "+91 98415 26709", number: "919841526709" },
-];
 
 const INSTAGRAM =
   "https://www.instagram.com/chennai_khatri_sports.club?igsh=azVtaWhnMDRmNnpz";
@@ -63,7 +59,18 @@ const values = [
   },
 ];
 
+// "9840880873" -> "+91 98408 80873"
+const formatPhone = (phone) => `+91 ${phone.slice(0, 5)} ${phone.slice(5)}`;
+
 const Contact = () => {
+  const { settings } = useSettings();
+  const organizers = settings.organizers.map((o) => ({
+    name: o.name,
+    display: formatPhone(o.phone),
+    number: `91${o.phone}`,
+  }));
+  const primary = organizers[0];
+
   return (
     <>
       <Meta title="Contact Us | Chennai Khatri Sports Club" />
@@ -179,7 +186,7 @@ const Contact = () => {
               </p>
             </div>
             <a
-              href="https://wa.me/919840880873?text=Hi%2C%20I%20have%20a%20question%20about%20KPL%20Season%204"
+              href={`https://wa.me/${primary.number}?text=Hi%2C%20I%20have%20a%20question%20about%20KPL%20Season%204`}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.waBtn}
@@ -283,14 +290,14 @@ const Contact = () => {
             </p>
             <div className={styles.joinButtons}>
               <a
-                href="https://wa.me/919840880873?text=Hi%2C%20I%20am%20interested%20in%20joining%20Chennai%20Khatri%20Sports%20Club"
+                href={`https://wa.me/${primary.number}?text=Hi%2C%20I%20am%20interested%20in%20joining%20Chennai%20Khatri%20Sports%20Club`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.joinWa}
               >
                 <i className="fab fa-whatsapp"></i> Message on WhatsApp
               </a>
-              <a href="tel:+919840880873" className={styles.joinCall}>
+              <a href={`tel:+${primary.number}`} className={styles.joinCall}>
                 <i className="fas fa-phone-alt"></i> Call Now
               </a>
               <a

@@ -1,8 +1,11 @@
+import { allowSeason3Read } from "@/lib/season3Access";
 // API endpoint to fetch auction players from Google Sheets
 const SHEET_ID = "1RFcdRX5EiC4DXwvuRkMX-GMUDnLwtxZp8_acPZ6Q25A";
 const SHEET_NAME = "Sheet1"; // Change this if your sheet has a different name
 
 export default async function handler(req, res) {
+  if (req.method === "GET" && !(await allowSeason3Read(req, res))) return;
+
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }

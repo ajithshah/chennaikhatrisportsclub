@@ -1,3 +1,4 @@
+import withSeason3Guard from "@/Components/Season3Guard";
 import ViewTeam from "@/Components/ViewTeam";
 import React from "react";
 import Footer from "@/Components/Footer";
@@ -17,4 +18,4 @@ const TeamPage = () => {
   );
 };
 
-export default TeamPage;
+export default withSeason3Guard(TeamPage);

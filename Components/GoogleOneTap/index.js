@@ -2,15 +2,20 @@ import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
 import { signInWithGoogleIdToken } from "../../utils/auth";
+import { useSettings } from "../../lib/useSettings";
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 const SCRIPT_SRC = "https://accounts.google.com/gsi/client";
 
 // Shows the Google One Tap "Continue as <name>" prompt to visitors who are not signed in.
-// Renders nothing; does nothing until NEXT_PUBLIC_GOOGLE_CLIENT_ID is set.
+// Renders nothing; does nothing until NEXT_PUBLIC_GOOGLE_CLIENT_ID is set and the super admin
+// has it switched on.
 export default function GoogleOneTap() {
+  const { settings, loaded } = useSettings();
+  const enabled = loaded && settings.oneTapEnabled;
+
   useEffect(() => {
-    if (!CLIENT_ID) return;
+    if (!CLIENT_ID || !enabled) return;
 
     let cancelled = false;
 
@@ -62,7 +67,7 @@ export default function GoogleOneTap() {
       unsubscribe();
       window.google?.accounts?.id?.cancel();
     };
-  }, []);
+  }, [enabled]);
 
   return null;
 }

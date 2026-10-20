@@ -1,3 +1,4 @@
+import { authFetch } from "@/lib/authFetch";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Container, Spinner, Row, Col, Card, Badge } from "react-bootstrap";
@@ -23,7 +24,7 @@ const ViewAuctionTeam = () => {
   const fetchTeam = async (id) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/auction/teams/${id}`);
+      const response = await authFetch(`/api/auction/teams/${id}`);
       const data = await response.json();
 
       if (data.error) {

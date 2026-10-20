@@ -1,3 +1,4 @@
+import withSeason3Guard from "@/Components/Season3Guard";
 import SchedulePage from "@/Components/Schedule";
 import React from "react";
 import Footer from "@/Components/Footer";
@@ -18,4 +19,4 @@ const Schedule = () => {
   );
 };
 
-export default Schedule;
+export default withSeason3Guard(Schedule);

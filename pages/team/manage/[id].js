@@ -1,3 +1,4 @@
+import withSeason3Guard from "@/Components/Season3Guard";
 import React from "react";
 import Footer from "@/Components/Footer";
 import Meta from "@/Components/Meta";
@@ -17,4 +18,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default withSeason3Guard(ProfilePage);

@@ -12,6 +12,24 @@ const syncGoogleUser = async (user) => {
   // Check if user exists in MongoDB
   const existingUser = await usersDb.get(user.uid);
 
+  // New members can be paused by the super admin; existing members always get in.
+  if (!existingUser) {
+    let signupsOpen = true;
+    try {
+      const res = await fetch("/api/settings");
+      if (res.ok) signupsOpen = (await res.json()).settings.signupsOpen !== false;
+    } catch (error) {
+      console.error("Could not check sign-up setting:", error);
+    }
+    if (!signupsOpen) {
+      await signOut(auth);
+      if (typeof window !== "undefined") {
+        window.alert("New member sign-ups are paused right now. Please try again later.");
+      }
+      throw new Error("SIGNUPS_CLOSED");
+    }
+  }
+
   const userData = {
     uid: user.uid,
     email: user.email,

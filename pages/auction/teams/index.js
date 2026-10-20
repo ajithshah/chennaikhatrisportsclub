@@ -1,3 +1,5 @@
+import { authFetch } from "@/lib/authFetch";
+import withSeason3Guard from "@/Components/Season3Guard";
 import React, { useState, useEffect } from "react";
 import Header from "../../../Components/Header";
 import Footer from "../../../Components/Footer";
@@ -18,7 +20,7 @@ const AuctionTeamsPage = () => {
   const fetchTeams = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/auction/teams");
+      const response = await authFetch("/api/auction/teams");
       const data = await response.json();
 
       if (data.error) {
@@ -193,4 +195,4 @@ const AuctionTeamsPage = () => {
   );
 };
 
-export default AuctionTeamsPage;
+export default withSeason3Guard(AuctionTeamsPage);

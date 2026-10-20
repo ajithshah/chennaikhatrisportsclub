@@ -1,3 +1,4 @@
+import { allowSeason3Read } from "@/lib/season3Access";
 import { getCollection } from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 
@@ -11,6 +12,8 @@ function parseMatchId(id) {
 }
 
 export default async function handler(req, res) {
+  if (req.method === "GET" && !(await allowSeason3Read(req, res))) return;
+
   const { id } = req.query;
   const collection = await getCollection("matches");
   const matchId = parseMatchId(id);

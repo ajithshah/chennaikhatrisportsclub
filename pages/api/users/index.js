@@ -1,4 +1,5 @@
 import { getCollection } from "../../../lib/mongodb";
+import { getSettings } from "../../../lib/settings";
 
 export default async function handler(req, res) {
   const collection = await getCollection("users");
@@ -33,6 +34,11 @@ export default async function handler(req, res) {
           const updatedUser = await collection.findOne({ _id: userData._id });
           res.status(200).json(updatedUser);
         } else {
+          // New members can be paused by the super admin
+          const { signupsOpen } = await getSettings();
+          if (!signupsOpen) {
+            return res.status(403).json({ error: "New member sign-ups are paused" });
+          }
           // Insert new user
           await collection.insertOne(userData);
           res.status(201).json(userData);

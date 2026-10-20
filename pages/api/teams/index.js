@@ -1,7 +1,10 @@
+import { allowSeason3Read } from "@/lib/season3Access";
 import { getCollection } from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 
 export default async function handler(req, res) {
+  if (req.method === "GET" && !(await allowSeason3Read(req, res))) return;
+
   const collection = await getCollection("cricket_teams");
 
   switch (req.method) {

@@ -1,20 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useSettings } from "../../lib/useSettings";
 import styles from "./banner.module.css";
 
 const Banner = () => {
   const scrollTextRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
  
-  const announcements = [
-    "🔥 KPL Season 4 is here! Team registration opens Saturday, 24th October 2026",
-    "💰 Registration Fee: Rs. 6000/-",
-    "🏏 KPL Season 4 on 23rd & 24th January 2027",
-  ];
+  const { settings, loaded } = useSettings();
+  const announcements = settings.bannerLines || [];
 
-  // Skip rendering if no announcements
-  if (announcements.length === 0) {
-    return null;
-  }
+  // Hidden until settings load, when switched off, or when there is nothing to show
+  const visible = loaded && settings.bannerEnabled && announcements.length > 0;
 
   // Detect mobile devices
   useEffect(() => {
@@ -74,7 +70,9 @@ const Banner = () => {
       scrollElement.removeEventListener("touchstart", handleTouchStart);
       scrollElement.removeEventListener("touchend", handleTouchEnd);
     };
-  }, []);
+  }, [visible]);
+
+  if (!visible) return null;
 
   const announcementText = announcements.join(" • ");
 

@@ -1,3 +1,5 @@
+import { authFetch } from "@/lib/authFetch";
+import withSeason3Guard from "@/Components/Season3Guard";
 import React, { useState, useEffect } from "react";
 import Header from "../../Components/Header";
 import Footer from "../../Components/Footer";
@@ -37,7 +39,7 @@ const AuctionPage = () => {
       if (!silent) setLoading(true);
       setIsRefreshing(true);
       
-      const response = await fetch("/api/auction/players?t=" + Date.now());
+      const response = await authFetch("/api/auction/players?t=" + Date.now());
       const data = await response.json();
       
       if (data.error) {
@@ -489,4 +491,4 @@ const AuctionPage = () => {
   );
 };
 
-export default AuctionPage;
+export default withSeason3Guard(AuctionPage);
