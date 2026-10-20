@@ -448,3 +448,75 @@
 .printBtn:disabled {
   opacity: 0.5;
 }
+
+.editModal {
+  border: 0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.editHead {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, #0b1f4d, #1b3a8a 65%, #c8102e);
+  color: #fff;
+  padding: 1.25rem 1.5rem;
+}
+
+.editHead h2 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.editHead span {
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.editBody {
+  background: #f8f9fa;
+  padding: 1.25rem 1.5rem 0.5rem;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.editSection {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem 1rem 0.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.editSectionTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0b1f4d;
+  margin: 0 0 0.9rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #ffc107;
+}
+
+.editFoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 0.9rem 1.5rem;
+  background: #fff;
+  border-top: 1px solid #e9ecef;
+}
+
+.formSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%231b3a8a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' d='M3 6l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 16px;
+  padding-right: 2.3rem;
+  cursor: pointer;
+}

@@ -7,6 +7,8 @@ import { authFetch } from "../../../lib/authFetch";
 import Header from "../../Header";
 import styles from "./kplRegistrations.module.css";
 
+const CITIES = ["Chennai", "Kanchipuram", "Vellore", "Vaniyambadi", "Bangalore"];
+
 const initials = (name = "") =>
   name
     .split(/\s+/)
@@ -78,6 +80,12 @@ export default function KplRegistrations() {
     ["captainEmail", "Captain email", true],
     ["viceCaptainName", "Vice captain name", true],
     ["viceCaptainPhone", "Vice captain phone", true, true],
+  ];
+
+  const editSections = [
+    ["Team", "🏏", editFields.slice(0, 2)],
+    ["Captain", "🛡️", editFields.slice(2, 5)],
+    ["Vice captain", "🎖️", editFields.slice(5)],
   ];
 
   const openEdit = (team) => {
@@ -391,41 +399,76 @@ export default function KplRegistrations() {
         )}
       </Modal>
 
-      <Modal show={!!editing} onHide={() => !saving && setEditing(null)} size="lg" centered>
+      <Modal
+        show={!!editing}
+        onHide={() => !saving && setEditing(null)}
+        size="lg"
+        centered
+        contentClassName={styles.editModal}
+      >
         <form onSubmit={saveEdit}>
-          <Modal.Header closeButton={!saving}>
-            <Modal.Title>Edit team</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {editError && <div className={styles.error}>{editError}</div>}
-            <div className="row">
-              {editFields.map(([key, label, required, isPhone]) => (
-                <div className="col-md-6 mb-3" key={key}>
-                  <label className={styles.formLabel} htmlFor={`edit-${key}`}>
-                    {label}
-                    {required && <span className="text-danger"> *</span>}
-                  </label>
-                  <input
-                    id={`edit-${key}`}
-                    className={styles.formInput}
-                    type={key === "captainEmail" ? "email" : "text"}
-                    inputMode={isPhone ? "numeric" : undefined}
-                    required={required}
-                    value={editForm[key] || ""}
-                    onChange={(e) => handleEditChange(key, e.target.value, isPhone)}
-                  />
-                </div>
-              ))}
+          <div className={styles.editHead}>
+            <div className={styles.avatar}>{initials(editForm.teamName || editing?.teamName)}</div>
+            <div>
+              <h2>Edit team</h2>
+              <span>{editing?.teamName}</span>
             </div>
+            <button type="button" className={styles.close} onClick={() => setEditing(null)} disabled={saving} aria-label="Close">
+              &times;
+            </button>
+          </div>
+          <Modal.Body className={styles.editBody}>
+            {editError && <div className={styles.error}>{editError}</div>}
+            {editSections.map(([title, icon, fields]) => (
+              <div className={styles.editSection} key={title}>
+                <h3 className={styles.editSectionTitle}>
+                  <span>{icon}</span> {title}
+                </h3>
+                <div className="row">
+                  {fields.map(([key, label, required, isPhone]) => (
+                    <div className={key === "captainEmail" ? "col-12 mb-3" : "col-md-6 mb-3"} key={key}>
+                      <label className={styles.formLabel} htmlFor={`edit-${key}`}>
+                        {label}
+                        {required && <span className="text-danger"> *</span>}
+                      </label>
+                      {key === "city" ? (
+                        <select
+                          id={`edit-${key}`}
+                          className={`${styles.formInput} ${styles.formSelect}`}
+                          value={editForm[key] || ""}
+                          onChange={(e) => handleEditChange(key, e.target.value)}
+                        >
+                          <option value="">Select city</option>
+                          {[...new Set([...CITIES, editForm.city].filter(Boolean))].map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          id={`edit-${key}`}
+                          className={styles.formInput}
+                          type={key === "captainEmail" ? "email" : isPhone ? "tel" : "text"}
+                          inputMode={isPhone ? "numeric" : undefined}
+                          placeholder={isPhone ? "10 digit number" : undefined}
+                          required={required}
+                          value={editForm[key] || ""}
+                          onChange={(e) => handleEditChange(key, e.target.value, isPhone)}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </Modal.Body>
-          <Modal.Footer>
+          <div className={styles.editFoot}>
             <button type="button" className={styles.cancelBtn} onClick={() => setEditing(null)} disabled={saving}>
               Cancel
             </button>
             <button type="submit" className={styles.saveBtn} disabled={saving}>
               {saving ? "Saving..." : "Save changes"}
             </button>
-          </Modal.Footer>
+          </div>
         </form>
       </Modal>
 
