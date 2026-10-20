@@ -43,14 +43,12 @@ export default async function handler(req, res) {
     const body = req.body || {};
     const data = {
       teamName: clean(body.teamName),
-      shortName: clean(body.shortName),
       city: clean(body.city),
       captainName: clean(body.captainName),
       captainPhone: clean(body.captainPhone),
       captainEmail: clean(body.captainEmail),
       viceCaptainName: clean(body.viceCaptainName),
       viceCaptainPhone: clean(body.viceCaptainPhone),
-      ownerName: clean(body.ownerName),
       paymentScreenshot: clean(body.paymentScreenshot),
     };
 

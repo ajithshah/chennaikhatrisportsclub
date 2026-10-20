@@ -72,9 +72,7 @@ export default function KplRegistrations() {
 
   const editFields = [
     ["teamName", "Team name", true],
-    ["shortName", "Short name"],
     ["city", "Area / City"],
-    ["ownerName", "Owner"],
     ["captainName", "Captain name", true],
     ["captainPhone", "Captain phone", true, true],
     ["captainEmail", "Captain email", true],
@@ -150,9 +148,8 @@ export default function KplRegistrations() {
         (t, i) => `
         <tr>
           <td>${i + 1}</td>
-          <td><strong>${esc(t.teamName)}</strong><br/><span class="muted">${esc(t.shortName || "")}</span></td>
+          <td><strong>${esc(t.teamName)}</strong></td>
           <td>${esc(t.city || "-")}</td>
-          <td>${esc(t.ownerName || "-")}</td>
           <td>${esc(t.captainName)}<br/><span class="muted">${esc(t.captainPhone)}</span><br/><span class="muted">${esc(t.captainEmail)}</span></td>
           <td>${esc(t.viceCaptainName)}<br/><span class="muted">${esc(t.viceCaptainPhone)}</span></td>
           <td>${esc(formatDate(t.createdAt))}</td>
@@ -197,7 +194,7 @@ export default function KplRegistrations() {
   <table>
     <thead>
       <tr>
-        <th>#</th><th>Team</th><th>City</th><th>Owner</th>
+        <th>#</th><th>Team</th><th>City</th>
         <th>Captain</th><th>Vice captain</th><th>Registered</th>
       </tr>
     </thead>
@@ -216,7 +213,7 @@ export default function KplRegistrations() {
     const q = query.trim().toLowerCase();
     if (!q) return teams;
     return teams.filter((t) =>
-      [t.teamName, t.shortName, t.captainName, t.viceCaptainName, t.captainPhone, t.city]
+      [t.teamName, t.captainName, t.viceCaptainName, t.captainPhone, t.city]
         .filter(Boolean)
         .some((v) => v.toLowerCase().includes(q))
     );
@@ -293,7 +290,7 @@ export default function KplRegistrations() {
                   <div className={styles.avatar}>{initials(team.teamName)}</div>
                   <div className={styles.cardTitle}>
                     <h3>{team.teamName}</h3>
-                    <span>{[team.shortName, team.city].filter(Boolean).join(" · ") || "—"}</span>
+                    <span>{[team.city].filter(Boolean).join(" · ") || "—"}</span>
                   </div>
                 </div>
 
@@ -350,7 +347,7 @@ export default function KplRegistrations() {
               <div className={styles.avatarLg}>{initials(selected.teamName)}</div>
               <div>
                 <h2>{selected.teamName}</h2>
-                <span>{[selected.shortName, selected.city].filter(Boolean).join(" · ")}</span>
+                <span>{[selected.city].filter(Boolean).join(" · ")}</span>
               </div>
               <button className={styles.close} onClick={() => setSelected(null)} aria-label="Close">
                 ×
@@ -359,7 +356,6 @@ export default function KplRegistrations() {
             <Modal.Body>
               <div className="row">
                 <div className="col-md-6">
-                  <Detail icon="👑" label="Owner" value={selected.ownerName} />
                   <Detail icon="🏏" label="Captain" value={`${selected.captainName} · ${selected.captainPhone}`} />
                   <Detail icon="✉️" label="Captain email" value={selected.captainEmail} />
                   <Detail icon="🛡️" label="Vice captain" value={`${selected.viceCaptainName} · ${selected.viceCaptainPhone}`} />
