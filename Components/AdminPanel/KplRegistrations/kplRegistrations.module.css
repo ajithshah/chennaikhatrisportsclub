@@ -430,3 +430,21 @@
 .deleteBtn {
   color: #c8102e;
 }
+
+.printBtn {
+  background: #1b3a8a;
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.45rem 1.2rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.printBtn:hover:not(:disabled) {
+  background: #c8102e;
+}
+
+.printBtn:disabled {
+  opacity: 0.5;
+}

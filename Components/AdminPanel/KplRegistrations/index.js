@@ -138,6 +138,80 @@ export default function KplRegistrations() {
     }
   };
 
+  const printTeams = () => {
+    const esc = (v) =>
+      String(v ?? "-")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;") || "-";
+
+    const rows = teams
+      .map(
+        (t, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td><strong>${esc(t.teamName)}</strong><br/><span class="muted">${esc(t.shortName || "")}</span></td>
+          <td>${esc(t.city || "-")}</td>
+          <td>${esc(t.ownerName || "-")}</td>
+          <td>${esc(t.captainName)}<br/><span class="muted">${esc(t.captainPhone)}</span><br/><span class="muted">${esc(t.captainEmail)}</span></td>
+          <td>${esc(t.viceCaptainName)}<br/><span class="muted">${esc(t.viceCaptainPhone)}</span></td>
+          <td>${esc(formatDate(t.createdAt))}</td>
+        </tr>`
+      )
+      .join("");
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      setError("Please allow pop-ups to print the team list.");
+      return;
+    }
+
+    printWindow.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>KPL Season 4 Teams - Chennai Khatri Sports Club</title>
+  <style>
+    @page { size: A4 landscape; margin: 12mm; }
+    body { font-family: Arial, sans-serif; color: #222; margin: 0; padding: 16px; }
+    .header { text-align: center; margin-bottom: 16px; border-bottom: 3px solid #1b3a8a; padding-bottom: 10px; }
+    .header h1 { margin: 0; color: #0b1f4d; font-size: 22px; }
+    .header p { margin: 4px 0 0; color: #555; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { background: #1b3a8a; color: #fff; text-align: left; padding: 8px; }
+    td { border-bottom: 1px solid #ddd; padding: 8px; vertical-align: top; }
+    tr { page-break-inside: avoid; }
+    tr:nth-child(even) td { background: #f4f6fb; }
+    .muted { color: #666; font-size: 11px; }
+    .footer { margin-top: 14px; text-align: right; font-size: 11px; color: #777; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>KPL Season 4 - Registered Teams</h1>
+    <p>Chennai Khatri Sports Club &middot; Total teams: ${teams.length} &middot; Printed on ${esc(
+      new Date().toLocaleString("en-IN")
+    )}</p>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>Team</th><th>City</th><th>Owner</th>
+        <th>Captain</th><th>Vice captain</th><th>Registered</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="footer">Chennai Khatri Sports Club</div>
+</body>
+</html>`);
+    printWindow.document.close();
+
+    printWindow.focus();
+    printWindow.print();
+  };
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return teams;
@@ -196,6 +270,13 @@ export default function KplRegistrations() {
           <span className={styles.count}>
             {filtered.length} of {teams.length} teams
           </span>
+          <button
+            className={styles.printBtn}
+            onClick={printTeams}
+            disabled={teams.length === 0}
+          >
+            <i className="fas fa-print"></i> Print all
+          </button>
         </div>
 
         {loading ? (
