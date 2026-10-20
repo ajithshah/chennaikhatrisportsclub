@@ -4,11 +4,13 @@ import { Container } from "react-bootstrap";
 import { auth } from "../../firebase";
 import { usersDb, teamsDb } from "../../lib/db";
 import { authFetch } from "../../lib/authFetch";
+import { useSettings } from "../../lib/useSettings";
 import Header from "../Header";
 import Meta from "../Meta";
 
 export default function AdminPanel() {
   const router = useRouter();
+  const { canManage } = useSettings();
   const [loading, setLoading] = useState(true);
   const [categoryStats, setCategoryStats] = useState({
     cricket: 0,
@@ -100,6 +102,20 @@ export default function AdminPanel() {
     //   statLabel: "Upcoming Events",
     // },
   ];
+
+  // Feature toggles card: only the super admin sees it
+  const settingsCategory = {
+    id: "settings",
+    title: "Feature Toggles",
+    icon: "🎛️",
+    description: "Turn registration and profile team info on or off for all users",
+    color: "#6f42c1",
+    link: "/adminpanel/settings",
+    isActive: true,
+  };
+  const visibleCategories = canManage
+    ? [...sportsCategories, settingsCategory]
+    : sportsCategories;
 
   // Fetch counts from MongoDB
   const fetchCounts = async () => {
@@ -418,7 +434,7 @@ export default function AdminPanel() {
           </div> */}
 
           <div className="dashboard-grid">
-            {sportsCategories.map((category) => (
+            {visibleCategories.map((category) => (
               <div className="dashboard-card" key={category.id}>
                 <div
                   className="dashboard-card-accent"
@@ -431,8 +447,8 @@ export default function AdminPanel() {
                     {category.title}
                   </div>
                   <div className="dashboard-badge">
-                    {categoryStats[category.statKey]}{" "}
-                    {category.id === "cricket" || category.id === "kpl4"
+                    {category.id === "settings" ? "Super admin" : categoryStats[category.statKey]}{" "}
+                    {category.id === "settings" ? "" : category.id === "cricket" || category.id === "kpl4"
                       ? "teams"
                       : category.id === "users"
                       ? "users"
@@ -465,7 +481,9 @@ export default function AdminPanel() {
 
                     <div className="dashboard-meta">
                       <span className="dashboard-badge">
-                        {category.id === "cricket" || category.id === "kpl4"
+                        {category.id === "settings"
+                          ? "Settings"
+                          : category.id === "cricket" || category.id === "kpl4"
                           ? "Teams"
                           : category.id === "users"
                           ? "Accounts"

@@ -1,10 +1,8 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import Link from "next/link";
+import { useSettings } from "../../lib/useSettings";
 import styles from "./kpl.module.css";
-
-// Set to true on 24th Oct 2026 to enable the registration link.
-const REGISTRATION_OPEN = false;
 
 const details = [
   {
@@ -33,6 +31,7 @@ const hashtags = [
 ];
 
 const KplSeason4 = () => {
+  const REGISTRATION_OPEN = useSettings().settings.registrationOpen;
   return (
     <div className={styles.page}>
       <section className={styles.hero}>

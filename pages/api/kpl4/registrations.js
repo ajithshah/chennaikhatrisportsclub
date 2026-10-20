@@ -1,5 +1,6 @@
 import { getCollection } from "../../../lib/mongodb";
 import { getUidFromRequest, requireAdmin } from "../../../lib/adminAuth";
+import { getSettings } from "../../../lib/settings";
 
 // New collection for KPL Season 4; existing data is not touched.
 const COLLECTION = "kpl4_team_registrations";
@@ -31,6 +32,11 @@ export default async function handler(req, res) {
   }
 
   try {
+    const { registrationOpen } = await getSettings();
+    if (!registrationOpen) {
+      return res.status(403).json({ error: "Team registration is currently closed" });
+    }
+
     const uid = await getUidFromRequest(req);
     if (!uid) return res.status(401).json({ error: "Please sign in to register a team" });
 

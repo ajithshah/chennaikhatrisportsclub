@@ -1,0 +1,260 @@
+.page {
+  background: #f4f6fb;
+  padding-top: 56px;
+}
+
+.hero {
+  background: linear-gradient(135deg, #0b1f4d 0%, #1b3a8a 60%, #c8102e 100%);
+  color: #fff;
+  text-align: center;
+  padding: 4.5rem 0 6rem;
+}
+
+.tag {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 0.3rem 1.1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.title {
+  font-size: clamp(2.6rem, 8vw, 4.5rem);
+  font-weight: 800;
+  margin: 1rem 0 0.5rem;
+}
+
+.title span {
+  color: #ffc107;
+}
+
+.subtitle {
+  font-size: 1.15rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.statsWrap {
+  margin-top: -3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.stat {
+  text-align: center;
+  padding: 1.5rem 0.5rem;
+  border-right: 1px solid #eef0f6;
+}
+
+.stat:last-child {
+  border-right: 0;
+}
+
+.stat strong {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1b3a8a;
+  line-height: 1.1;
+}
+
+.stat span {
+  color: #6c757d;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.section {
+  padding: 4.5rem 0 3rem;
+}
+
+.alt {
+  background: #fff;
+}
+
+.eyebrow {
+  display: inline-block;
+  color: #c8102e;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.heading {
+  font-size: clamp(1.7rem, 4vw, 2.3rem);
+  font-weight: 800;
+  color: #0b1f4d;
+  margin-bottom: 1.2rem;
+}
+
+.heading::after {
+  content: "";
+  display: block;
+  width: 64px;
+  height: 4px;
+  border-radius: 2px;
+  background: #ffc107;
+  margin-top: 0.6rem;
+}
+
+.lead {
+  color: #6c757d;
+  max-width: 640px;
+  margin: 0 auto;
+  font-size: 1.05rem;
+}
+
+:global(.text-center) .heading::after {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text {
+  color: #4a5568;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.callout {
+  border-left: 4px solid #c8102e;
+  background: #fdf1f3;
+  border-radius: 0 10px 10px 0;
+  padding: 0.9rem 1.1rem;
+  font-weight: 700;
+  color: #0b1f4d;
+  margin-top: 1.25rem;
+}
+
+.photoFrame {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(11, 31, 77, 0.2);
+  border-bottom: 5px solid #ffc107;
+  background: #0b1f4d;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.founder {
+  background: #fff;
+  border-radius: 16px;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.founder:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.14);
+}
+
+.founderPhoto {
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(135deg, #1b3a8a, #c8102e);
+}
+
+.founderImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+}
+
+.founder h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0b1f4d;
+  margin: 0;
+}
+
+.founder span {
+  color: #c8102e;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ctaSection {
+  padding: 1rem 0 4rem;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  background: linear-gradient(135deg, #0b1f4d 0%, #1b3a8a 60%, #c8102e 100%);
+  color: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 28px rgba(11, 31, 77, 0.25);
+}
+
+.cta h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 0.3rem;
+}
+
+.cta p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.ctaBtn {
+  background: #ffc107;
+  color: #0b1f4d;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.7rem 1.6rem;
+  text-decoration: none;
+}
+
+.ctaBtn:hover {
+  background: #ffd24d;
+  color: #0b1f4d;
+}
+
+@media (max-width: 768px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat:nth-child(2) {
+    border-right: 0;
+  }
+
+  .stat:nth-child(-n + 2) {
+    border-bottom: 1px solid #eef0f6;
+  }
+}

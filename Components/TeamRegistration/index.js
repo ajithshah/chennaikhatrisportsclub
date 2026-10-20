@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
 import { auth } from "../../firebase";
 import { authFetch } from "../../lib/authFetch";
+import { useSettings } from "../../lib/useSettings";
 import styles from "./teamRegistration.module.css";
 
 const initialForm = {
@@ -18,6 +19,7 @@ const initialForm = {
 };
 
 const TeamRegistration = () => {
+  const { settings, loaded } = useSettings();
   const [form, setForm] = useState(initialForm);
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
@@ -140,7 +142,12 @@ const TeamRegistration = () => {
             )}
             {error && <Alert variant="danger">{error}</Alert>}
 
-            {authReady && !user ? (
+            {loaded && !settings.registrationOpen ? (
+              <Alert variant="info">
+                Team registration is currently closed. It opens on Saturday,
+                24th October 2026.
+              </Alert>
+            ) : authReady && !user ? (
               <Alert variant="warning">
                 Please sign in (top right) to register your team.
               </Alert>
