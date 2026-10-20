@@ -162,6 +162,14 @@ const TeamRegistration = () => {
             </Modal>
             {error && <Alert variant="danger">{error}</Alert>}
 
+            <Alert variant="warning">
+              <strong>Please Note:</strong> Entries will be processed on a
+              first-come, first-served basis, and participation will be
+              confirmed upon receipt of payment. Spots are limited and will
+              be secured once payment confirmation is received.
+              <br />
+              <strong>Secure your spot before it&apos;s too late!</strong>
+            </Alert>
             {loaded && !settings.registrationOpen ? (
               <Alert variant="info">
                 Team registration is currently closed. It opens on Saturday,
@@ -173,14 +181,6 @@ const TeamRegistration = () => {
               </Alert>
             ) : (
               <Form onSubmit={handleSubmit} className={styles.card}>
-                <Alert variant="warning">
-                  <strong>Please Note:</strong> Entries will be processed on a
-                  first-come, first-served basis, and participation will be
-                  confirmed upon receipt of payment. Spots are limited and will
-                  be secured once payment confirmation is received.
-                  <br />
-                  <strong>Secure your spot before it&apos;s too late!</strong>
-                </Alert>
                 <h2 className={styles.section}>Team details</h2>
                 <Row>
                   <Col md={6}>{field("teamName", "Team name", { required: true, maxLength: 60 })}</Col>
