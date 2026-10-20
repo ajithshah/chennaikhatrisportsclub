@@ -1,6 +1,46 @@
-import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import {
+  signInWithPopup,
+  signInWithCredential,
+  GoogleAuthProvider,
+  signOut,
+} from "firebase/auth";
 import { auth } from "../firebase";
 import { usersDb } from "../lib/db";
+
+// Creates or updates the MongoDB user document after a Google sign-in.
+const syncGoogleUser = async (user) => {
+  // Check if user exists in MongoDB
+  const existingUser = await usersDb.get(user.uid);
+
+  const userData = {
+    uid: user.uid,
+    email: user.email,
+    providerId: user.providerData[0].providerId,
+    lastLogin: new Date().toISOString(),
+  };
+
+  // Create or update the user document
+  await usersDb.set(user.uid, userData);
+
+  // If this is a new user, set additional default fields
+  if (!existingUser) {
+    userData.isAdmin = false;
+    userData.createdAt = new Date().toISOString();
+    userData.displayName = user.displayName || "";
+    userData.photoURL = user.photoURL || "";
+    await usersDb.set(user.uid, userData);
+  }
+
+  return userData;
+};
+
+// Signs in with the Google ID token returned by Google One Tap.
+export const signInWithGoogleIdToken = async (idToken) => {
+  const credential = GoogleAuthProvider.credential(idToken);
+  const result = await signInWithCredential(auth, credential);
+  const userData = await syncGoogleUser(result.user);
+  return { user: result.user, userData };
+};
 
 export const signInWithGoogle = async (onSuccess, onError, setIsLoading) => {
   try {
@@ -11,27 +51,7 @@ export const signInWithGoogle = async (onSuccess, onError, setIsLoading) => {
     const user = result.user;
 
     if (user) {
-      // Check if user exists in MongoDB
-      const existingUser = await usersDb.get(user.uid);
-
-      const userData = {
-        uid: user.uid,
-        email: user.email,
-        providerId: user.providerData[0].providerId,
-        lastLogin: new Date().toISOString(),
-      };
-
-      // Create or update the user document
-      await usersDb.set(user.uid, userData);
-
-      // If this is a new user, set additional default fields
-      if (!existingUser) {
-        userData.isAdmin = false;
-        userData.createdAt = new Date().toISOString();
-        userData.displayName = user.displayName || "";
-        userData.photoURL = user.photoURL || "";
-        await usersDb.set(user.uid, userData);
-      }
+      const userData = await syncGoogleUser(user);
 
       // Call the success callback if provided
       if (onSuccess && typeof onSuccess === "function") {
@@ -64,6 +84,9 @@ export const signInWithGoogle = async (onSuccess, onError, setIsLoading) => {
 export const handleSignOut = async (onSuccess, onError) => {
   try {
     await signOut(auth);
+    if (typeof window !== "undefined") {
+      window.google?.accounts?.id?.disableAutoSelect();
+    }
 
     // Call the success callback if provided
     if (onSuccess && typeof onSuccess === "function") {

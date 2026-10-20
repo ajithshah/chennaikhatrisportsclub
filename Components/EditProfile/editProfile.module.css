@@ -1,0 +1,333 @@
+.page {
+  background: #f4f6fb;
+  min-height: calc(100vh - 56px);
+  padding-bottom: 3rem;
+}
+
+.loading {
+  min-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #f4f6fb;
+  color: #1b3a8a;
+}
+
+.loading p {
+  color: #6c757d;
+}
+
+.spinner {
+  width: 56px;
+  height: 56px;
+  border: 5px solid rgba(27, 58, 138, 0.15);
+  border-top-color: #1b3a8a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1.5rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero {
+  background: linear-gradient(135deg, #0b1f4d 0%, #1b3a8a 60%, #c8102e 100%);
+  color: #fff;
+  padding: 2.5rem 0 5rem;
+}
+
+.back {
+  background: rgba(255, 255, 255, 0.15);
+  border: 0;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.35rem 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.back:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.title {
+  font-weight: 800;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  margin: 0;
+}
+
+.title span {
+  color: #ffc107;
+}
+
+.subtitle {
+  opacity: 0.85;
+  margin: 0.4rem 0 0;
+}
+
+.content {
+  margin-top: -3rem;
+  max-width: 900px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0b1f4d;
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #ffc107;
+}
+
+.cardTitle i {
+  color: #1b3a8a;
+}
+
+.photoRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.avatar {
+  flex: none;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid #ffc107;
+  background: linear-gradient(135deg, #1b3a8a, #c8102e);
+  color: #fff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.6rem;
+  font-weight: 800;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoActions {
+  flex: 1 1 260px;
+}
+
+.photoButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.hiddenInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.uploadBtn,
+.removeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin: 0;
+}
+
+.uploadBtn {
+  background: #1b3a8a;
+  color: #fff;
+}
+
+.uploadBtn:hover,
+.hiddenInput:focus-visible + .uploadBtn {
+  background: #c8102e;
+}
+
+.removeBtn {
+  background: #fdecee;
+  color: #c8102e;
+}
+
+.removeBtn:hover {
+  background: #f8c9cf;
+}
+
+.uploading {
+  margin-top: 0.7rem;
+  color: #1b3a8a;
+  font-size: 0.9rem;
+}
+
+.helper {
+  display: block;
+  margin: 0.6rem 0 0;
+  color: #6c757d;
+  font-size: 0.82rem;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.label i {
+  color: #1b3a8a;
+}
+
+.req {
+  color: #c8102e;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.saveBtn {
+  background: #1b3a8a !important;
+  border-color: #1b3a8a !important;
+  border-radius: 999px !important;
+  padding: 0.6rem 1.8rem !important;
+  font-weight: 700 !important;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: #c8102e !important;
+  border-color: #c8102e !important;
+}
+
+.secondaryBtn {
+  border-radius: 999px !important;
+  padding: 0.6rem 1.4rem !important;
+  font-weight: 600 !important;
+  color: #1b3a8a !important;
+  background: #fff !important;
+  border: 1px solid #d5def3 !important;
+}
+
+.secondaryBtn:hover {
+  background: #e7ecf8 !important;
+}
+
+@media (max-width: 576px) {
+  .photoRow {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .photoButtons {
+    justify-content: center;
+  }
+
+  .actions > * {
+    flex: 1 1 100%;
+  }
+}
+
+/* Form fields: inputs, textarea and dropdowns */
+.page :global(.form-control),
+.page :global(.form-select) {
+  border: 2px solid #e1e6f2;
+  border-radius: 12px;
+  background-color: #f8f9fc;
+  color: #0b1f4d;
+  font-weight: 500;
+  padding: 0.65rem 0.95rem;
+  min-height: 46px;
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+
+.page :global(.form-control):hover:not(:disabled),
+.page :global(.form-select):hover:not(:disabled) {
+  border-color: #b8c4e6;
+  background-color: #fff;
+}
+
+.page :global(.form-control):focus,
+.page :global(.form-select):focus {
+  border-color: #1b3a8a;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(27, 58, 138, 0.15);
+  outline: none;
+}
+
+.page :global(.form-control):disabled,
+.page :global(.form-select):disabled {
+  background-color: #eef0f6;
+  color: #8a93a6;
+  cursor: not-allowed;
+}
+
+.page :global(.form-control)::placeholder {
+  color: #9aa3b8;
+  font-weight: 400;
+}
+
+/* Dropdown arrow: navy chevron in a rounded tile */
+.page :global(.form-select) {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 3rem;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%231b3a8a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' d='M3 6l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 14px 14px;
+}
+
+.page :global(.form-select):focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23c8102e' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' d='M3 6l5 5 5-5'/%3E%3C/svg%3E");
+}
+
+.page :global(.form-select) option {
+  color: #0b1f4d;
+  background: #fff;
+  padding: 0.5rem;
+}
+
+/* Validation states */
+.page :global(.form-control.is-invalid),
+.page :global(.form-select.is-invalid) {
+  border-color: #c8102e;
+  box-shadow: none;
+}
+
+.page :global(.invalid-feedback) {
+  color: #c8102e;
+  font-size: 0.82rem;
+}

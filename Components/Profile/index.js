@@ -25,6 +25,8 @@ export default function Profile() {
   const router = useRouter();
   const SHOW_TEAM_INFO = useSettings().settings.showTeamInfo;
   const [userData, setUserData] = useState(null);
+  const [authPhoto, setAuthPhoto] = useState("");
+  const [photoFailed, setPhotoFailed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [teamData, setTeamData] = useState(null);
   const [animateEdit, setAnimateEdit] = useState(false);
@@ -114,6 +116,7 @@ export default function Profile() {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
+        setAuthPhoto(user.photoURL || "");
         const userDoc = await usersDb.get(user.uid);
 
         if (userDoc) {
@@ -153,6 +156,13 @@ export default function Profile() {
     }
   };
 
+  // Use the saved photo, else the Google account photo (most members have none saved).
+  // Google thumbnails are tiny (s96), so ask for a larger one.
+  const rawPhoto = userData?.photoURL || authPhoto;
+  const photoSrc = rawPhoto
+    ? rawPhoto.replace(/=s\d+-c$/, "=s400-c")
+    : "";
+
   return (
     <>
       <Meta
@@ -171,13 +181,14 @@ export default function Profile() {
             <Container>
               <div className={styles.heroInner}>
                 <div className={styles.avatar}>
-                  {userData?.photoURL ? (
+                  {photoSrc && !photoFailed ? (
                     <Image
-                      src={userData.photoURL}
+                      src={photoSrc}
                       alt="Profile"
                       width={140}
                       height={140}
                       className={styles.avatarImg}
+                      onError={() => setPhotoFailed(true)}
                       priority
                     />
                   ) : (
