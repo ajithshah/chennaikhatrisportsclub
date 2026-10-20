@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { Container } from "react-bootstrap";
 import { auth } from "../../firebase";
 import { usersDb, teamsDb } from "../../lib/db";
+import { authFetch } from "../../lib/authFetch";
 import Header from "../Header";
 import Meta from "../Meta";
 
@@ -11,6 +12,7 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true);
   const [categoryStats, setCategoryStats] = useState({
     cricket: 0,
+    kpl4: 0,
     users: 0,
     tournaments: 0,
     senior_citizen_cricket: 0,
@@ -32,7 +34,7 @@ export default function AdminPanel() {
     },
     {
       id: "cricket",
-      title: "KPL Cricket Teams",
+      title: "KPL S3 Teams",
       icon: "🏏",
       description: "Manage cricket teams, players and match schedules",
       color: "#4CAF50",
@@ -40,6 +42,17 @@ export default function AdminPanel() {
       isActive: true,
       statKey: "cricket",
       statLabel: "Cricket Teams",
+    },
+    {
+      id: "kpl4",
+      title: "KPL S4 Teams",
+      icon: "🏆",
+      description: "View team registrations and payment screenshots for KPL Season 4",
+      color: "#1B3A8A",
+      link: "/adminpanel/kpl4",
+      statKey: "kpl4",
+      isActive: true,
+      statLabel: "Registered Teams",
     },
     {
       id: "matches",
@@ -97,9 +110,18 @@ export default function AdminPanel() {
       // Get user count
       const users = await usersDb.getAll();
 
+      let kpl4Count = 0;
+      try {
+        const res = await authFetch("/api/kpl4/registrations");
+        if (res.ok) kpl4Count = (await res.json()).length;
+      } catch (e) {
+        console.error("Error fetching KPL 4 registrations:", e);
+      }
+
       setCategoryStats((prev) => ({
         ...prev,
         cricket: teams.length,
+        kpl4: kpl4Count,
         users: users.length,
       }));
     } catch (error) {
@@ -410,7 +432,7 @@ export default function AdminPanel() {
                   </div>
                   <div className="dashboard-badge">
                     {categoryStats[category.statKey]}{" "}
-                    {category.id === "cricket"
+                    {category.id === "cricket" || category.id === "kpl4"
                       ? "teams"
                       : category.id === "users"
                       ? "users"
@@ -443,7 +465,7 @@ export default function AdminPanel() {
 
                     <div className="dashboard-meta">
                       <span className="dashboard-badge">
-                        {category.id === "cricket"
+                        {category.id === "cricket" || category.id === "kpl4"
                           ? "Teams"
                           : category.id === "users"
                           ? "Accounts"

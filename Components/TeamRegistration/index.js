@@ -26,6 +26,7 @@ const TeamRegistration = () => {
   const [success, setSuccess] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [fileKey, setFileKey] = useState(0);
+  const [qrMissing, setQrMissing] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((u) => {
@@ -166,6 +167,32 @@ const TeamRegistration = () => {
                 </Row>
 
                 <h2 className={styles.section}>Payment</h2>
+                <div className={styles.qrBox}>
+                  <div className={styles.qrFrame}>
+                    {qrMissing ? (
+                      <span className={styles.qrMissing}>
+                        QR code coming soon
+                      </span>
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src="/payment-qr.png"
+                        alt="Scan this QR code to pay the registration fee"
+                        className={styles.qrImage}
+                        onError={() => setQrMissing(true)}
+                      />
+                    )}
+                  </div>
+                  <div className={styles.qrText}>
+                    <h3>📱 Scan to pay</h3>
+                    <p className={styles.qrAmount}>Rs. 6000/-</p>
+                    <p>
+                      Pay the registration fee using any UPI app (GPay,
+                      PhonePe, Paytm), then upload the payment screenshot
+                      below.
+                    </p>
+                  </div>
+                </div>
                 <Form.Group className="mb-3">
                   <Form.Label htmlFor="paymentScreenshotInput">
                     Payment screenshot (Rs. 6000/-)
