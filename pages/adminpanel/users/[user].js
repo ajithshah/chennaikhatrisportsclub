@@ -14,7 +14,7 @@ const UserDetailsPage = () => {
       <Meta />
       <Headers />
       <main className="flex-grow-1">
-        <UserDetails userId={user} />;
+        <UserDetails userId={user} />
       </main>
       <Footer />
     </div>

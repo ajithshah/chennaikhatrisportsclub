@@ -1,0 +1,262 @@
+.page {
+  background: #f4f6fb;
+  min-height: 70vh;
+  padding-bottom: 3rem;
+}
+
+.hero {
+  background: linear-gradient(135deg, #0b1f4d 0%, #1b3a8a 60%, #c8102e 100%);
+  color: #fff;
+  padding: 5.5rem 0 5.5rem;
+}
+
+.back {
+  background: rgba(255, 255, 255, 0.15);
+  border: 0;
+  color: #fff;
+  border-radius: 999px;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1.25rem;
+}
+
+.back:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.avatar {
+  flex: none;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 2.6rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.name {
+  font-weight: 800;
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  margin: 0;
+  word-break: break-word;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.chip {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 0.2rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.chipAdmin {
+  background: #ffc107;
+  border-color: #ffc107;
+  color: #0b1f4d;
+}
+
+.content {
+  margin-top: -2.5rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.25rem 1.25rem 0.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+  border-top: 4px solid #1b3a8a;
+  height: 100%;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0b1f4d;
+  margin: 0 0 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #ffc107;
+}
+
+.row {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.icon {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #e7ecf8;
+  color: #1b3a8a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.value {
+  font-weight: 600;
+  color: #0b1f4d;
+  word-break: break-word;
+}
+
+.value a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.value a:hover {
+  color: #c8102e;
+}
+
+.muted {
+  color: #adb5bd;
+  font-weight: 500;
+}
+
+.state {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #0b1f4d;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(27, 58, 138, 0.15);
+  border-top-color: #1b3a8a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1.5rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.deleteBtn {
+  background: #c8102e;
+  border: 0;
+  color: #fff;
+  border-radius: 999px;
+  width: 40px;
+  height: 40px;
+}
+
+.deleteBtn:hover {
+  background: #9e0c24;
+}
+
+.modalHead {
+  position: relative;
+  background: linear-gradient(135deg, #7a0a1c, #c8102e);
+  color: #fff;
+  padding: 1.1rem 1.5rem;
+  border-radius: 0.3rem 0.3rem 0 0;
+}
+
+.modalHead h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.modalClose {
+  position: absolute;
+  top: 0.6rem;
+  right: 1rem;
+  background: none;
+  border: 0;
+  color: #fff;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.modalFoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 0.8rem 1.25rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.cancelBtn,
+.confirmBtn {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+}
+
+.cancelBtn {
+  background: #e9ecef;
+}
+
+.confirmBtn {
+  background: #c8102e;
+  color: #fff;
+}
+
+.confirmBtn:hover:not(:disabled) {
+  background: #9e0c24;
+}
+
+.cancelBtn:disabled,
+.confirmBtn:disabled {
+  opacity: 0.6;
+}
+
+.error {
+  background: #f8d7da;
+  color: #842029;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1rem;
+}

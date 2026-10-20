@@ -1,4 +1,5 @@
 import { getCollection } from "../../../lib/mongodb";
+import { getUidFromRequest, isSuperAdminRequest } from "../../../lib/adminAuth";
 
 export default async function handler(req, res) {
   const { id } = req.query;
@@ -39,6 +40,13 @@ export default async function handler(req, res) {
 
     case "DELETE":
       try {
+        // Only a super admin may delete a user, and never themselves
+        if (!(await isSuperAdminRequest(req))) {
+          return res.status(403).json({ error: "Only a super admin can delete users" });
+        }
+        if ((await getUidFromRequest(req)) === id) {
+          return res.status(400).json({ error: "You can't delete your own account" });
+        }
         const result = await collection.deleteOne({ _id: id });
         if (result.deletedCount === 0) {
           return res.status(404).json({ error: "User not found" });
