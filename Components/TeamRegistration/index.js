@@ -186,7 +186,7 @@ const TeamRegistration = () => {
                   <Col md={6}>{field("teamName", "Team name", { required: true, maxLength: 60 })}</Col>
                   <Col md={6}>
                     <Form.Group className="mb-3" controlId="city">
-                      <Form.Label>Area / City</Form.Label>
+                      <Form.Label>City</Form.Label>
                       <Form.Select className={styles.select} name="city" value={form.city} onChange={handleChange}>
                         <option value="">Select city</option>
                         {CITIES.map((c) => (
