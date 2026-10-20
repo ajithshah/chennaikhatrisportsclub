@@ -354,3 +354,79 @@
 .cancelBtn:disabled {
   opacity: 0.6;
 }
+
+.editBtn {
+  background: #e7ecf8;
+  border: 0;
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+}
+
+.editBtn:hover {
+  background: #d5def3;
+}
+
+.editBtnLg,
+.saveBtn {
+  background: #1b3a8a;
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.45rem 1.2rem;
+  font-weight: 600;
+}
+
+.editBtnLg:hover,
+.saveBtn:hover:not(:disabled) {
+  background: #0b1f4d;
+}
+
+.saveBtn:disabled {
+  opacity: 0.6;
+}
+
+.formLabel {
+  display: block;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.formInput {
+  width: 100%;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+}
+
+.formInput:focus {
+  border-color: #1b3a8a;
+  box-shadow: 0 0 0 3px rgba(27, 58, 138, 0.15);
+}
+
+.viewIconBtn {
+  margin-left: auto;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 999px;
+  background: #1b3a8a;
+  color: #fff;
+}
+
+.viewIconBtn:hover {
+  background: #c8102e;
+}
+
+.editBtn {
+  color: #1b3a8a;
+}
+
+.deleteBtn {
+  color: #c8102e;
+}

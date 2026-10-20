@@ -6,9 +6,9 @@ const Banner = () => {
   const [isMobile, setIsMobile] = useState(false);
  
   const announcements = [
-    "📢 Attention team captains and vice captains:",
-    "📅 Live Now: Offical Match Schedule Released",
-    "🏏 KPL Season 3 on July 5 - 6 at Pachaiyappas College Ground, Chennai",
+    "🔥 KPL Season 4 is here! Team registration opens Saturday, 24th October 2026",
+    "💰 Registration Fee: Rs. 6000/-",
+    "🏏 KPL Season 4 on 23rd & 24th January 2027",
   ];
 
   // Skip rendering if no announcements

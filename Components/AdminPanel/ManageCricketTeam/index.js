@@ -17,10 +17,12 @@ import Image from "next/image";
 import Header from "@/Components/Header";
 import Meta from "@/Components/Meta";
 import Select from "react-select";
+import cardStyles from "./manageCricketTeam.module.css";
 
 export default function ManageCricketTeam() {
   const router = useRouter();
   const [teams, setTeams] = useState([]);
+  const [teamQuery, setTeamQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [preview, setPreview] = useState(null);
@@ -1079,6 +1081,14 @@ export default function ManageCricketTeam() {
     printWindow.document.close();
   };
 
+  const visibleTeams = teams.filter((t) => {
+    const q = teamQuery.trim().toLowerCase();
+    if (!q) return true;
+    return [t.name, t.captain, t.viceCaptain, t.captainPhoneNumber, t.viceCaptainPhoneNumber]
+      .filter(Boolean)
+      .some((v) => String(v).toLowerCase().includes(q));
+  });
+
   return (
     <>
       <Meta title="Manage Cricket Teams | Admin Panel" />
@@ -1949,172 +1959,148 @@ export default function ManageCricketTeam() {
           <h3 className="loading-text">Loading Cricket Teams</h3>
         </div>
       ) : (
-        <div className="admin-container">
-          <Container>
-            <Card className="admin-card">
-              <Card.Body className="p-4">
-                <div className="card-header-container">
-                  <h2 className="card-title">Cricket Teams</h2>
-                  <div
-                    className="d-flex align-items-center justify-content-between"
-                    style={{ width: "100%", maxWidth: "300px" }}
-                  >
-                    <Badge
-                      bg="success"
-                      className="teams-count-badge text-light w-100"
-                    >
-                      <i className="fas fa-users me-2"></i>
-                      Total Teams: {teams.length}
-                    </Badge>
-                    <Button
-                      variant="outline-info"
-                      className="ms-2 d-inline-flex align-items-center"
-                      onClick={printTeamsTable}
-                      style={{
-                        borderRadius: "50px",
-                        marginLeft: "0.5rem",
-                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                        fontWeight: "600",
-                      }}
-                    >
-                      <i className="fas fa-print me-1 mr-1"></i>Print
-                    </Button>
-                    <Button
-                      variant="primary"
-                      className="ms-2 d-inline-flex align-items-center"
-                      onClick={() => setShowModal(true)}
-                      style={{
-                        borderRadius: "50px",
-                        marginLeft: "0.5rem",
-                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                        fontWeight: "600",
-                      }}
-                    >
-                      <i className="fas fa-plus"></i>
-                    </Button>
-                  </div>
+        <div className={cardStyles.page}>
+          <section className={cardStyles.hero}>
+            <Container>
+              <button
+                className={cardStyles.back}
+                onClick={() => router.push("/adminpanel")}
+              >
+                ← Admin Panel
+              </button>
+              <h1 className={cardStyles.title}>
+                🏏 KPL <span>Cricket</span> Teams
+              </h1>
+              <p className={cardStyles.subtitle}>
+                Manage teams, captains and players
+              </p>
+              <div className={cardStyles.stats}>
+                <div className={cardStyles.stat}>
+                  <strong>{teams.length}</strong>
+                  <span>Total teams</span>
                 </div>
+                <div className={cardStyles.stat}>
+                  <strong>
+                    {teams.filter((t) => t.status === "active").length}
+                  </strong>
+                  <span>Active teams</span>
+                </div>
+                <div className={cardStyles.stat}>
+                  <strong>
+                    {teams.reduce((n, t) => n + (t.players?.length || 0), 0)}
+                  </strong>
+                  <span>Players</span>
+                </div>
+              </div>
+            </Container>
+          </section>
 
-                {teams.length === 0 ? (
-                  <div className="empty-state">
-                    <i className="fas fa-users-slash"></i>
-                    <h5>No Teams Added Yet</h5>
-                    <p>Click the + button to create your first cricket team</p>
+          <Container className={cardStyles.content}>
+            <div className={cardStyles.toolbar}>
+              <input
+                type="search"
+                className={cardStyles.search}
+                placeholder="Search by team, captain or phone..."
+                value={teamQuery}
+                onChange={(e) => setTeamQuery(e.target.value)}
+              />
+              <span className={cardStyles.count}>
+                {visibleTeams.length} of {teams.length} teams
+              </span>
+              <button className={cardStyles.printBtn} onClick={printTeamsTable}>
+                <i className="fas fa-print"></i> Print
+              </button>
+              <button
+                className={cardStyles.addBtn}
+                onClick={() => setShowModal(true)}
+              >
+                <i className="fas fa-plus"></i> Add team
+              </button>
+            </div>
+
+            {teams.length === 0 ? (
+              <div className={cardStyles.empty}>
+                No teams added yet. Click &quot;Add team&quot; to create your
+                first cricket team.
+              </div>
+            ) : visibleTeams.length === 0 ? (
+              <div className={cardStyles.empty}>No teams match your search.</div>
+            ) : (
+              <div className={cardStyles.grid}>
+                {visibleTeams.map((team) => (
+                  <div key={team.id} className={cardStyles.card}>
+                    <div className={cardStyles.cardTop}>
+                      <div className={cardStyles.logo}>
+                        {team.teamLogoUrl ? (
+                          <Image
+                            src={team.teamLogoUrl}
+                            width={52}
+                            height={52}
+                            alt={`${team.name}'s logo`}
+                            style={{ objectFit: "cover" }}
+                          />
+                        ) : (
+                          <span>{team.name.charAt(0)}</span>
+                        )}
+                      </div>
+                      <div className={cardStyles.cardTitle}>
+                        <h3>{team.name}</h3>
+                        <span>{team.players?.length || 0} players</span>
+                      </div>
+                      <span
+                        className={`${cardStyles.status} ${
+                          team.status === "active" ? cardStyles.statusActive : ""
+                        }`}
+                      >
+                        {team.status}
+                      </span>
+                    </div>
+
+                    <div className={cardStyles.people}>
+                      <div>
+                        <small>Captain</small>
+                        <div>{team.captain}</div>
+                        <a href={`tel:${team.captainPhoneNumber}`}>
+                          {team.captainPhoneNumber}
+                        </a>
+                      </div>
+                      <div>
+                        <small>Vice captain</small>
+                        <div>{team.viceCaptain}</div>
+                        <a href={`tel:${team.viceCaptainPhoneNumber}`}>
+                          {team.viceCaptainPhoneNumber}
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className={cardStyles.actions}>
+                      <button
+                        className={cardStyles.viewBtn}
+                        onClick={() => handleViewTeam(team.id)}
+                      >
+                        View details
+                      </button>
+                      <button
+                        className={cardStyles.iconBtn}
+                        onClick={() => handleEditTeam(team)}
+                        title="Edit team"
+                        aria-label={`Edit ${team.name}`}
+                      >
+                        <i className="fas fa-edit"></i>
+                      </button>
+                      <button
+                        className={`${cardStyles.iconBtn} ${cardStyles.iconDanger}`}
+                        onClick={() => handleDeleteTeam(team.id)}
+                        title="Delete team"
+                        aria-label={`Delete ${team.name}`}
+                      >
+                        <i className="fas fa-trash-alt"></i>
+                      </button>
+                    </div>
                   </div>
-                ) : (
-                  <Table responsive hover className="teams-table align-middle">
-                    <thead>
-                      <tr>
-                        <th className="px-4 py-3">Logo</th>
-                        <th className="px-4 py-3">Team Name</th>
-                        <th className="px-4 py-3">Captain/Vice-Captain</th>
-                        <th className="px-4 py-3">Contact</th>
-                        <th className="px-4 py-3">Status</th>
-                        <th className="px-4 py-3 text-center">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {teams.map((team) => (
-                        <tr key={team.id}>
-                          <td className="px-4 py-3">
-                            <div className="team-logo-container">
-                              {team.teamLogoUrl ? (
-                                <Image
-                                  src={team.teamLogoUrl}
-                                  width={50}
-                                  height={50}
-                                  className="img-fluid"
-                                  alt={`${team.name}'s logo`}
-                                />
-                              ) : (
-                                <div className="team-placeholder">
-                                  {team.name.charAt(0)}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 fw-semibold">{team.name}</td>
-                          <td className="px-4 py-3">
-                            <div className="mb-2">
-                              <Badge
-                                bg="primary"
-                                className="me-2 px-2 py-1 text-light"
-                              >
-                                C
-                              </Badge>
-                              {team.captain}
-                            </div>
-                            <div>
-                              <Badge
-                                bg="info"
-                                className="me-2 px-2 py-1 text-light"
-                              >
-                                VC
-                              </Badge>
-                              {team.viceCaptain}
-                            </div>
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="mb-2">
-                              <small className="text-muted d-block">
-                                Captain:
-                              </small>
-                              {team.captainPhoneNumber}
-                            </div>
-                            <div>
-                              <small className="text-muted d-block">
-                                Vice-Captain:
-                              </small>
-                              {team.viceCaptainPhoneNumber}
-                            </div>
-                          </td>
-                          <td className="px-4 py-3">
-                            <Badge
-                              bg={
-                                team.status === "active"
-                                  ? "success"
-                                  : "secondary"
-                              }
-                              className={`status-badge ${team.status} text-light`}
-                            >
-                              {team.status}
-                            </Badge>
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="d-flex gap-2 justify-content-center action-button-group">
-                              <Button
-                                size="sm"
-                                variant="outline-success"
-                                className="action-button"
-                                onClick={() => handleViewTeam(team.id)}
-                              >
-                                <i className="fas fa-eye me-1"></i>
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline-primary"
-                                className="action-button ml-1"
-                                onClick={() => handleEditTeam(team)}
-                              >
-                                <i className="fas fa-edit me-1"></i>
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline-danger"
-                                className="action-button ml-1"
-                                onClick={() => handleDeleteTeam(team.id)}
-                              >
-                                <i className="fas fa-trash-alt me-1"></i>
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                )}
-              </Card.Body>
-            </Card>
+                ))}
+              </div>
+            )}
           </Container>
 
           {/* Add/Edit Team Modal */}

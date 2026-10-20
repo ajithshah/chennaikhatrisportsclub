@@ -39,6 +39,10 @@ export default function KplRegistrations() {
   const [selected, setSelected] = useState(null);
   const [toDelete, setToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [editForm, setEditForm] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [editError, setEditError] = useState("");
 
   useEffect(() => {
     const load = async (currentUser) => {
@@ -65,6 +69,54 @@ export default function KplRegistrations() {
     });
     return () => unsubscribe();
   }, [router]);
+
+  const editFields = [
+    ["teamName", "Team name", true],
+    ["shortName", "Short name"],
+    ["city", "Area / City"],
+    ["ownerName", "Owner"],
+    ["captainName", "Captain name", true],
+    ["captainPhone", "Captain phone", true, true],
+    ["captainEmail", "Captain email", true],
+    ["viceCaptainName", "Vice captain name", true],
+    ["viceCaptainPhone", "Vice captain phone", true, true],
+  ];
+
+  const openEdit = (team) => {
+    setEditError("");
+    setEditForm(Object.fromEntries(editFields.map(([k]) => [k, team[k] || ""])));
+    setEditing(team);
+  };
+
+  const handleEditChange = (key, value, isPhone) => {
+    setEditForm((f) => ({
+      ...f,
+      [key]: isPhone ? value.replace(/\D/g, "").slice(0, 10) : value,
+    }));
+  };
+
+  const saveEdit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setEditError("");
+    try {
+      const res = await authFetch(`/api/kpl4/registrations/${editing.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editForm),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to save changes");
+      const updated = { ...editing, ...editForm };
+      setTeams((prev) => prev.map((t) => (t.id === editing.id ? updated : t)));
+      setSelected((cur) => (cur && cur.id === editing.id ? updated : cur));
+      setEditing(null);
+    } catch (err) {
+      setEditError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const confirmDelete = async () => {
     setDeleting(true);
@@ -179,8 +231,21 @@ export default function KplRegistrations() {
 
                 <div className={styles.cardBottom}>
                   <span className={styles.date}>{formatDate(team.createdAt)}</span>
-                  <button className={styles.viewBtn} onClick={() => setSelected(team)}>
-                    View details
+                  <button
+                    className={styles.viewIconBtn}
+                    onClick={() => setSelected(team)}
+                    aria-label={`View ${team.teamName}`}
+                    title="View details"
+                  >
+                    <i className="fas fa-eye"></i>
+                  </button>
+                  <button
+                    className={styles.editBtn}
+                    onClick={() => openEdit(team)}
+                    aria-label={`Edit ${team.teamName}`}
+                    title="Edit team"
+                  >
+                    <i className="fas fa-edit"></i>
                   </button>
                   <button
                     className={styles.deleteBtn}
@@ -188,7 +253,7 @@ export default function KplRegistrations() {
                     aria-label={`Delete ${team.teamName}`}
                     title="Delete team"
                   >
-                    🗑
+                    <i className="fas fa-trash-alt"></i>
                   </button>
                 </div>
               </div>
@@ -233,12 +298,53 @@ export default function KplRegistrations() {
               </div>
             </Modal.Body>
             <Modal.Footer>
+              <button className={styles.editBtnLg} onClick={() => openEdit(selected)}>
+                ✏️ Edit team
+              </button>
               <button className={styles.deleteBtnLg} onClick={() => setToDelete(selected)}>
                 🗑 Delete team
               </button>
             </Modal.Footer>
           </>
         )}
+      </Modal>
+
+      <Modal show={!!editing} onHide={() => !saving && setEditing(null)} size="lg" centered>
+        <form onSubmit={saveEdit}>
+          <Modal.Header closeButton={!saving}>
+            <Modal.Title>Edit team</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {editError && <div className={styles.error}>{editError}</div>}
+            <div className="row">
+              {editFields.map(([key, label, required, isPhone]) => (
+                <div className="col-md-6 mb-3" key={key}>
+                  <label className={styles.formLabel} htmlFor={`edit-${key}`}>
+                    {label}
+                    {required && <span className="text-danger"> *</span>}
+                  </label>
+                  <input
+                    id={`edit-${key}`}
+                    className={styles.formInput}
+                    type={key === "captainEmail" ? "email" : "text"}
+                    inputMode={isPhone ? "numeric" : undefined}
+                    required={required}
+                    value={editForm[key] || ""}
+                    onChange={(e) => handleEditChange(key, e.target.value, isPhone)}
+                  />
+                </div>
+              ))}
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button type="button" className={styles.cancelBtn} onClick={() => setEditing(null)} disabled={saving}>
+              Cancel
+            </button>
+            <button type="submit" className={styles.saveBtn} disabled={saving}>
+              {saving ? "Saving..." : "Save changes"}
+            </button>
+          </Modal.Footer>
+        </form>
       </Modal>
 
       <Modal show={!!toDelete} onHide={() => !deleting && setToDelete(null)} centered>
