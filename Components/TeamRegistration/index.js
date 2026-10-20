@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Alert, Modal } from "react-bootstrap";
 import { auth } from "../../firebase";
 import { authFetch } from "../../lib/authFetch";
 import { useSettings } from "../../lib/useSettings";
@@ -7,9 +7,7 @@ import styles from "./teamRegistration.module.css";
 
 const initialForm = {
   teamName: "",
-  shortName: "",
   city: "",
-  ownerName: "",
   captainName: "",
   captainPhone: "",
   captainEmail: "",
@@ -147,12 +145,19 @@ const TeamRegistration = () => {
       <Container className={styles.formWrap}>
         <Row className="justify-content-center">
           <Col lg={8}>
-            {success && (
-              <Alert variant="success">
-                🎉 Your team has been registered! The organizers will review it
-                and get in touch with the captain.
-              </Alert>
-            )}
+            <Modal show={success} onHide={() => setSuccess(false)} centered>
+              <Modal.Body className="text-center p-4">
+                <div style={{ fontSize: "3rem" }}>🎉</div>
+                <h4 className="mt-2">Registration received!</h4>
+                <p className="mb-4">
+                  Thank you for registering your team. The KPL team will get
+                  back to you soon.
+                </p>
+                <Button variant="primary" onClick={() => setSuccess(false)}>
+                  OK
+                </Button>
+              </Modal.Body>
+            </Modal>
             {error && <Alert variant="danger">{error}</Alert>}
 
             {loaded && !settings.registrationOpen ? (
@@ -169,15 +174,14 @@ const TeamRegistration = () => {
                 <h2 className={styles.section}>Team details</h2>
                 <Row>
                   <Col md={6}>{field("teamName", "Team name", { required: true, maxLength: 60 })}</Col>
-                  <Col md={6}>{field("shortName", "Short name", { maxLength: 5, placeholder: "e.g. CKS" })}</Col>
                   <Col md={6}>{field("city", "Area / City")}</Col>
-                  <Col md={12}>{field("ownerName", "Owner")}</Col>
                 </Row>
 
                 <h2 className={styles.section}>Captain</h2>
                 <Row>
                   <Col md={6}>{field("captainName", "Name", { required: true })}</Col>
                   <Col md={6}>{field("captainPhone", "Phone", { required: true, phone: true, inputMode: "numeric", placeholder: "10 digit number" })}</Col>
+                  <Col md={12}>{field("captainEmail", "Email", { required: true, type: "email", placeholder: "name@example.com" })}</Col>
                 </Row>
 
                 <h2 className={styles.section}>Vice captain</h2>
