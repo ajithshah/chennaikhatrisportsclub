@@ -5,6 +5,8 @@ import { authFetch } from "../../lib/authFetch";
 import { useSettings } from "../../lib/useSettings";
 import styles from "./teamRegistration.module.css";
 
+const CITIES = ["Chennai", "Kanchipuram", "Vellore", "Vaniyambadi", "Bangalore"];
+
 const initialForm = {
   teamName: "",
   city: "",
@@ -171,10 +173,28 @@ const TeamRegistration = () => {
               </Alert>
             ) : (
               <Form onSubmit={handleSubmit} className={styles.card}>
+                <Alert variant="warning">
+                  <strong>Please Note:</strong> Entries will be processed on a
+                  first-come, first-served basis, and participation will be
+                  confirmed upon receipt of payment. Spots are limited and will
+                  be secured once payment confirmation is received.
+                  <br />
+                  <strong>Secure your spot before it&apos;s too late!</strong>
+                </Alert>
                 <h2 className={styles.section}>Team details</h2>
                 <Row>
                   <Col md={6}>{field("teamName", "Team name", { required: true, maxLength: 60 })}</Col>
-                  <Col md={6}>{field("city", "Area / City")}</Col>
+                  <Col md={6}>
+                    <Form.Group className="mb-3" controlId="city">
+                      <Form.Label>Area / City</Form.Label>
+                      <Form.Select className={styles.select} name="city" value={form.city} onChange={handleChange}>
+                        <option value="">Select city</option>
+                        {CITIES.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
                 </Row>
 
                 <h2 className={styles.section}>Captain</h2>
