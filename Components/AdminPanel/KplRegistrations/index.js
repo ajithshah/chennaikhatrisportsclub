@@ -299,6 +299,11 @@ export default function KplRegistrations() {
                     <small>Captain</small>
                     <div>{team.captainName}</div>
                     <a href={`tel:${team.captainPhone}`}>{team.captainPhone}</a>
+                    {team.captainEmail && (
+                      <a href={`mailto:${team.captainEmail}`} style={{ display: "block", wordBreak: "break-all" }}>
+                        {team.captainEmail}
+                      </a>
+                    )}
                   </div>
                   <div>
                     <small>Vice captain</small>
