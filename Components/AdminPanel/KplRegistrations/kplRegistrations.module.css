@@ -14,8 +14,10 @@
   border: 0;
   color: #fff;
   border-radius: 999px;
-  padding: 0.35rem 1rem;
-  font-size: 0.9rem;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 1rem;
   margin-bottom: 1rem;
 }
 
@@ -436,9 +438,10 @@
   color: #fff;
   border: 0;
   border-radius: 999px;
-  padding: 0.45rem 1.2rem;
-  font-weight: 600;
-  font-size: 0.9rem;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 1rem;
 }
 
 .printBtn:hover:not(:disabled) {
@@ -519,4 +522,74 @@
   background-size: 16px;
   padding-right: 2.3rem;
   cursor: pointer;
+}
+
+.personCard {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid #ffc107;
+}
+
+.personRole {
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.personName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0b1f4d;
+  margin-bottom: 0.5rem;
+}
+
+.personLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.personLinks a {
+  display: inline-flex;
+  align-self: flex-start;
+  background: #e7ecf8;
+  color: #1b3a8a;
+  border-radius: 999px;
+  padding: 0.25rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.personLinks a:hover {
+  background: #1b3a8a;
+  color: #fff;
+}
+
+.regChip {
+  display: inline-block;
+  background: #fff7dc;
+  color: #7a5a00;
+  border-radius: 999px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.iconLg {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
 }

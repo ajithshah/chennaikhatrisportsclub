@@ -22,16 +22,6 @@ const formatDate = (value) =>
     ? new Date(value).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })
     : "-";
 
-const Detail = ({ icon, label, value }) => (
-  <div className={styles.detail}>
-    <span className={styles.detailIcon}>{icon}</span>
-    <div>
-      <div className={styles.detailLabel}>{label}</div>
-      <div className={styles.detailValue}>{value || "-"}</div>
-    </div>
-  </div>
-);
-
 export default function KplRegistrations() {
   const router = useRouter();
   const [teams, setTeams] = useState([]);
@@ -236,8 +226,13 @@ export default function KplRegistrations() {
 
       <section className={styles.hero}>
         <Container>
-          <button className={styles.back} onClick={() => router.push("/adminpanel")}>
-            ← Admin Panel
+          <button
+            className={styles.back}
+            onClick={() => router.push("/adminpanel")}
+            aria-label="Back to admin panel"
+            title="Back to admin panel"
+          >
+            <i className="fas fa-arrow-left"></i>
           </button>
           <h1 className={styles.title}>
             🏆 KPL <span>Season 4</span> Teams
@@ -279,8 +274,10 @@ export default function KplRegistrations() {
             className={styles.printBtn}
             onClick={printTeams}
             disabled={teams.length === 0}
+            aria-label="Print all"
+            title="Print all"
           >
-            <i className="fas fa-print"></i> Print all
+            <i className="fas fa-print"></i>
           </button>
         </div>
 
@@ -353,48 +350,80 @@ export default function KplRegistrations() {
         )}
       </Container>
 
-      <Modal show={!!selected} onHide={() => setSelected(null)} size="lg" centered>
+      <Modal
+        show={!!selected}
+        onHide={() => setSelected(null)}
+        size="lg"
+        centered
+        contentClassName={styles.editModal}
+      >
         {selected && (
           <>
-            <div className={styles.modalHead}>
+            <div className={styles.editHead}>
               <div className={styles.avatarLg}>{initials(selected.teamName)}</div>
               <div>
                 <h2>{selected.teamName}</h2>
-                <span>{[selected.city].filter(Boolean).join(" · ")}</span>
+                <span>{selected.city || "—"}</span>
               </div>
               <button className={styles.close} onClick={() => setSelected(null)} aria-label="Close">
                 ×
               </button>
             </div>
-            <Modal.Body>
+            <Modal.Body className={styles.editBody}>
               <div className="row">
                 <div className="col-md-6">
-                  <Detail icon="🏏" label="Captain" value={`${selected.captainName} · ${selected.captainPhone}`} />
-                  <Detail icon="✉️" label="Captain email" value={selected.captainEmail} />
-                  <Detail icon="🛡️" label="Vice captain" value={`${selected.viceCaptainName} · ${selected.viceCaptainPhone}`} />
-                  <Detail icon="🕒" label="Registered" value={formatDate(selected.createdAt)} />
+                  <div className={styles.personCard}>
+                    <div className={styles.personRole}>🛡️ Captain</div>
+                    <div className={styles.personName}>{selected.captainName}</div>
+                    <div className={styles.personLinks}>
+                      <a href={`tel:${selected.captainPhone}`}>📞 {selected.captainPhone}</a>
+                      {selected.captainEmail && (
+                        <a href={`mailto:${selected.captainEmail}`}>✉️ {selected.captainEmail}</a>
+                      )}
+                    </div>
+                  </div>
+                  <div className={styles.personCard}>
+                    <div className={styles.personRole}>🎖️ Vice captain</div>
+                    <div className={styles.personName}>{selected.viceCaptainName}</div>
+                    <div className={styles.personLinks}>
+                      <a href={`tel:${selected.viceCaptainPhone}`}>📞 {selected.viceCaptainPhone}</a>
+                    </div>
+                  </div>
+                  <div className={styles.regChip}>🕒 Registered {formatDate(selected.createdAt)}</div>
                 </div>
                 <div className="col-md-6">
-                  <div className={styles.detailLabel}>💰 Payment screenshot</div>
-                  {selected.paymentScreenshot ? (
-                    <a href={selected.paymentScreenshot} target="_blank" rel="noreferrer">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={selected.paymentScreenshot} alt="Payment screenshot" className={styles.shot} />
-                    </a>
-                  ) : (
-                    <p className="text-muted mt-2">Not uploaded</p>
-                  )}
+                  <div className={styles.personCard}>
+                    <div className={styles.personRole}>💰 Payment screenshot</div>
+                    {selected.paymentScreenshot ? (
+                      <a href={selected.paymentScreenshot} target="_blank" rel="noreferrer">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={selected.paymentScreenshot} alt="Payment screenshot" className={styles.shot} />
+                      </a>
+                    ) : (
+                      <p className="text-muted mt-2 mb-0">Not uploaded</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </Modal.Body>
-            <Modal.Footer>
-              <button className={styles.editBtnLg} onClick={() => openEdit(selected)}>
-                ✏️ Edit team
+            <div className={styles.editFoot}>
+              <button
+                className={`${styles.editBtnLg} ${styles.iconLg}`}
+                onClick={() => openEdit(selected)}
+                aria-label="Edit team"
+                title="Edit team"
+              >
+                <i className="fas fa-edit"></i>
               </button>
-              <button className={styles.deleteBtnLg} onClick={() => setToDelete(selected)}>
-                🗑 Delete team
+              <button
+                className={`${styles.deleteBtnLg} ${styles.iconLg}`}
+                onClick={() => setToDelete(selected)}
+                aria-label="Delete team"
+                title="Delete team"
+              >
+                <i className="fas fa-trash-alt"></i>
               </button>
-            </Modal.Footer>
+            </div>
           </>
         )}
       </Modal>
@@ -462,31 +491,72 @@ export default function KplRegistrations() {
             ))}
           </Modal.Body>
           <div className={styles.editFoot}>
-            <button type="button" className={styles.cancelBtn} onClick={() => setEditing(null)} disabled={saving}>
-              Cancel
+            <button
+              type="button"
+              className={`${styles.cancelBtn} ${styles.iconLg}`}
+              onClick={() => setEditing(null)}
+              disabled={saving}
+              aria-label="Cancel"
+              title="Cancel"
+            >
+              <i className="fas fa-times"></i>
             </button>
-            <button type="submit" className={styles.saveBtn} disabled={saving}>
-              {saving ? "Saving..." : "Save changes"}
+            <button
+              type="submit"
+              className={`${styles.saveBtn} ${styles.iconLg}`}
+              disabled={saving}
+              aria-label="Save changes"
+              title={saving ? "Saving..." : "Save changes"}
+            >
+              <i className={saving ? "fas fa-spinner fa-spin" : "fas fa-check"}></i>
             </button>
           </div>
         </form>
       </Modal>
 
-      <Modal show={!!toDelete} onHide={() => !deleting && setToDelete(null)} centered>
-        <Modal.Header closeButton={!deleting}>
-          <Modal.Title>Delete team?</Modal.Title>
-        </Modal.Header>
+      <Modal
+        show={!!toDelete}
+        onHide={() => !deleting && setToDelete(null)}
+        centered
+        contentClassName={styles.editModal}
+      >
+        <div className={styles.editHead} style={{ background: "linear-gradient(135deg, #7a0a1c, #c8102e)" }}>
+          <div>
+            <h2>Delete team?</h2>
+          </div>
+          <button
+            type="button"
+            className={styles.close}
+            onClick={() => setToDelete(null)}
+            disabled={deleting}
+            aria-label="Close"
+          >
+            &times;
+          </button>
+        </div>
         <Modal.Body>
           This will permanently delete the registration for{" "}
           <strong>{toDelete?.teamName}</strong>, including its payment
           screenshot. This cannot be undone.
         </Modal.Body>
         <Modal.Footer>
-          <button className={styles.cancelBtn} onClick={() => setToDelete(null)} disabled={deleting}>
-            Cancel
+          <button
+            className={`${styles.cancelBtn} ${styles.iconLg}`}
+            onClick={() => setToDelete(null)}
+            disabled={deleting}
+            aria-label="Cancel"
+            title="Cancel"
+          >
+            <i className="fas fa-times"></i>
           </button>
-          <button className={styles.deleteBtnLg} onClick={confirmDelete} disabled={deleting}>
-            {deleting ? "Deleting..." : "Yes, delete"}
+          <button
+            className={`${styles.deleteBtnLg} ${styles.iconLg}`}
+            onClick={confirmDelete}
+            disabled={deleting}
+            aria-label="Yes, delete"
+            title={deleting ? "Deleting..." : "Yes, delete"}
+          >
+            <i className={deleting ? "fas fa-spinner fa-spin" : "fas fa-trash-alt"}></i>
           </button>
         </Modal.Footer>
       </Modal>
