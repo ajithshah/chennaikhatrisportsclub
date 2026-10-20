@@ -131,6 +131,34 @@ const Contact = () => {
           </Col>
         </Row>
 
+        {/* KPL Season 4 */}
+        <Row className="g-4 mt-4">
+          <Col xs={12}>
+            <div className="kpl-banner">
+              <div className="kpl-banner-text">
+                <span className="kpl-tag">🏏 KPL Season 4</span>
+                <h3 className="kpl-title">Team registration opens 24th October 2026</h3>
+                <p className="kpl-detail">
+                  Tournament on <strong>23rd &amp; 24th January 2027</strong> ·
+                  Registration fee <strong>Rs. 6000/-</strong>
+                </p>
+                <p className="kpl-detail">
+                  Questions about KPL Season 4? Call or WhatsApp any of our
+                  organizers listed above.
+                </p>
+              </div>
+              <a
+                href="https://wa.me/919840880873?text=Hi%2C%20I%20have%20a%20question%20about%20KPL%20Season%204"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cta-btn whatsapp"
+              >
+                <i className="fab fa-whatsapp"></i> Ask about KPL 4
+              </a>
+            </div>
+          </Col>
+        </Row>
+
         {/* Google Map */}
         <Row className="g-4 mt-4">
           <Col xs={12}>
@@ -208,7 +236,7 @@ const Contact = () => {
                   </div>
                   <div className="sport-info">
                     <span className="sport-name">Ladies & Kids Events</span>
-                    <span className="sport-detail">Coming soon</span>
+                    <span className="sport-detail">1 Session completed</span>
                   </div>
                 </div>
               </div>
@@ -232,7 +260,7 @@ const Contact = () => {
           </Col>
           <Col xs={6} md={3}>
             <div className="stat-card">
-              <div className="stat-number">8+</div>
+              <div className="stat-number">15+</div>
               <div className="stat-label">Teams</div>
             </div>
           </Col>
@@ -489,6 +517,53 @@ const Contact = () => {
           font-size: 0.92rem;
           color: #2d3748;
           font-weight: 500;
+        }
+
+        /* KPL Season 4 banner */
+        .kpl-banner {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+          background: linear-gradient(135deg, #0b1f4d 0%, #1b3a8a 60%, #c8102e 100%);
+          color: #fff;
+          border-radius: 16px;
+          padding: 28px 30px;
+          box-shadow: 0 6px 24px rgba(11, 31, 77, 0.25);
+        }
+
+        .kpl-banner-text {
+          flex: 1 1 320px;
+        }
+
+        .kpl-tag {
+          display: inline-block;
+          background: #ffc107;
+          color: #0b1f4d;
+          font-weight: 700;
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          border-radius: 999px;
+          padding: 4px 14px;
+          margin-bottom: 10px;
+        }
+
+        .kpl-title {
+          font-size: 1.4rem;
+          font-weight: 800;
+          margin-bottom: 8px;
+        }
+
+        .kpl-detail {
+          font-size: 0.95rem;
+          opacity: 0.92;
+          margin-bottom: 4px;
+        }
+
+        .kpl-detail strong {
+          color: #ffc107;
         }
 
         /* Map */
@@ -849,6 +924,20 @@ const Contact = () => {
         }
 
         @media (max-width: 576px) {
+          .kpl-banner {
+            padding: 20px 16px;
+          }
+
+          .kpl-title {
+            font-size: 1.15rem;
+          }
+
+          .kpl-banner :global(.cta-btn),
+          .kpl-banner .cta-btn {
+            width: 100%;
+            justify-content: center;
+          }
+
           .contact-section {
             padding-bottom: 40px;
           }
