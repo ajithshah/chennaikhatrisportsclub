@@ -33,6 +33,7 @@
 }
 
 .badge {
+  text-decoration: none;
   display: inline-block;
   background: #ffc107;
   color: #0b1f4d;
@@ -116,4 +117,17 @@
   padding: 0.3rem 0.8rem;
   border-radius: 999px;
   font-size: 0.9rem;
+}
+
+.badgeDisabled {
+  background: #adb5bd;
+  color: #495057;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.opensOn {
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
+  opacity: 0.9;
 }

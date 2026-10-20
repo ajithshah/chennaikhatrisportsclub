@@ -1,6 +1,10 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
+import Link from "next/link";
 import styles from "./kpl.module.css";
+
+// Set to true on 24th Oct 2026 to enable the registration link.
+const REGISTRATION_OPEN = false;
 
 const details = [
   {
@@ -43,7 +47,21 @@ const KplSeason4 = () => {
             🏆 The wait is over! Get ready for another thrilling season of
             cricket, competition, and champions!
           </p>
-          <span className={styles.badge}>📢 Player Registration</span>
+          {REGISTRATION_OPEN ? (
+            <Link href="/team-registration" className={styles.badge}>
+              📢 Register Your Team
+            </Link>
+          ) : (
+            <>
+              <span
+                className={`${styles.badge} ${styles.badgeDisabled}`}
+                aria-disabled="true"
+              >
+                📢 Register Your Team
+              </span>
+              <p className={styles.opensOn}>Opens 24th October 2026</p>
+            </>
+          )}
         </Container>
       </section>
 

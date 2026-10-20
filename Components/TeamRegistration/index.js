@@ -1,0 +1,231 @@
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
+import { auth } from "../../firebase";
+import { authFetch } from "../../lib/authFetch";
+import styles from "./teamRegistration.module.css";
+
+const initialForm = {
+  teamName: "",
+  shortName: "",
+  city: "",
+  ownerName: "",
+  captainName: "",
+  captainPhone: "",
+  captainEmail: "",
+  viceCaptainName: "",
+  viceCaptainPhone: "",
+  paymentScreenshot: "",
+};
+
+const TeamRegistration = () => {
+  const [form, setForm] = useState(initialForm);
+  const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [fileKey, setFileKey] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((u) => {
+      setUser(u);
+      setAuthReady(true);
+      if (u?.email) {
+        setForm((f) => ({ ...f, captainEmail: f.captainEmail || u.email }));
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+  };
+
+  const handlePhone = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value.replace(/\D/g, "").slice(0, 10) }));
+  };
+
+  const handleScreenshot = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError("");
+    if (!["image/jpeg", "image/png"].includes(file.type)) {
+      setError("Only JPG or PNG images are allowed");
+      setFileKey((k) => k + 1);
+      return;
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      setError("Screenshot must be under 4 MB");
+      setFileKey((k) => k + 1);
+      return;
+    }
+    setUploading(true);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const response = await authFetch("/api/kpl4/payment_upload", {
+        method: "POST",
+        body,
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Upload failed");
+      setForm((f) => ({ ...f, paymentScreenshot: data.fileUrl }));
+    } catch (err) {
+      setError(err.message);
+      setFileKey((k) => k + 1);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSubmitting(true);
+    try {
+      const response = await authFetch("/api/kpl4/registrations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Registration failed");
+      setSuccess(true);
+      setForm(initialForm);
+      setFileKey((k) => k + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const field = (name, label, { phone, ...props } = {}) => (
+    <Form.Group className="mb-3" controlId={name}>
+      <Form.Label>
+        {label}
+        {props.required && <span className="text-danger"> *</span>}
+      </Form.Label>
+      <Form.Control
+        name={name}
+        value={form[name]}
+        onChange={phone ? handlePhone : handleChange}
+        {...props}
+      />
+    </Form.Group>
+  );
+
+  return (
+    <div className={styles.page}>
+      <section className={styles.hero}>
+        <Container>
+          <h1>Team Registration</h1>
+          <p>KPL Season 4 · 23rd & 24th January 2027 · Fee Rs. 6000/-</p>
+        </Container>
+      </section>
+
+      <Container className={styles.formWrap}>
+        <Row className="justify-content-center">
+          <Col lg={8}>
+            {success && (
+              <Alert variant="success">
+                🎉 Your team has been registered! The organizers will review it
+                and get in touch with the captain.
+              </Alert>
+            )}
+            {error && <Alert variant="danger">{error}</Alert>}
+
+            {authReady && !user ? (
+              <Alert variant="warning">
+                Please sign in (top right) to register your team.
+              </Alert>
+            ) : (
+              <Form onSubmit={handleSubmit} className={styles.card}>
+                <h2 className={styles.section}>Team details</h2>
+                <Row>
+                  <Col md={6}>{field("teamName", "Team name", { required: true, maxLength: 60 })}</Col>
+                  <Col md={6}>{field("shortName", "Short name", { maxLength: 5, placeholder: "e.g. CKS" })}</Col>
+                  <Col md={6}>{field("city", "Area / City")}</Col>
+                  <Col md={12}>{field("ownerName", "Owner")}</Col>
+                </Row>
+
+                <h2 className={styles.section}>Captain</h2>
+                <Row>
+                  <Col md={6}>{field("captainName", "Name", { required: true })}</Col>
+                  <Col md={6}>{field("captainPhone", "Phone", { required: true, phone: true, inputMode: "numeric", placeholder: "10 digit number" })}</Col>
+                </Row>
+
+                <h2 className={styles.section}>Vice captain</h2>
+                <Row>
+                  <Col md={6}>{field("viceCaptainName", "Name", { required: true })}</Col>
+                  <Col md={6}>{field("viceCaptainPhone", "Phone", { required: true, phone: true, inputMode: "numeric", placeholder: "10 digit number" })}</Col>
+                </Row>
+
+                <h2 className={styles.section}>Payment</h2>
+                <Form.Group className="mb-3">
+                  <Form.Label htmlFor="paymentScreenshotInput">
+                    Payment screenshot (Rs. 6000/-)
+                    <span className="text-danger"> *</span>
+                  </Form.Label>
+                  <input
+                    id="paymentScreenshotInput"
+                    key={fileKey}
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    onChange={handleScreenshot}
+                    disabled={uploading}
+                    className={styles.hiddenInput}
+                  />
+                  <label
+                    htmlFor="paymentScreenshotInput"
+                    className={`${styles.dropzone} ${
+                      uploading ? styles.dropzoneDisabled : ""
+                    }`}
+                  >
+                    <i
+                      className={`fas ${
+                        uploading
+                          ? "fa-spinner fa-spin"
+                          : form.paymentScreenshot
+                          ? "fa-check-circle"
+                          : "fa-cloud-upload-alt"
+                      } ${styles.dropIcon}`}
+                    ></i>
+                    <span className={styles.dropTitle}>
+                      {uploading
+                        ? "Uploading..."
+                        : form.paymentScreenshot
+                        ? "Screenshot uploaded - click to change"
+                        : "Click to choose your payment screenshot"}
+                    </span>
+                    <span className={styles.dropHint}>JPG or PNG, up to 4 MB</span>
+                  </label>
+                  {form.paymentScreenshot && !uploading && (
+                    <div className="mt-2">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={form.paymentScreenshot}
+                        alt="Payment screenshot preview"
+                        className={styles.preview}
+                      />
+                    </div>
+                  )}
+                </Form.Group>
+
+                <Button type="submit" size="lg" className="w-100" disabled={submitting || uploading || !form.paymentScreenshot}>
+                  {submitting ? "Submitting..." : "Register Team"}
+                </Button>
+              </Form>
+            )}
+          </Col>
+        </Row>
+      </Container>
+    </div>
+  );
+};
+
+export default TeamRegistration;
