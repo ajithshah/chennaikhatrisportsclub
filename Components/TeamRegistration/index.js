@@ -7,6 +7,37 @@ import styles from "./teamRegistration.module.css";
 
 const CITIES = ["Chennai", "Kanchipuram", "Vellore", "Vaniyambadi", "Bangalore"];
 
+const RULES = [
+  {
+    title: "No Team Transfers",
+    text: "Team transfers will not be permitted once a team is registered.",
+  },
+  {
+    title: "No Refund Policy",
+    text: "Registration fees are non-refundable once the team registration is confirmed.",
+  },
+  {
+    title: "Registration Deadline",
+    text: "Team registrations will close on Sunday, 25th October 2026, at 10:00 PM sharp. No registrations will be accepted after the deadline.",
+  },
+  {
+    title: "Changes and Modifications",
+    text: "Any changes to team registration, or other tournament-related matters will be considered only after discussion with Chennai Khatri Sports Club.",
+  },
+  {
+    title: "Final Authority",
+    text: "Chennai Khatri Sports Club reserves the right to review and decide on registration-related matters in consultation with the concerned parties.",
+  },
+  {
+    title: "Confirmation of Registration",
+    text: "Teams must complete all required registration formalities within the stipulated deadline to secure their participation.",
+  },
+  {
+    title: "Acceptance of Rules",
+    text: "By registering, all team owners and representatives agree to abide by the registration rules and decisions made by Chennai Khatri Sports Club.",
+  },
+];
+
 const initialForm = {
   teamName: "",
   city: "",
@@ -172,10 +203,32 @@ const TeamRegistration = () => {
               <br />
               <strong>Secure your spot before it&apos;s too late!</strong>
             </Alert>
+
+            <section className={styles.rules} aria-labelledby="registration-rules">
+              <h2 id="registration-rules" className={styles.rulesTitle}>
+                Registration rules
+              </h2>
+              <p className={styles.rulesIntro}>
+                All team Captains are requested to read and follow the
+                registration rules carefully.
+              </p>
+              <ol className={styles.rulesList}>
+                {RULES.map((rule) => (
+                  <li key={rule.title}>
+                    <strong>{rule.title}:</strong> {rule.text}
+                  </li>
+                ))}
+              </ol>
+              <p className={styles.rulesNotice}>
+                <strong>📢 Important Notice:</strong> Please ensure that all
+                team details are finalised before registration. Avoid
+                last-minute requests for changes.
+              </p>
+            </section>
             {loaded && !settings.registrationOpen ? (
               <Alert variant="info">
                 Team registration is currently closed. It opens on Saturday,
-                24th October 2026.
+                24th October 2026 at 5 PM.
               </Alert>
             ) : authReady && !user ? (
               <Alert variant="warning">
