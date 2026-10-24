@@ -170,7 +170,7 @@ const HomePage = () => {
               </Link>
             ) : (
               <span className={styles.registerSoon}>
-                📢 Team registration opens 24th October 2026
+                📢 Team registration opens 24th October 2026, 5 PM
               </span>
             )}
           </div>

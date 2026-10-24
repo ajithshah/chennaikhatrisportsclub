@@ -138,6 +138,9 @@ const ImageSlider = () => {
   // YouTube Iframe API setup
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // The player div is currently commented out below; creating a YT.Player without
+    // an element throws and crashes the page when the home page is revisited.
+    if (!ytPlayer1Ref.current) return;
     function requestPlayerFullscreen(playerRef) {
       // Find the iframe inside the player div
       const iframe =

@@ -168,6 +168,8 @@ const TeamRegistration = () => {
               confirmed upon receipt of payment. Spots are limited and will
               be secured once payment confirmation is received.
               <br />
+              <strong>Once the team is registered, no refunds are allowed.</strong>
+              <br />
               <strong>Secure your spot before it&apos;s too late!</strong>
             </Alert>
             {loaded && !settings.registrationOpen ? (
@@ -300,6 +302,10 @@ const TeamRegistration = () => {
                     </div>
                   )}
                 </Form.Group>
+
+                <p className="text-muted small text-center">
+                  Once the team is registered, no refunds are allowed.
+                </p>
 
                 <Button type="submit" size="lg" className="w-100" disabled={submitting || uploading || !form.paymentScreenshot}>
                   {submitting ? "Submitting..." : "Register Team"}

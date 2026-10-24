@@ -49,9 +49,14 @@ const Footer = () => {
             {
               <p className="developer-credit text-light">
                 Developed by{" "}
-                <span className="developer-name">
+                <a
+                  href="https://www.instagram.com/ajith._.shah/?hl=en"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="developer-name"
+                >
                   Tech Brothers
-                </span>
+                </a>
               </p>
             }
           </Col>
@@ -147,6 +152,13 @@ const Footer = () => {
 
         .developer-name {
           font-weight: 600;
+          color: inherit;
+          text-decoration: none;
+        }
+
+        .developer-name:hover {
+          color: #fff;
+          text-decoration: underline;
         }
 
         @media (max-width: 767px) {
